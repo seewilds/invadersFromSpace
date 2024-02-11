@@ -7,12 +7,12 @@ class Defender {
       this.pixels[i] = new Pixel(5, 5, 10 + i * 5, 200, "blue"); 
     }
     for(let i = 5; i < 10; i++){
-      this.pixels[i] = new Pixel(5, 5, 10 + i * 5, 205, "blue"); 
+      this.pixels[i] = new Pixel(5, 5, 10 + (i-5) * 5, 195, "blue"); 
     }
     for(let i = 10; i < 13; i++){
-      this.pixels[i] = new Pixel(5, 5, 15 + i * 5, 210, "blue"); 
+      this.pixels[i] = new Pixel(5, 5, 15 + (i-10) * 5, 190, "blue"); 
     }
-    this.pixels[13] = new Pixel(5, 5, 20, 215, "blue"); 
+    this.pixels[13] = new Pixel(5, 5, 20, 185, "blue"); 
   }
   Update(context : CanvasRenderingContext2D){
     this.pixels.forEach(pixel => {
@@ -59,3 +59,4 @@ class Pixel {
   }
 }
 
+export {Defender};
