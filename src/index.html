@@ -14,13 +14,14 @@
     <body onload="startGame()">
     <script>
     
-    var redGamePiece, blueGamePiece, yellowGamePiece;
+    var redGamePiece, blueGamePiece, blueGame2Piece, yellowGamePiece, defender;
     
     function startGame() {
         redGamePiece = new component(75, 75, "red", 10, 10);
         yellowGamePiece = new component(75, 75, "yellow", 50, 60);    
-        blueGamePiece = new component(75, 75, "blue", 10, 220);
-        blueGamePiece = new component(75, 75, "green", 10, 110);
+        blueGamePiece = new component(5, 5, "blue", 10, 220);
+        blueGame2Piece = new component(5, 5, "blue", 15, 220);
+        defender = new Defender();
         myGameArea.start();
     }
     
@@ -55,11 +56,13 @@
         redGamePiece.x += 1;
         yellowGamePiece.x += 1;    
         yellowGamePiece.y += 1;        
-        blueGamePiece.x += 1;        
-        blueGamePiece.y -= 1;            
+        // blueGamePiece.x += 1;        
+        // blueGamePiece.y -= 1;            
         redGamePiece.update();
         yellowGamePiece.update();        
         blueGamePiece.update();
+        blueGame2Piece.update();
+        defender.Update();
     }
     </script>
 <p>We have created a game area! (or at least an empty canvas)</p>
