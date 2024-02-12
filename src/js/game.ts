@@ -1,7 +1,12 @@
 class Defender {
+  context : CanvasRenderingContext2D;
   health : number;
   pixels : Pixel[];
-  constructor(){
+  key : boolean;
+  deltaX : number;
+  constructor(context : CanvasRenderingContext2D){
+    this.context = context;
+    this.deltaX = 0;
     this.pixels = new Array(14);
     for(let i = 0; i < 5; i++){
       this.pixels[i] = new Pixel(5, 5, 10 + i * 5, 200, "blue"); 
@@ -13,11 +18,29 @@ class Defender {
       this.pixels[i] = new Pixel(5, 5, 15 + (i-10) * 5, 190, "blue"); 
     }
     this.pixels[13] = new Pixel(5, 5, 20, 185, "blue"); 
+    window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
+    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
   }
-  Update(context : CanvasRenderingContext2D){
+  Update(){
     this.pixels.forEach(pixel => {
-      pixel.Update(context, pixel.x, pixel.y);
+      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
     });
+  }
+  HandleKeyDown(event: KeyboardEvent){
+    if(event.key == 'a'){
+      this.deltaX = -1;
+    }
+    if(event.key == 'd'){
+      this.deltaX = 1;
+    }
+  }
+  HandleKeyUp(event: KeyboardEvent){
+    if(event.key == 'a'){
+      this.deltaX = 0;
+    }
+    if(event.key == 'd'){
+      this.deltaX = 0;
+    }
   }
 }
 

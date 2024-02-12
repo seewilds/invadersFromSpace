@@ -19,13 +19,16 @@
     
     function startGame() {
         redGamePiece = new component(75, 75, "red", 10, 10);
-        yellowGamePiece = new component(75, 75, "yellow", 50, 60);    
-        defender = new Defender();
+        yellowGamePiece = new component(75, 75, "yellow", 50, 60);  
+        
         myGameArea.start();
+        defender = new Defender(myGameArea.context);
     }
+    
     
     var myGameArea = {
         canvas : document.createElement("canvas"),
+        context : null,
         start : function() {
             this.canvas.width = 480;
             this.canvas.height = 270;
@@ -37,7 +40,8 @@
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
-    
+
+
     function component(width, height, color, x, y) {
         this.width = width;
         this.height = height;
@@ -58,8 +62,8 @@
         // blueGamePiece.x += 1;        
         // blueGamePiece.y -= 1;            
         redGamePiece.update();
-        yellowGamePiece.update();        
-        defender.Update(myGameArea.context);
+        yellowGamePiece.update(); 
+        defender.Update();       
     }
 
     document.addEventListener('DOMContentLoaded', (event) => {
