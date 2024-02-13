@@ -11,12 +11,12 @@
         import { Defender, Battlefield } from './js/game.ts'
 
         var redGamePiece, blueGamePiece, blueGame2Piece, yellowGamePiece, defender;
-        var battlefield = new Battlefield(document.createElement("canvas"), 600, 450, updateGameArea);
+        var battlefield = new Battlefield(document.createElement("canvas"), 512, 512, updateGameArea);
         function startGame() {
             // redGamePiece = new component(75, 75, "red", 10, 10);
             // yellowGamePiece = new component(75, 75, "yellow", 50, 60);
             
-            defender = new Defender(battlefield.context);
+            defender = new Defender(4, 512,battlefield.context);
         }
 
         function component(width, height, color, x, y) {
