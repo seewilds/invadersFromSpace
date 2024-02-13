@@ -45,10 +45,10 @@ class Defender {
   }
   HandleKeyDown(event: KeyboardEvent) {
     if (event.key == 'a') {
-      this.deltaX = -10;
+      this.deltaX = -this.pixelsPerPixel;
     }
     if (event.key == 'd') {
-      this.deltaX = 10;
+      this.deltaX = this.pixelsPerPixel;
     }
   }
   HandleKeyUp(event: KeyboardEvent) {
