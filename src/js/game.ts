@@ -77,9 +77,14 @@ class Octopus {
     let bottom = boardDimension - this.pixelsPerPixel * 2;
     let left = Math.round(boardDimension / 2 - 13 / 2);
     let row1, row2, row3, row4, row5, row6, row7, row8 = 0;
-    for (row1 = 0; row1 < 4; row1++) {
+    for (row1 = 0; row1 < 2; row1++) {
       this.pixels[row1] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + row1 * this.pixelsPerPixel, bottom, "#20FF20");
     }
+    for (row1 += 8; row1 < 12; row1++) {
+      this.pixels[row1] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + row1 * this.pixelsPerPixel, bottom, "#20FF20");
+    }
+
+
     for (row2 = row1; row2 < 26; row2++) {
       this.pixels[row2] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + (row2 - row1) * this.pixelsPerPixel, bottom - this.pixelsPerPixel, "#20FF20");
     }
@@ -242,4 +247,4 @@ class Pixel {
   }
 }
 
-export { Defender, Battlefield };
+export { Defender, Octopus, Battlefield };
