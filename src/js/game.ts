@@ -8,11 +8,10 @@ class Defender {
   constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.deltaX = 0;
-    this.pixels = new Array(14);
     this.pixelsPerPixel = pixelsPerPixel;
     let bottom = boardDimension  - 13 * pixelsPerPixel;
     let left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 13, pixelsPerPixel, left, bottom,  [6,18,19,20,31,32,33,40,41,42,43,44,45,46,47,48,49,50,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103]);
+    this.pixels = spriteFactory(8, 13, pixelsPerPixel, left, bottom,  [6,18,19,20,31,32,33,40,41,42,43,44,45,46,47,48,49,50,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103], "#1FFE1F");
     console.log(this.pixels)
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
     window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
@@ -40,7 +39,7 @@ class Defender {
   }
 }
 
-function spriteFactory(height : number, width : number, pixelsPerPixel : number, xStart :number, yStart : number, activePixels : number[]){
+function spriteFactory(height : number, width : number, pixelsPerPixel : number, xStart :number, yStart : number, activePixels : number[], colour : string){
   let spriteArray = new Array(activePixels.length);
   let activePixelsSet = 0;
   let loopNumber = 0;
@@ -49,7 +48,7 @@ function spriteFactory(height : number, width : number, pixelsPerPixel : number,
     for(let j = 0; j < width; j++){      
       
       if(activePixels.includes(loopNumber)){
-        spriteArray[activePixelsSet] = new Pixel(pixelsPerPixel, pixelsPerPixel, xStart - j * pixelsPerPixel, yStart + pixelsPerPixel * i , "white");
+        spriteArray[activePixelsSet] = new Pixel(pixelsPerPixel, pixelsPerPixel, xStart - j * pixelsPerPixel, yStart + pixelsPerPixel * i , colour);
         activePixelsSet++;
       }
       loopNumber++;
@@ -73,9 +72,12 @@ class Octopus {
     this.pixelsPerPixel = pixelsPerPixel;
     let bottom = boardDimension - this.pixelsPerPixel * 2;
     let left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 11, pixelsPerPixel, bottom, left,  [6,18,19,20,31,32,33,40,41,42,43,44,45,46,47,48,49,50,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103]);
+    this.pixels = spriteFactory(8, 11, pixelsPerPixel, left, bottom,  [6,18,19,20,31,32,33,40,41,42,43,44,45,46,47,48,49,50,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103], "blue");
   }
   Update() {
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
+    });
   }
 }
 
@@ -89,13 +91,15 @@ class Crab {
   constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.deltaX = 0;
-    this.pixels = new Array(14);
     this.pixelsPerPixel = pixelsPerPixel;
-    let bottom = boardDimension - this.pixelsPerPixel * 2;
+    let bottom = boardDimension / 2;// - this.pixelsPerPixel * 2;
     let left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 13, pixelsPerPixel, bottom, left,  [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,41,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84]);
+    this.pixels = spriteFactory(8, 11, pixelsPerPixel, left, bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "white");
   }
   Update() {
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
+    });
   }
 }
 
