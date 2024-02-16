@@ -67,12 +67,10 @@ class Octopus {
   constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.deltaX = 0;
-    let pixelHeight = 8;
-    let pixelWidth = 12;
     this.pixelsPerPixel = pixelsPerPixel;
-    let bottom = boardDimension - this.pixelsPerPixel * 2;
+    let bottom = boardDimension / 2;
     let left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 11, pixelsPerPixel, left, bottom,  [6,18,19,20,31,32,33,40,41,42,43,44,45,46,47,48,49,50,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103], "blue");
+    this.pixels = spriteFactory(8, 12, pixelsPerPixel, left, bottom,  [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue");
   }
   Update() {
     this.pixels.forEach(pixel => {
@@ -117,31 +115,9 @@ class Squid {
     this.deltaX = 0;
     this.pixels = new Array(14);
     this.pixelsPerPixel = pixelsPerPixel;
-    let bottom = boardDimension - this.pixelsPerPixel * 2;
+    let bottom = boardDimension / 7;
     let left = Math.round(boardDimension / 2 - 13 / 2);
-    let row1, row2, row3, row4, row5, row6, row7, row8 = 0;
-    for (row1 = 0; row1 < 4; row1++) {
-      this.pixels[row1] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + row1 * this.pixelsPerPixel, bottom, "#20FF20");
-    }
-    for (row2 = row1; row2 < 26; row2++) {
-      this.pixels[row2] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + (row2 - row1) * this.pixelsPerPixel, bottom - this.pixelsPerPixel, "#20FF20");
-    }
-    for (row3 = row2; row3 < 39; row3++) {
-      this.pixels[row3] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + (row3 - row2) * this.pixelsPerPixel, bottom - this.pixelsPerPixel * 2, "#20FF20");
-    }
-    for (row4 = row3; row4 < 52; row4++) {
-      this.pixels[row4] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + (row4 - row3) * this.pixelsPerPixel,  bottom - this.pixelsPerPixel * 3, "#20FF20");
-    }
-    for (row5 = row4; row5 < 63; row5++) {
-      this.pixels[row5] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + this.pixelsPerPixel + (row5 - row4) * this.pixelsPerPixel,  bottom - this.pixelsPerPixel * 4, "#20FF20");
-    }
-    for (row6 = row5; row6 < 66; row6++) {
-      this.pixels[row6] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, left + 5 * this.pixelsPerPixel + (row6 - row5) * this.pixelsPerPixel,  bottom - this.pixelsPerPixel * 5, "#20FF20");
-    }
-    for (row7 = row6; row7 < 66; row7++) {
-      this.pixels[row7] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, (left + 5 * this.pixelsPerPixel + 1) + (row7 - row6) * this.pixelsPerPixel,  bottom - this.pixelsPerPixel * 6, "#20FF20");
-    }
-    this.pixels[row7] = new Pixel(this.pixelsPerPixel, this.pixelsPerPixel, (left + 6 * this.pixelsPerPixel), bottom - this.pixelsPerPixel * 6, "#20FF20");
+    this.pixels = spriteFactory(8, 8, pixelsPerPixel, left, bottom,  [3,4,10,11,12,13,17,18,19,20,21,22,24,25,27,28,30,31,32,33,34,35,36,37,38,39,42,45,49,51,52,54,56,58,61,63], "red");
   }
   Update() {
     this.pixels.forEach(pixel => {
@@ -195,4 +171,4 @@ class Pixel {
   }
 }
 
-export { Defender, Octopus, Battlefield, Crab };
+export { Defender, Octopus, Battlefield, Crab, Squid };
