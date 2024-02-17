@@ -8,9 +8,9 @@
 
 <body>
     <script type="module">
-        import { Defender, Octopus, Battlefield, Crab, Squid } from './js/game.ts'
+        import { Defender, Octopus, Battlefield, Crab, Squid, Shield } from './js/game.ts'
 
-        var defender, crab, octopus, squid;
+        var defender, crab, octopus, squid, shield;
         var battlefield = new Battlefield(document.createElement("canvas"), 512, 512, updateGameArea);
         function startGame() {
             // redGamePiece = new component(75, 75, "red", 10, 10);
@@ -20,6 +20,7 @@
             crab = new Crab(4, 512, battlefield.context);
             octopus = new Octopus(4, 623, battlefield.context);
             squid = new Squid(4, 745, battlefield.context);
+            shield = new Shield(4, 431, battlefield.context);
         }
 
         function component(width, height, color, x, y) {
@@ -40,7 +41,7 @@
             crab.Update();
             octopus.Update();
             squid.Update();
-
+            shield.Update();
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
