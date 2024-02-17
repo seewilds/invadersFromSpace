@@ -99,6 +99,27 @@ class Shield {
   }
 }
 
+class Spaceship {
+  context: CanvasRenderingContext2D;
+  pixels: Pixel[];
+  key: boolean;
+  deltaX: number;
+  pixelsPerPixel : number;
+  constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
+    this.context = context;
+    this.deltaX = 0;
+    this.pixelsPerPixel = pixelsPerPixel;
+    let bottom = boardDimension / 4;
+    let left = Math.round(boardDimension / 2 - 13 / 2);
+    this.pixels = spriteFactory(7, 16, pixelsPerPixel, left, bottom, [4,5,6,7,8,9,10,11,19,20,21,22,23,24,25,26,27,28,34,35,36,37,38,39,40,41,42,43,44,45,49,50,52,53,55,56,58,59,61,62,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,81,82,83,92,93,94,98,109], "orange");
+  }
+  Update() {
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
+    });
+  }
+}
+
 class Crab {
   context: CanvasRenderingContext2D;
   health: number;
@@ -191,4 +212,4 @@ class Pixel {
   }
 }
 
-export { Defender, Octopus, Battlefield, Crab, Squid, Shield };
+export { Defender, Octopus, Battlefield, Crab, Squid, Shield, Spaceship };
