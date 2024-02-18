@@ -48,7 +48,6 @@ function spriteFactory(height : number, width : number, pixelsPerPixel : number,
   let spriteArray = new Array(activePixels.length);
   let activePixelsSet = 0;
   let loopNumber = 0;
-  console.log(activePixels);
   for(let i = 0; i < height; i++){
     for(let j = 0; j < width; j++){      
       
@@ -66,23 +65,39 @@ class Octopus {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
+  pixelAActive : boolean;
   key: boolean;
   deltaX: number;
   pixelsPerPixel : number;
+  left : number;
+  bottom : number;
+  interval: number | undefined;
   constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.deltaX = 0;
     this.pixelsPerPixel = pixelsPerPixel;
-    let bottom = boardDimension / 2;
-    let left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 12, pixelsPerPixel, left, bottom,  [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue");
+    this.bottom = boardDimension / 2;
+    this.left = Math.round(boardDimension / 2 - 13 / 2);
+    this.pixels = spriteFactory(8, 12, pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue");
+    this.pixelAActive = true;
+    this.interval = setInterval(() => this.Update(), 200);
   }
   Update() {
+    // this.context.fillStyle = "black";
+    // this.context.fillRect(this.pixels[0].x - 8 * this.pixelsPerPixel, this.pixels[0].y, 11 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
+    // if(this.pixelAActive){
+    //   this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue")
+    //   this.pixelAActive = false;
+    // } else{
+    //   this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue")
+    //   this.pixelAActive = true;
+    // }
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
     });
   }
 }
+
 
 class Shield {
   context: CanvasRenderingContext2D;
@@ -139,22 +154,24 @@ class Crab {
   interval: number | undefined;
   constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
     this.context = context;
-    this.deltaX = 10;
+    this.deltaX = 0;
     this.pixelsPerPixel = pixelsPerPixel;
     this.bottom = boardDimension / 2;// - this.pixelsPerPixel * 2;
     this.left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "white");
+    this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "pink");
     this.pixelAActive = true;
     this.interval = setInterval(() => this.Update(), 200);
+    console.log(this.pixels[0])
+    console.log(this)
   }
   Update() {
-    this.context.fillStyle = "black";
+    this.context.fillStyle = "black";    
     this.context.fillRect(this.pixels[0].x - 8 * this.pixelsPerPixel, this.pixels[0].y, 11 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
     if(this.pixelAActive){
-      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,11,14,18,21,22,24,25,26,27,28,29,30,32,33,34,35,37,38,39,41,42,43,44,45,46,47,48,49,50,51,52,53,54,57,58,59,60,61,62,63,68,74,78,86], "white");
+      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,11,14,18,21,22,24,25,26,27,28,29,30,32,33,34,35,37,38,39,41,42,43,44,45,46,47,48,49,50,51,52,53,54,57,58,59,60,61,62,63,68,74,78,86], "pink");
       this.pixelAActive = false;
     } else{
-      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "white");
+      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "pink");
       this.pixelAActive = true;
     }
     this.pixels.forEach(pixel => {
@@ -169,19 +186,34 @@ class Squid {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
+  pixelAActive : boolean;
   key: boolean;
   deltaX: number;
   pixelsPerPixel : number;
+  left : number;
+  bottom : number;
+  interval: number | undefined;
   constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.deltaX = 0;
     this.pixels = new Array(14);
     this.pixelsPerPixel = pixelsPerPixel;
-    let bottom = boardDimension / 7;
-    let left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 8, pixelsPerPixel, left, bottom,  [3,4,10,11,12,13,17,18,19,20,21,22,24,25,27,28,30,31,32,33,34,35,36,37,38,39,42,45,49,51,52,54,56,58,61,63], "red");
+    this.bottom = boardDimension / 7;
+    this.left = Math.round(boardDimension / 2 - 13 / 2);
+    this.pixels = spriteFactory(8, 8, pixelsPerPixel, this.left, this.bottom,  [3,4,10,11,12,13,17,18,19,20,21,22,24,25,27,28,30,31,32,33,34,35,36,37,38,39,42,45,49,51,52,54,56,58,61,63], "red");
+    this.pixelAActive = true;
+    this.interval = setInterval(() => this.Update(), 200);
   }
   Update() {
+    this.context.fillStyle = "black";
+    this.context.fillRect(this.pixels[0].x - 4 * this.pixelsPerPixel - 1, this.pixels[0].y, 8 * this.pixelsPerPixel + 2, 8 * this.pixelsPerPixel + 1);
+    if(this.pixelAActive){
+      this.pixels = spriteFactory(8, 8, this.pixelsPerPixel, this.left, this.bottom, [3,4,10,11,12,13,17,18,19,20,21,22,24,25,27,28,30,31,32,33,34,35,36,37,38,39,42,45,49,51,52,54,56,58,61,63], "red");
+      this.pixelAActive = false;
+    } else{
+      this.pixels = spriteFactory(8, 8, this.pixelsPerPixel, this.left, this.bottom, [3,4,10,11,12,13,17,18,19,20,21,22,24,25,27,28,30,31,32,33,34,35,36,37,38,39,41,46,48,55,57,62], "red");
+      this.pixelAActive = true;
+    }
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
     });
