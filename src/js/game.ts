@@ -78,20 +78,20 @@ class Octopus {
     this.pixelsPerPixel = pixelsPerPixel;
     this.bottom = boardDimension / 2;
     this.left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 12, pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue");
+    this.pixels = spriteFactory(8, 12, pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,77,78,80,81,84,85,94,95], "blue");
     this.pixelAActive = true;
     this.interval = setInterval(() => this.Update(), 200);
   }
   Update() {
-    // this.context.fillStyle = "black";
-    // this.context.fillRect(this.pixels[0].x - 8 * this.pixelsPerPixel, this.pixels[0].y, 11 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
-    // if(this.pixelAActive){
-    //   this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue")
-    //   this.pixelAActive = false;
-    // } else{
-    //   this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,80,81,84,85,94,95], "blue")
-    //   this.pixelAActive = true;
-    // }
+    this.context.fillStyle = "black";
+    this.context.fillRect(this.pixels[0].x - 7 * this.pixelsPerPixel, this.pixels[0].y, 12 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
+    if(this.pixelAActive){
+      this.pixels = spriteFactory(8, 12, this.pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69,73,74,77,78,81,82,86,87,92,93], "blue")
+      this.pixelAActive = false;
+    } else{
+      this.pixels = spriteFactory(8, 12, this.pixelsPerPixel, this.left, this.bottom, [4,5,6,7,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,63,64,67,68,74,75,77,78,80,81,84,85,94,95], "blue");
+      this.pixelAActive = true;
+    }
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
     });
