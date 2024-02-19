@@ -41,10 +41,10 @@ const Saucer : Sprite = {
 }
 
 const Shot : Sprite = {
-    rows: 1,
-    cols: 4,
-    activePixels: [1,2,3,4],
-    activePixelsAlt: [1,2,3,4],
+    rows: 6,
+    cols: 1,
+    activePixels: [1,2,3,4,5,6],
+    activePixelsAlt: [1,2,3,4,5,6],
 }
 
 export { Sprite, Octopus, Crab, Squid, Shield, Saucer, Shot }

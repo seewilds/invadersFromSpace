@@ -1,9 +1,10 @@
-import { Sprite } from "./types.ts"
+import { Sprite, Shot } from "./types.ts"
 
 class Defender {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
+  shots : Laser[];
   key: boolean;
   x: number;
   y: number;
@@ -14,6 +15,7 @@ class Defender {
   constructor(pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.deltaX = 0;
+    this.shots = [];
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = x;
     this.y = y;
@@ -33,6 +35,15 @@ class Defender {
       this.pixels.forEach(pixel => {
         pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
       });
+      this.shots.forEach((shot, i) => {
+        console.log(this.shots.length);
+        console.log(shot.y );
+        if(shot.y >= 453){
+          this.shots.splice(i,1);
+          console.log(this.shots.length);
+        }
+        shot.Update();
+      })
       this.lastUpdate = timestamp;
     }
     requestAnimationFrame(this.Update.bind(this));
@@ -43,6 +54,9 @@ class Defender {
     }
     if (event.key == 'd') {
       this.deltaX = this.pixelsPerPixel;
+    }
+    if (event.key == ' ') {
+      this.shots = [...this.shots, new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24 , this.context)]
     }
   }
   HandleKeyUp(event: KeyboardEvent) {
@@ -156,7 +170,6 @@ class Laser {
   pixels: Pixel[];
   sprite: Sprite;
   key: boolean;
-  deltaX: number;
   deltaY: number;
   pixelsPerPixel: number;
   x: number;
@@ -167,7 +180,6 @@ class Laser {
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
-    this.deltaX = 5;
     this.deltaY = 2;
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = x;
@@ -175,19 +187,16 @@ class Laser {
     this.direction = 0;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "silver");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "pink ");
     requestAnimationFrame(this.Update.bind(this));
   }
-  Update(timestamp) {
-    const deltaTime = timestamp - this.lastUpdate;
-    if (deltaTime >= this.updateInterval) {
-      this.context.fillStyle = "black";
-      this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-      this.pixels.forEach(pixel => {
-        pixel.Update(this.context, pixel.x, pixel.y += this.deltaY);
-      });
-      this.lastUpdate = timestamp;
-    }
+  Update() {
+    this.context.fillStyle = "black";
+    this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.rows * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
+    });
+
     requestAnimationFrame(this.Update.bind(this));
   }
 }
