@@ -9,7 +9,7 @@
 <body>
     <script type="module">
         import { Defender,  Battlefield, Invader, Shield } from './js/game.ts'
-        import {Crab, Octopus, Squid } from "./js/types.ts"
+        import {Crab, Octopus, Squid, Shield as Shieldy } from "./js/types.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
         var battlefield = new Battlefield(document.createElement("canvas"), 512, 512, updateGameArea);
@@ -20,10 +20,10 @@
             octopus = new Invader(Octopus, "blue", 4, 90, 45, battlefield.context);
             squid = new Invader(Squid, "red", 4, 140, 45, battlefield.context);
 
-            shield = new Shield(4, 10, 512 - 120, battlefield.context);
-            shield = new Shield(4, 128, 512 - 120, battlefield.context);
-            shield = new Shield(4, 256, 512 - 120, battlefield.context);
-            shield = new Shield(4, 384, 512 - 120, battlefield.context);
+            shield = new Shield(Shieldy, 4, 10, 512 - 120, battlefield.context);
+            shield = new Shield(Shieldy, 4, 128, 512 - 120, battlefield.context);
+            shield = new Shield(Shieldy, 4, 256, 512 - 120, battlefield.context);
+            shield = new Shield(Shieldy, 4, 384, 512 - 120, battlefield.context);
             spaceship = new Spaceship(4, 600, battlefield.context);
         }
 
