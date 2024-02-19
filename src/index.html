@@ -8,25 +8,28 @@
 
 <body>
     <script type="module">
-        import { Defender, Octopus, Battlefield, Crab, Squid, Shield, Spaceship } from './js/game.ts'
+        import { Defender,  Battlefield, Invader, Shield } from './js/game.ts'
+        import {Crab, Octopus, Squid } from "./js/types.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
         var battlefield = new Battlefield(document.createElement("canvas"), 512, 512, updateGameArea);
         function startGame() {
-            // redGamePiece = new component(75, 75, "red", 10, 10);
-            // yellowGamePiece = new component(75, 75, "yellow", 50, 60);
             
             defender = new Defender(4, 245, 512 - 35, battlefield.context);
-            crab = new Crab(4, 512, battlefield.context);
-            octopus = new Octopus(4, 0, 0, battlefield.context);
-            squid = new Squid(4, 745, battlefield.context);
-            shield = new Shield(4, 431, battlefield.context);
+            crab = new Invader(Crab, "orange", 4,45,45,battlefield.context);
+            octopus = new Invader(Octopus, "blue", 4, 90, 45, battlefield.context);
+            squid = new Invader(Squid, "red", 4, 140, 45, battlefield.context);
+
+            shield = new Shield(4, 10, 512 - 120, battlefield.context);
+            shield = new Shield(4, 128, 512 - 120, battlefield.context);
+            shield = new Shield(4, 256, 512 - 120, battlefield.context);
+            shield = new Shield(4, 384, 512 - 120, battlefield.context);
             spaceship = new Spaceship(4, 600, battlefield.context);
         }
 
         function updateGameArea() {
             //battlefield.Clear();
-            defender.Update();
+            //defender.Update();
             //crab.Update();
             octopus.Update();
             squid.Update();
