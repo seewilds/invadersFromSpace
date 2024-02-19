@@ -151,6 +151,49 @@ class Spaceship {
   }
 }
 
+class Laser {
+  context: CanvasRenderingContext2D;
+  pixels: Pixel[];
+  sprite: Sprite;
+  key: boolean;
+  deltaX: number;
+  deltaY: number;
+  pixelsPerPixel: number;
+  x: number;
+  y: number;
+  direction: number;
+  updateInterval: number;
+  lastUpdate: number;
+  constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+    this.context = context;
+    this.sprite = sprite;
+    this.deltaX = 5;
+    this.deltaY = 2;
+    this.pixelsPerPixel = pixelsPerPixel;
+    this.x = x;
+    this.y = y;
+    this.direction = 0;
+    this.updateInterval = 10;
+    this.lastUpdate = performance.now();
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "silver");
+    requestAnimationFrame(this.Update.bind(this));
+  }
+  Update(timestamp) {
+    const deltaTime = timestamp - this.lastUpdate;
+    if (deltaTime >= this.updateInterval) {
+      this.context.fillStyle = "black";
+      this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+      this.pixels.forEach(pixel => {
+        pixel.Update(this.context, pixel.x, pixel.y += this.deltaY);
+      });
+      this.lastUpdate = timestamp;
+    }
+    requestAnimationFrame(this.Update.bind(this));
+  }
+}
+
+
+
 class Invader {
   context: CanvasRenderingContext2D;
   health: number;
@@ -243,4 +286,4 @@ class Pixel {
   }
 }
 
-export { Defender, Battlefield, Invader, Shield, Spaceship };
+export { Defender, Battlefield, Invader, Shield, Spaceship, Laser };

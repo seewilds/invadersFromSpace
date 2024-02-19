@@ -40,4 +40,11 @@ const Saucer : Sprite = {
     activePixelsAlt: [4, 5, 6, 7, 8, 9, 10, 11, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 49, 50, 52, 53, 55, 56, 58, 59, 61, 62, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 82, 83, 92, 93, 94, 98, 109],
 }
 
-export { Sprite, Octopus, Crab, Squid, Shield, Saucer }
+const Shot : Sprite = {
+    rows: 1,
+    cols: 4,
+    activePixels: [1,2,3,4],
+    activePixelsAlt: [1,2,3,4],
+}
+
+export { Sprite, Octopus, Crab, Squid, Shield, Saucer, Shot }
