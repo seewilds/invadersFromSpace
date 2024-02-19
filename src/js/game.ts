@@ -5,26 +5,33 @@ class Defender {
   key: boolean;
   deltaX: number;
   pixelsPerPixel : number;
-  interval : number | undefined;
+  updateInterval : number;
+  lastUpdate : number;
   constructor(pixelsPerPixel : number, boardDimension : number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.deltaX = 0;
     this.pixelsPerPixel = pixelsPerPixel;
-    let bottom = boardDimension  - 13 * pixelsPerPixel;
-    let left = Math.round(boardDimension / 2 - 13 / 2);
+    let bottom = 0;
+    let left = 0;
+    this.updateInterval = 10;
+    this.lastUpdate = performance.now();
     this.pixels = spriteFactory(8, 13, pixelsPerPixel, left, bottom,  [6,18,19,20,31,32,33,40,41,42,43,44,45,46,47,48,49,50,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103], "#1FFE1F");
-    this.interval = setInterval(()=>this.Update(), 20); 
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
     window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
-
+    requestAnimationFrame(this.Update.bind(this)); 
   }
-  Update() {
-    this.context.fillStyle = "black";
-    this.context.clearRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
-    this.context.fillRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
-    });
+  Update(timestamp) {
+    const deltaTime = timestamp - this.lastUpdate;
+    if(deltaTime >= this.updateInterval){
+      this.context.fillStyle = "black";
+      this.context.clearRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
+      this.context.fillRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
+      this.pixels.forEach(pixel => {
+        pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
+      });
+      this.lastUpdate = timestamp;
+    }
+    requestAnimationFrame(this.Update.bind(this));
   }
   HandleKeyDown(event: KeyboardEvent) {
     if (event.key == 'a') {
@@ -52,7 +59,7 @@ function spriteFactory(height : number, width : number, pixelsPerPixel : number,
     for(let j = 0; j < width; j++){      
       
       if(activePixels.includes(loopNumber)){
-        spriteArray[activePixelsSet] = new Pixel(pixelsPerPixel, pixelsPerPixel, xStart - j * pixelsPerPixel, yStart + pixelsPerPixel * i , colour);
+        spriteArray[activePixelsSet] = new Pixel(pixelsPerPixel, pixelsPerPixel, xStart + j * pixelsPerPixel, yStart + pixelsPerPixel * i , colour);
         activePixelsSet++;
       }
       loopNumber++;
@@ -158,7 +165,7 @@ class Crab {
     this.pixelsPerPixel = pixelsPerPixel;
     this.bottom = boardDimension / 2;// - this.pixelsPerPixel * 2;
     this.left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "pink");
+    this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "orange");
     this.pixelAActive = true;
     this.interval = setInterval(() => this.Update(), 200);
     console.log(this.pixels[0])
@@ -168,10 +175,10 @@ class Crab {
     this.context.fillStyle = "black";    
     this.context.fillRect(this.pixels[0].x - 8 * this.pixelsPerPixel, this.pixels[0].y, 11 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
     if(this.pixelAActive){
-      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,11,14,18,21,22,24,25,26,27,28,29,30,32,33,34,35,37,38,39,41,42,43,44,45,46,47,48,49,50,51,52,53,54,57,58,59,60,61,62,63,68,74,78,86], "pink");
+      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,11,14,18,21,22,24,25,26,27,28,29,30,32,33,34,35,37,38,39,41,42,43,44,45,46,47,48,49,50,51,52,53,54,57,58,59,60,61,62,63,68,74,78,86], "orange");
       this.pixelAActive = false;
     } else{
-      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "pink");
+      this.pixels = spriteFactory(8, 11, this.pixelsPerPixel, this.left, this.bottom, [2,8,14,18,24,25,26,27,28,29,30,34,35,37,38,39,41,42,44,45,46,47,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,65,66,68,74,76,80,81,83,84], "orange");
       this.pixelAActive = true;
     }
     this.pixels.forEach(pixel => {
