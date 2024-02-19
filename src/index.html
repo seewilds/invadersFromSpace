@@ -8,8 +8,8 @@
 
 <body>
     <script type="module">
-        import { Defender,  Battlefield, Invader, Shield } from './js/game.ts'
-        import {Crab, Octopus, Squid, Shield as Shieldy } from "./js/types.ts"
+        import { Defender,  Battlefield, Invader, Shield, Spaceship } from './js/game.ts'
+        import {Crab, Octopus, Squid, Shield as Shieldy, Saucer } from "./js/types.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
         var battlefield = new Battlefield(document.createElement("canvas"), 512, 512, updateGameArea);
@@ -24,7 +24,7 @@
             shield = new Shield(Shieldy, 4, 128, 512 - 120, battlefield.context);
             shield = new Shield(Shieldy, 4, 256, 512 - 120, battlefield.context);
             shield = new Shield(Shieldy, 4, 384, 512 - 120, battlefield.context);
-            spaceship = new Spaceship(4, 600, battlefield.context);
+            spaceship = new Spaceship(Saucer, 4, 240, 240, battlefield.context);
         }
 
         function updateGameArea() {

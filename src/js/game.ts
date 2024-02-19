@@ -75,13 +75,13 @@ function spriteFactory(height: number, width: number, pixelsPerPixel: number, xS
 class Shield {
   context: CanvasRenderingContext2D;
   pixels: Pixel[];
-  sprite : Sprite;
+  sprite: Sprite;
   key: boolean;
   deltaX: number;
   pixelsPerPixel: number;
-  x :number;
-  y :number;
-  constructor(sprite : Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  x: number;
+  y: number;
+  constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
     this.deltaX = 0;
@@ -101,21 +101,53 @@ class Shield {
 class Spaceship {
   context: CanvasRenderingContext2D;
   pixels: Pixel[];
+  sprite: Sprite;
   key: boolean;
   deltaX: number;
+  deltaY: number;
   pixelsPerPixel: number;
-  constructor(pixelsPerPixel: number, boardDimension: number, context: CanvasRenderingContext2D) {
+  x: number;
+  y: number;
+  direction: number;
+  updateInterval: number;
+  lastUpdate: number;
+  constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
-    this.deltaX = 0;
+    this.sprite = sprite;
+    this.deltaX = 5;
+    this.deltaY = 2;
     this.pixelsPerPixel = pixelsPerPixel;
-    let bottom = boardDimension / 4;
-    let left = Math.round(boardDimension / 2 - 13 / 2);
-    this.pixels = spriteFactory(7, 16, pixelsPerPixel, left, bottom, [4, 5, 6, 7, 8, 9, 10, 11, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 49, 50, 52, 53, 55, 56, 58, 59, 61, 62, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 82, 83, 92, 93, 94, 98, 109], "orange");
+    this.x = x;
+    this.y = y;
+    this.direction = 0;
+    this.updateInterval = 10;
+    this.lastUpdate = performance.now();
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "silver");
+    requestAnimationFrame(this.Update.bind(this));
   }
-  Update() {
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
-    });
+  Update(timestamp) {
+    const deltaTime = timestamp - this.lastUpdate;
+    if (deltaTime >= this.updateInterval) {
+      this.context.fillStyle = "black";
+      this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+      if (this.pixels[0].x < 0) {
+        this.deltaX = 5
+      }
+      if (this.pixels[0].x > 512) {
+        this.deltaX = -5
+      }
+      if (this.pixels[0].x < 200) {
+        this.deltaY = 1
+      }
+      if (this.pixels[0].x > 300) {
+        this.deltaY = -1
+      }
+      this.pixels.forEach(pixel => {
+        pixel.Update(this.context, pixel.x += this.deltaX, pixel.y += this.deltaY);
+      });
+      this.lastUpdate = timestamp;
+    }
+    requestAnimationFrame(this.Update.bind(this));
   }
 }
 
@@ -123,17 +155,16 @@ class Invader {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
-  sprite : Sprite;
-  colour : string;
-  pixelAActive: boolean;
-  key: boolean;
+  sprite: Sprite;
+  colour: string;
+  altActive: boolean;
   deltaX: number;
   pixelsPerPixel: number;
   x: number;
   y: number;
   updateInterval: number;
   lastUpdate: number;
-  constructor(sprite : Sprite, colour: string, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  constructor(sprite: Sprite, colour: string, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
     this.colour = colour;
@@ -144,7 +175,7 @@ class Invader {
     this.updateInterval = 200;
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, this.colour);
-    this.pixelAActive = true;
+    this.altActive = false;
     requestAnimationFrame(this.Update.bind(this));
   }
   Update(timestamp) {
@@ -152,12 +183,12 @@ class Invader {
     if (deltaTime >= this.updateInterval) {
       this.context.fillStyle = "black";
       this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-      if (this.pixelAActive) {
+      if (this.altActive) {
         this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixelsAlt, this.colour)
-        this.pixelAActive = false;
+        this.altActive = false;
       } else {
         this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, this.colour);
-        this.pixelAActive = true;
+        this.altActive = true;
       }
       this.pixels.forEach(pixel => {
         pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
@@ -212,4 +243,4 @@ class Pixel {
   }
 }
 
-export { Defender, Battlefield, Invader, Shield };
+export { Defender, Battlefield, Invader, Shield, Spaceship };
