@@ -47,4 +47,11 @@ const Shot : Sprite = {
     activePixelsAlt: [1,2,3,4,5,6],
 }
 
-export { Sprite, Octopus, Crab, Squid, Shield, Saucer, Shot }
+const Explosion : Sprite = {
+    rows: 13,
+    cols: 8,
+    activePixels: [4,8,14,18,20,24,28,36,42,48,42,43,53,54,5864,70,73,75,78,72,75,79,82],
+    activePixelsAlt: [4,8,14,18,20,24,28,36,42,48,42,43,53,54,5864,70,73,75,78,72,75,79,82],
+}
+
+export { Sprite, Octopus, Crab, Squid, Shield, Saucer, Shot, Explosion }

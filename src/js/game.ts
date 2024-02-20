@@ -1,4 +1,4 @@
-import { Sprite, Shot } from "./types.ts"
+import { Sprite, Shot, Explosion } from "./types.ts"
 
 class Defender {
   context: CanvasRenderingContext2D;
@@ -208,6 +208,7 @@ class Invader {
   health: number;
   pixels: Pixel[];
   sprite: Sprite;
+  explosion : Sprite;
   colour: string;
   altActive: boolean;
   deltaX: number;
@@ -218,6 +219,7 @@ class Invader {
   lastUpdate: number;
   constructor(sprite: Sprite, colour: string, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
+    this.explosion = Explosion;
     this.sprite = sprite;
     this.colour = colour;
     this.deltaX = 0;
@@ -235,7 +237,11 @@ class Invader {
     if (deltaTime >= this.updateInterval) {
       this.context.fillStyle = "black";
       this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-      if (this.altActive) {
+      if(this.health === 0){
+        this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, "orange")
+        this.altActive = false;        
+      }
+      else if (this.altActive) {
         this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixelsAlt, this.colour)
         this.altActive = false;
       } else {
