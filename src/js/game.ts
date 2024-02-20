@@ -180,7 +180,7 @@ class Laser {
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
-    this.deltaY = 2;
+    this.deltaY = 3;
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = x;
     this.y = y;
