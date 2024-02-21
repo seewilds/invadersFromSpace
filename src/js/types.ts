@@ -1,3 +1,20 @@
+enum InvaderType{
+    Squid,
+    Crab,
+    Octopus
+}
+
+interface InvaderRow {
+    count : number;
+    type : InvaderType;
+    sprite : Sprite;
+    colour : string
+}
+
+interface GameSetup {
+    setup : InvaderRow[];
+}
+
 interface Sprite {
     rows: number;
     cols: number;
@@ -54,4 +71,11 @@ const Explosion : Sprite = {
     activePixelsAlt: [4,8,14,18,20,24,28,36,42,48,42,43,53,54,5864,70,73,75,78,72,75,79,82],
 }
 
-export { Sprite, Octopus, Crab, Squid, Shield, Saucer, Shot, Explosion }
+const DefenderSprite : Sprite = {
+    rows: 13,
+    cols: 8,
+    activePixels:  [6, 18, 19, 20, 31, 32, 33, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103],
+    activePixelsAlt:  [6, 18, 19, 20, 31, 32, 33, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103],
+}
+
+export { Sprite, Octopus, Crab, Squid, Shield, Saucer, Shot, Explosion, GameSetup, InvaderType, DefenderSprite }
