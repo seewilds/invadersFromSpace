@@ -23,7 +23,7 @@ Must have Node and Npm installed.
    ```sh
    npm install
    ```
-4. Run Start `config.js`
+4. Run Start
    ```sh
    npm start
    ```
