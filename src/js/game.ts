@@ -1,4 +1,4 @@
-import { Sprite, Shot, Explosion } from "./types.ts"
+import { Sprite, Shot, Explosion, GameSetup, InvaderType, Squid, Crab, Octopus, DefenderSprite } from "./types.ts"
 
 class Defender {
   context: CanvasRenderingContext2D;
@@ -6,22 +6,24 @@ class Defender {
   pixels: Pixel[];
   shots : Laser[];
   key: boolean;
+  sprite : Sprite;
   x: number;
   y: number;
   deltaX: number;
   pixelsPerPixel: number;
   updateInterval: number;
   lastUpdate: number;
-  constructor(pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  constructor(pixelsPerPixel: number, width: number, height: number, context: CanvasRenderingContext2D) {
     this.context = context;
+    this.sprite = DefenderSprite;
     this.deltaX = 0;
     this.shots = [];
     this.pixelsPerPixel = pixelsPerPixel;
-    this.x = x;
-    this.y = y;
+    this.x = width / 2 ;
+    this.y = height - this.sprite.cols * this.pixelsPerPixel - 2 * this.pixelsPerPixel;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(8, 13, pixelsPerPixel, this.x, this.y, [6, 18, 19, 20, 31, 32, 33, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103], "#1FFE1F");
+    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "#1FFE1F");
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
     window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
     requestAnimationFrame(this.Update.bind(this));
@@ -36,11 +38,8 @@ class Defender {
         pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
       });
       this.shots.forEach((shot, i) => {
-        console.log(this.shots.length);
-        console.log(shot.y );
         if(shot.y >= 453){
           this.shots.splice(i,1);
-          console.log(this.shots.length);
         }
         shot.Update();
       })
@@ -218,6 +217,7 @@ class Invader {
   updateInterval: number;
   lastUpdate: number;
   constructor(sprite: Sprite, colour: string, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+    this.health = 1;
     this.context = context;
     this.explosion = Explosion;
     this.sprite = sprite;
@@ -230,53 +230,100 @@ class Invader {
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, this.colour);
     this.altActive = false;
-    requestAnimationFrame(this.Update.bind(this));
   }
-  Update(timestamp) {
-    const deltaTime = timestamp - this.lastUpdate;
-    if (deltaTime >= this.updateInterval) {
-      this.context.fillStyle = "black";
-      this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-      if(this.health === 0){
-        this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, "orange")
-        this.altActive = false;        
-      }
-      else if (this.altActive) {
-        this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixelsAlt, this.colour)
-        this.altActive = false;
-      } else {
-        this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, this.colour);
-        this.altActive = true;
-      }
-      this.pixels.forEach(pixel => {
-        pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
-      });
-      this.lastUpdate = timestamp;
+  Update() {
+    this.context.fillStyle = "black";
+    this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    if(this.health === 0){
+      this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, "orange")
+      this.altActive = false;        
     }
-    requestAnimationFrame(this.Update.bind(this));
+    else if (this.altActive) {
+      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixelsAlt, this.colour)
+      this.altActive = false;
+    } else {
+      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, this.colour);
+      this.altActive = true;
+    }
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
+    });
   }
 }
+
 
 // space invaders is 128 x 128 pixels
 class Battlefield {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
-  interval: number | undefined;
-  constructor(canvas: HTMLCanvasElement, width: number, height: number, updateBattleField: Function) {
-    this.canvas = canvas;
-    this.canvas.width = width;
-    this.canvas.height = height;
+  scale: number;
+  pixelsPerPixel: number;
+  updateInterval: number;
+  lastUpdate: number;
+  invaders : Invader[];
+  defender : Defender;
+  laserShots : Laser[];
+  constructor(canvas: HTMLCanvasElement, scale: number, gameSetup : GameSetup) {
+    this.invaders = new Array();
+    this.scale = scale;
+    this.canvas = canvas;    
+    this.pixelsPerPixel = this.scale * this.scale;
+    this.canvas.width = 128 * this.pixelsPerPixel;
+    this.canvas.height = 128 * this.pixelsPerPixel;    
     this.context = canvas.getContext("2d");
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    //this.interval = setInterval(updateBattleField, 20);
+    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.context!);
+    this.setupInvaders(gameSetup);
+    this.updateInterval = 200;
+    this.lastUpdate = performance.now();
+    requestAnimationFrame(this.Update.bind(this));
   }
 
   Clear(): void {
     this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  setupInvaders(gameSetup : GameSetup){
+    let arrayIndex = 0;
+    let rowIndex = 0;
+    gameSetup.setup.forEach(element => {
+      if(element.type == InvaderType.Squid){
+        for(let i = 0; i < element.count; i++){
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * 50, rowIndex * 50 + 10, this.context!);
+          arrayIndex++;
+        }
+        rowIndex++;
+      }
+      if(element.type == InvaderType.Octopus){
+        for(let i = 0; i < element.count; i++){
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * 50, rowIndex * 50 + 10, this.context!);
+          arrayIndex++;
+        }
+        rowIndex++;
+      }
+      if(element.type == InvaderType.Crab){
+        for(let i = 0; i < element.count; i++){
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * 50, rowIndex * 50 + 10, this.context!);
+          arrayIndex++;
+        }
+        rowIndex++;
+      }
+    });
+  }
+
+  Update(timestamp){
+    const deltaTime = timestamp - this.lastUpdate;
+    if (deltaTime >= this.updateInterval) {
+      this.invaders.forEach(element => {
+        element.Update();
+      });
+      this.lastUpdate = timestamp;      
+    } 
+    requestAnimationFrame(this.Update.bind(this));   
   }
 }
 
