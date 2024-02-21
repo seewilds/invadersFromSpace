@@ -1,8 +1,5 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
-
-<!-- PROJECT LOGO -->
-<br />
 <div align="center">
 <h3 align="center">Invaders from Space!</h3>
 
@@ -97,6 +94,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/seewilds/invadersFromSpace)
+Project Link: [https://github.com/seewilds/invadersFromSpace](https://github.com/seewilds/invadersFromSpace)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
