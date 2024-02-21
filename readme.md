@@ -1,7 +1,3 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-<a name="readme-top"></a>
-<div align="center">
-
 ## Invaders from Space
 
 Invaders from Space is a twist on a classic arcade game reimagined for the web. Developed using Parcel, TypeScript, HTML, and CSS, this game brings the nostalgic alien-shooting experience to your browser. Players control a spaceship, dodging alien attacks while trying to eliminate Features
