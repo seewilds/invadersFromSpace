@@ -4,28 +4,17 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
-
-  <h3 align="center">Invaders from Space!</h3>
+<h3 align="center">Invaders from Space!</h3>
 
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
+    <li><a href="#about-the-project">About</a></li>
+    <li><a href="#built-with">Built With</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#installation">Installation</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -35,9 +24,7 @@
 
 ## About Invaders from Space
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-Space Invaders is a classic arcade game reimagined for the web. Developed using TypeScript, HTML, and CSS, this game brings the nostalgic alien-shooting experience to your browser. Players control a spaceship, dodging alien attacks while trying to eliminate Features
+Space Invaders is a classic arcade game reimagined for the web. Developed using Parcel, TypeScript, HTML, and CSS, this game brings the nostalgic alien-shooting experience to your browser. Players control a spaceship, dodging alien attacks while trying to eliminate Features
 
 Features:
 * Smooth animations and gameplay
@@ -53,8 +40,10 @@ Features:
 
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
-* [![Parcel][https://parceljs.org/]][Parcel-url]
-* [![Typescript][https://www.typescriptlang.org/]][Typescript-url]
+* Parcel
+* Typescript
+* Html
+* Css
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
