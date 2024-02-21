@@ -22,4 +22,7 @@ class DoubleLinkedList{
         }
         this.head = newNode; 
     }
+    remove(index : number){
+        
+    }
 }
