@@ -55,6 +55,7 @@ class Defender {
       this.deltaX = this.pixelsPerPixel;
     }
     if (event.key == ' ') {
+      console.log(this.shots.length);
       this.shots = [...this.shots, new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24 , this.context)]
     }
   }
@@ -192,10 +193,9 @@ class Laser {
   Update() {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.rows * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-    this.pixels.forEach(pixel => {
+    this.pixels.forEach((pixel, index) => {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
-    });
-
+    });    
     requestAnimationFrame(this.Update.bind(this));
   }
 }
