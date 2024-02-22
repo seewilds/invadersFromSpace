@@ -277,7 +277,7 @@ class Battlefield {
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.context!);    
+    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.context!);
     this.setupInvaders(gameSetup);
     this.updateInterval = 200;
     this.lastUpdate = performance.now();
@@ -293,12 +293,12 @@ class Battlefield {
   setupInvaders(gameSetup: GameSetup) {
     let arrayIndex = 0;
     let rowIndex = 0;
-    gameSetup.setup.forEach(element => {      
-      let invaderWidth = element.sprite.cols * this.pixelsPerPixel; 
+    gameSetup.setup.forEach(element => {
+      let invaderWidth = element.sprite.cols * this.pixelsPerPixel;
       element.count = element.count * invaderWidth >= this.canvas.width ? Math.floor(this.canvas.width / invaderWidth) : element.count;
-      let invaderHeight = element.sprite.cols * this.pixelsPerPixel; 
+      let invaderHeight = element.sprite.cols * this.pixelsPerPixel;
       let remainder = this.canvas.width - invaderWidth * element.count;
-      let spaceBetween =  Math.floor(remainder / (element.count + 2)) ;
+      let spaceBetween = Math.floor(remainder / (element.count + 2));
       if (element.type == InvaderType.Squid) {
         for (let i = 0; i < element.count; i++) {
           console.log(i * invaderWidth + spaceBetween)
