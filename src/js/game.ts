@@ -272,14 +272,17 @@ class Battlefield {
     this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.addShots, this.context!);
     this.setupInvaders(gameSetup);
     this.updateInterval = 200;
-    this.lastUpdate = performance.now();    
-    requestAnimationFrame(this.Update.bind(this));
+    this.lastUpdate = performance.now();        
   }
 
   Clear(): void {
     this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  start(){
+    requestAnimationFrame(this.Update.bind(this));
   }
 
   addShots = (laser :Laser)=>{
@@ -297,7 +300,6 @@ class Battlefield {
       let spaceBetween = Math.floor(remainder / (element.count + 2));
       if (element.type == InvaderType.Squid) {
         for (let i = 0; i < element.count; i++) {
-          console.log(i * invaderWidth + spaceBetween)
           this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 5, this.context!);
           arrayIndex++;
         }

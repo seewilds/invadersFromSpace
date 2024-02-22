@@ -8,49 +8,23 @@
 
 <body>
     <script type="module">
-        import { Defender,  Battlefield, Invader, Shield, Spaceship } from './js/game.ts'
-        import {Crab, Octopus, Squid, Shield as Shieldy, Saucer, InvaderType } from "./js/types.ts"
+        import { Defender, Battlefield, Invader, Shield, Spaceship } from './js/game.ts'
+        import { Crab, Octopus, Squid, Shield as Shieldy, Saucer, InvaderType } from "./js/types.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
-        var battlefield = new Battlefield(document.createElement("canvas"), 2, {setup:[{count: 10, colour: "red", type : InvaderType.Squid, sprite : Squid}, {count: 9, colour: "blue", type : InvaderType.Octopus, sprite : Octopus},{count: 7, colour: "pink", type : InvaderType.Octopus, sprite : Crab}]} );
-        function startGame() {
-            
-            // defender = new Defender(4, 245, 512 - 35, battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,10,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,60,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,110,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,160,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,210,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,260,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,310,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,360,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,410,20,battlefield.context);
-            // crab = new Invader(Crab, "orange", 4,460,20,battlefield.context);
-            // //octopus = new Invader(Octopus, "blue", 4, 90, 45, battlefield.context);
-            // squid = new Invader(Squid, "red", 4, 140, 45, battlefield.context);
-
-            // shield = new Shield(Shieldy, 4, 10, 512 - 120, battlefield.context);
-            // shield = new Shield(Shieldy, 4, 128, 512 - 120, battlefield.context);
-            // shield = new Shield(Shieldy, 4, 256, 512 - 120, battlefield.context);
-            // shield = new Shield(Shieldy, 4, 384, 512 - 120, battlefield.context);
-            // spaceship = new Spaceship(Saucer, 4, 240, 240 , battlefield.context);
-        }
-
-        function updateGameArea() {
-            //battlefield.Clear();
-            //defender.Update();
-            //crab.Update();
-            octopus.Update();
-            squid.Update();
-            shield.Update();
-            spaceship.Update();
-        }
+        var battlefield = new Battlefield(
+            document.createElement("canvas"),
+            2,
+            {
+                setup: [{ count: 10, colour: "red", type: InvaderType.Squid, sprite: Squid },
+                { count: 9, colour: "blue", type: InvaderType.Octopus, sprite: Octopus },
+                { count: 7, colour: "pink", type: InvaderType.Octopus, sprite: Crab }]
+            });
 
         document.addEventListener('DOMContentLoaded', (event) => {
-            startGame();
+            battlefield.start();
         });
     </script>
-
 </body>
 
 </html>
