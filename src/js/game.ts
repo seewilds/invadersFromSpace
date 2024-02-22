@@ -4,9 +4,9 @@ class Defender {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
-  shots : Laser[];
+  shots: Laser[];
   key: boolean;
-  sprite : Sprite;
+  sprite: Sprite;
   x: number;
   y: number;
   deltaX: number;
@@ -19,7 +19,7 @@ class Defender {
     this.deltaX = 0;
     this.shots = [];
     this.pixelsPerPixel = pixelsPerPixel;
-    this.x = width / 2 ;
+    this.x = width / 2;
     this.y = height - this.sprite.cols * this.pixelsPerPixel - 2 * this.pixelsPerPixel;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
@@ -38,8 +38,8 @@ class Defender {
         pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
       });
       this.shots.forEach((shot, i) => {
-        if(shot.y >= 453){
-          this.shots.splice(i,1);
+        if (shot.y >= 453) {
+          this.shots.splice(i, 1);
         }
         shot.Update();
       })
@@ -56,7 +56,7 @@ class Defender {
     }
     if (event.key == ' ') {
       console.log(this.shots.length);
-      this.shots = [...this.shots, new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24 , this.context)]
+      this.shots = [...this.shots, new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context)]
     }
   }
   HandleKeyUp(event: KeyboardEvent) {
@@ -195,7 +195,7 @@ class Laser {
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.rows * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
     this.pixels.forEach((pixel, index) => {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
-    });    
+    });
     requestAnimationFrame(this.Update.bind(this));
   }
 }
@@ -207,7 +207,7 @@ class Invader {
   health: number;
   pixels: Pixel[];
   sprite: Sprite;
-  explosion : Sprite;
+  explosion: Sprite;
   colour: string;
   altActive: boolean;
   deltaX: number;
@@ -231,15 +231,15 @@ class Invader {
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, this.colour);
     this.altActive = false;
   }
-  getWidth(){
+  getWidth() {
     return this.sprite.cols * this.pixelsPerPixel;
   }
   Update() {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-    if(this.health === 0){
+    if (this.health === 0) {
       this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, "orange")
-      this.altActive = false;        
+      this.altActive = false;
     }
     else if (this.altActive) {
       this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixelsAlt, this.colour)
@@ -263,21 +263,21 @@ class Battlefield {
   pixelsPerPixel: number;
   updateInterval: number;
   lastUpdate: number;
-  invaders : Invader[];
-  defender : Defender;
-  laserShots : Laser[];
-  constructor(canvas: HTMLCanvasElement, scale: number, gameSetup : GameSetup) {
+  invaders: Invader[];
+  defender: Defender;
+  laserShots: Laser[];
+  constructor(canvas: HTMLCanvasElement, scale: number, gameSetup: GameSetup) {
     this.invaders = new Array();
     this.scale = scale;
-    this.canvas = canvas;    
+    this.canvas = canvas;
     this.pixelsPerPixel = this.scale * this.scale;
     this.canvas.width = 128 * this.pixelsPerPixel;
-    this.canvas.height = 128 * this.pixelsPerPixel;    
+    this.canvas.height = 128 * this.pixelsPerPixel;
     this.context = canvas.getContext("2d");
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.context!);
+    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.context!);    
     this.setupInvaders(gameSetup);
     this.updateInterval = 200;
     this.lastUpdate = performance.now();
@@ -290,27 +290,33 @@ class Battlefield {
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  setupInvaders(gameSetup : GameSetup){
+  setupInvaders(gameSetup: GameSetup) {
     let arrayIndex = 0;
     let rowIndex = 0;
-    gameSetup.setup.forEach(element => {
-      if(element.type == InvaderType.Squid){
-        for(let i = 0; i < element.count; i++){
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * 50, rowIndex * 50 + 10, this.context!);
+    gameSetup.setup.forEach(element => {      
+      let invaderWidth = element.sprite.cols * this.pixelsPerPixel; 
+      element.count = element.count * invaderWidth >= this.canvas.width ? Math.floor(this.canvas.width / invaderWidth) : element.count;
+      let invaderHeight = element.sprite.cols * this.pixelsPerPixel; 
+      let remainder = this.canvas.width - invaderWidth * element.count;
+      let spaceBetween =  Math.floor(remainder / (element.count + 2)) ;
+      if (element.type == InvaderType.Squid) {
+        for (let i = 0; i < element.count; i++) {
+          console.log(i * invaderWidth + spaceBetween)
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 5, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
-      if(element.type == InvaderType.Octopus){
-        for(let i = 0; i < element.count; i++){
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * 50, rowIndex * 50 + 10, this.context!);
+      if (element.type == InvaderType.Octopus) {
+        for (let i = 0; i < element.count; i++) {
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
-      if(element.type == InvaderType.Crab){
-        for(let i = 0; i < element.count; i++){
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * 50, rowIndex * 50 + 10, this.context!);
+      if (element.type == InvaderType.Crab) {
+        for (let i = 0; i < element.count; i++) {
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, this.context!);
           arrayIndex++;
         }
         rowIndex++;
@@ -318,15 +324,15 @@ class Battlefield {
     });
   }
 
-  Update(timestamp){
+  Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       this.invaders.forEach(element => {
         element.Update();
       });
-      this.lastUpdate = timestamp;      
-    } 
-    requestAnimationFrame(this.Update.bind(this));   
+      this.lastUpdate = timestamp;
+    }
+    requestAnimationFrame(this.Update.bind(this));
   }
 }
 
