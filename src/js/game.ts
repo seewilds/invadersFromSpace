@@ -4,7 +4,6 @@ class Defender {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
-  shots: Laser[];
   key: boolean;
   sprite: Sprite;
   x: number;
@@ -13,17 +12,18 @@ class Defender {
   pixelsPerPixel: number;
   updateInterval: number;
   lastUpdate: number;
-  constructor(pixelsPerPixel: number, width: number, height: number, context: CanvasRenderingContext2D) {
+  addShots : Function;
+  constructor(pixelsPerPixel: number, width: number, height: number, addShots : Function, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = DefenderSprite;
     this.deltaX = 0;
-    this.shots = [];
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = width / 2;
     this.y = height - this.sprite.cols * this.pixelsPerPixel - 2 * this.pixelsPerPixel;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "#1FFE1F");
+    this.addShots = addShots;
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
     window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
     requestAnimationFrame(this.Update.bind(this));
@@ -37,12 +37,6 @@ class Defender {
       this.pixels.forEach(pixel => {
         pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
       });
-      this.shots.forEach((shot, i) => {
-        if (shot.y >= 453) {
-          this.shots.splice(i, 1);
-        }
-        shot.Update();
-      })
       this.lastUpdate = timestamp;
     }
     requestAnimationFrame(this.Update.bind(this));
@@ -55,8 +49,7 @@ class Defender {
       this.deltaX = this.pixelsPerPixel;
     }
     if (event.key == ' ') {
-      console.log(this.shots.length);
-      this.shots = [...this.shots, new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context)]
+      this.addShots(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context));      
     }
   }
   HandleKeyUp(event: KeyboardEvent) {
@@ -180,15 +173,14 @@ class Laser {
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
-    this.deltaY = 3;
+    this.deltaY = 5;
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = x;
     this.y = y;
     this.direction = 0;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "pink ");
-    requestAnimationFrame(this.Update.bind(this));
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "orange");
   }
   Update() {
     this.context.fillStyle = "black";
@@ -196,7 +188,6 @@ class Laser {
     this.pixels.forEach((pixel, index) => {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
     });
-    requestAnimationFrame(this.Update.bind(this));
   }
 }
 
@@ -238,7 +229,7 @@ class Invader {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
     if (this.health === 0) {
-      this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, "orange")
+      this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, this.colour)
       this.altActive = false;
     }
     else if (this.altActive) {
@@ -277,10 +268,11 @@ class Battlefield {
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.context!);
+    this.laserShots = [];
+    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.addShots, this.context!);
     this.setupInvaders(gameSetup);
     this.updateInterval = 200;
-    this.lastUpdate = performance.now();
+    this.lastUpdate = performance.now();    
     requestAnimationFrame(this.Update.bind(this));
   }
 
@@ -289,6 +281,10 @@ class Battlefield {
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
+
+  addShots = (laser :Laser)=>{
+    this.laserShots = [...this.laserShots, laser];
+  };
 
   setupInvaders(gameSetup: GameSetup) {
     let arrayIndex = 0;
@@ -330,7 +326,15 @@ class Battlefield {
       this.invaders.forEach(element => {
         element.Update();
       });
+      this.laserShots.forEach(element => {
+        element.Update();
+      });
       this.lastUpdate = timestamp;
+    }
+    if (deltaTime >= 20) {
+      this.laserShots.forEach(element => {
+        element.Update();
+      });
     }
     requestAnimationFrame(this.Update.bind(this));
   }
