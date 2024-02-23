@@ -183,11 +183,14 @@ class Laser {
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "orange");
   }
   Update() {
-    this.context.fillStyle = "black";
-    this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.rows * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    this.Clear();
     this.pixels.forEach((pixel, index) => {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
     });
+  }
+  Clear(){
+    this.context.fillStyle = "black";
+    this.context.fillRect(this.pixels[0].x, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
 }
 
@@ -225,9 +228,12 @@ class Invader {
   getWidth() {
     return this.sprite.cols * this.pixelsPerPixel;
   }
-  Update() {
+  Clear(){
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+  }
+  Update() {
+    this.Clear();
     if (this.health === 0) {
       this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, this.colour)
       this.altActive = false;
@@ -325,7 +331,10 @@ class Battlefield {
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
-      this.invaders.forEach(element => {
+      this.invaders.forEach(( element, index ) => {
+        if(element.health === 0){
+          this.invaders.splice(index, 1);
+        }
         element.Update();
       });
       this.laserShots.forEach(element => {
@@ -333,9 +342,28 @@ class Battlefield {
       });
       this.lastUpdate = timestamp;
     }
-    if (deltaTime >= 20) {
+    else if (deltaTime >= 20) {
       this.laserShots.forEach(element => {
         element.Update();
+      });
+      this.laserShots.forEach((laser, laserIndex) => {
+        this.invaders.forEach((invader, invaderIndex ) => {
+          invader.pixels.forEach(element => {
+            if(laser.x <= element.x && laser.y <= element.y){
+              invader.health = 0;
+              console.log(invader.health)
+              this.laserShots.splice(laserIndex, 1);
+            }
+          });
+        });
+        laser.pixels.forEach(pixel =>{
+          if(pixel.y <= 0){
+            console.log(pixel.y)
+            laser.Clear();
+            this.laserShots.splice(laserIndex, 1);
+          }
+          
+        })
       });
     }
     requestAnimationFrame(this.Update.bind(this));
