@@ -333,9 +333,12 @@ class Battlefield {
     if (deltaTime >= this.updateInterval) {
       this.invaders.forEach(( element, index ) => {
         if(element.health === 0){
+          element.Clear();
           this.invaders.splice(index, 1);
+        }else{
+          element.Update();
         }
-        element.Update();
+        
       });
       this.laserShots.forEach(element => {
         element.Update();
@@ -343,27 +346,32 @@ class Battlefield {
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
+      this.invaders.forEach(( element, index ) => {
+        if(element.health === 0){
+          element.Clear();
+          this.invaders.splice(index, 1);
+        }
+      });
+
       this.laserShots.forEach(element => {
         element.Update();
       });
+
       this.laserShots.forEach((laser, laserIndex) => {
-        this.invaders.forEach((invader, invaderIndex ) => {
-          invader.pixels.forEach(element => {
-            if(laser.x <= element.x && laser.y <= element.y){
-              invader.health = 0;
-              console.log(invader.health)
-              this.laserShots.splice(laserIndex, 1);
-            }
-          });
+        laser.pixels.forEach(laserPixel => {
+          this.invaders.forEach(invader=>{
+            invader.pixels.forEach(invaderPixel=>{
+              if(laserPixel.x === invaderPixel.x && invaderPixel.y <= laserPixel.y){
+                invader.health = 0;
+                laser.Clear();
+                this.laserShots.splice(laserIndex, 1);
+              }else if(laserPixel.y <= 0){
+                laser.Clear();
+                this.laserShots.splice(laserIndex, 1);
+              }
+            })
+          })
         });
-        laser.pixels.forEach(pixel =>{
-          if(pixel.y <= 0){
-            console.log(pixel.y)
-            laser.Clear();
-            this.laserShots.splice(laserIndex, 1);
-          }
-          
-        })
       });
     }
     requestAnimationFrame(this.Update.bind(this));
