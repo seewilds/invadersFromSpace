@@ -12,8 +12,8 @@ class Defender {
   pixelsPerPixel: number;
   updateInterval: number;
   lastUpdate: number;
-  addShots : Function;
-  constructor(pixelsPerPixel: number, width: number, height: number, addShots : Function, context: CanvasRenderingContext2D) {
+  addShots: Function;
+  constructor(pixelsPerPixel: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = DefenderSprite;
     this.deltaX = 0;
@@ -49,7 +49,7 @@ class Defender {
       this.deltaX = this.pixelsPerPixel;
     }
     if (event.key == ' ') {
-      this.addShots(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context));      
+      this.addShots(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context));
     }
   }
   HandleKeyUp(event: KeyboardEvent) {
@@ -188,7 +188,7 @@ class Laser {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
     });
   }
-  Clear(){
+  Clear() {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
@@ -228,7 +228,7 @@ class Invader {
   getWidth() {
     return this.sprite.cols * this.pixelsPerPixel;
   }
-  Clear(){
+  Clear() {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
@@ -277,8 +277,8 @@ class Battlefield {
     this.laserShots = [];
     this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.addShots, this.context!);
     this.setupInvaders(gameSetup);
-    this.updateInterval = 200;
-    this.lastUpdate = performance.now();        
+    this.updateInterval = 100;
+    this.lastUpdate = performance.now();
   }
 
   Clear(): void {
@@ -287,11 +287,11 @@ class Battlefield {
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  start(){
+  start() {
     requestAnimationFrame(this.Update.bind(this));
   }
 
-  addShots = (laser :Laser)=>{
+  addShots = (laser: Laser) => {
     this.laserShots = [...this.laserShots, laser];
   };
 
@@ -331,48 +331,57 @@ class Battlefield {
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
-      this.invaders.forEach(( element, index ) => {
-        if(element.health === 0){
-          element.Clear();
-          this.invaders.splice(index, 1);
-        }else{
-          element.Update();
+
+      for (let i = this.invaders.length - 1; i >= 0; i--) {
+        if (this.invaders[i].health == 0) {
+          this.invaders[i].Clear();
+          this.invaders.splice(i, 1);
         }
-        
-      });
+        else {
+          this.invaders[i].Update();
+        }
+      }
+
       this.laserShots.forEach(element => {
+        element.Clear()
         element.Update();
       });
+
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
-      this.invaders.forEach(( element, index ) => {
-        if(element.health === 0){
-          element.Clear();
-          this.invaders.splice(index, 1);
-        }
-      });
+      // this.invaders.forEach(( element, index ) => {
+      //   if(element.health === 0){
+      //     element.Clear();
+      //     this.invaders.splice(index, 1);
+      //   }
+      // });
 
       this.laserShots.forEach(element => {
+        element.Clear()
         element.Update();
       });
 
-      this.laserShots.forEach((laser, laserIndex) => {
-        laser.pixels.forEach(laserPixel => {
-          this.invaders.forEach(invader=>{
-            invader.pixels.forEach(invaderPixel=>{
-              if(laserPixel.x === invaderPixel.x && invaderPixel.y <= laserPixel.y){
-                invader.health = 0;
-                laser.Clear();
-                this.laserShots.splice(laserIndex, 1);
-              }else if(laserPixel.y <= 0){
-                laser.Clear();
-                this.laserShots.splice(laserIndex, 1);
+
+
+      for (let j = this.invaders.length - 1; j >= 0; j--) {
+        for (let l = this.invaders[j].pixels.length - 1; l >= 0; l--) {
+          for (let i = this.laserShots.length - 1; i >= 0; i--) {
+            for (let k = this.laserShots[i].pixels.length - 2; k >= 0; k--) {
+              if (this.laserShots[i].pixels[k].x === this.invaders[j].pixels[l].x && this.invaders[j].pixels[l].y >= this.laserShots[i].pixels[k].y) {
+                this.invaders[j].health = 0;
+                this.laserShots[i].Clear();
+                this.laserShots.splice(j, 1);
+              } else if (this.laserShots[i].pixels[k].y <= 0) {
+                this.laserShots[i].Clear();
+                this.laserShots.splice(i, 1);
               }
-            })
-          })
-        });
-      });
+            }
+          }
+        }
+      }
+
+
     }
     requestAnimationFrame(this.Update.bind(this));
   }
