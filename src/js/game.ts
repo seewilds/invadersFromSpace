@@ -1,4 +1,4 @@
-import { Sprite, Shot, Explosion, GameSetup, InvaderType, Squid, Crab, Octopus, DefenderSprite } from "./types.ts"
+import { Sprite, Shot, Explosion, GameSetup, InvaderType, ShieldSprite, Crab, Octopus, DefenderSprite } from "./types.ts"
 
 class Defender {
   context: CanvasRenderingContext2D;
@@ -96,7 +96,6 @@ class Shield {
     this.x = x;
     this.y = y;
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "#1FFE1F");
-    requestAnimationFrame(this.Update.bind(this));
   }
   Update() {
     this.pixels.forEach(pixel => {
@@ -263,6 +262,7 @@ class Battlefield {
   invaders: Invader[];
   defender: Defender;
   laserShots: Laser[];
+  shields: Shield[];
   constructor(canvas: HTMLCanvasElement, scale: number, gameSetup: GameSetup) {
     this.invaders = new Array();
     this.scale = scale;
@@ -275,8 +275,10 @@ class Battlefield {
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     this.laserShots = [];
+    this.shields = [];
     this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.addShots, this.context!);
     this.setupInvaders(gameSetup);
+    this.setupShields(gameSetup);
     this.updateInterval = 100;
     this.lastUpdate = performance.now();
   }
@@ -328,19 +330,22 @@ class Battlefield {
     });
   }
 
+  setupShields(gameSetup: GameSetup) {
+    let shieldWidth = ShieldSprite.cols * this.pixelsPerPixel;
+    gameSetup.shieldCount = gameSetup.shieldCount * shieldWidth >= this.canvas.width ? Math.floor(this.canvas.width / shieldWidth) : gameSetup.shieldCount;
+    let invaderHeight = ShieldSprite.cols * this.pixelsPerPixel;
+    let remainder = this.canvas.width - shieldWidth * gameSetup.shieldCount;
+    let spaceBetween = Math.floor(remainder / (gameSetup.shieldCount + 2));
+  
+    for (let i = 0; i < gameSetup.shieldCount; i++) {
+      this.shields[i] = new Shield(ShieldSprite, this.pixelsPerPixel, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * invaderHeight + 5, this.context!);
+    }
+  }
+
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
 
-      for (let i = this.invaders.length - 1; i >= 0; i--) {
-        if (this.invaders[i].health == 0) {
-          this.invaders[i].Clear();
-          this.invaders.splice(i, 1);
-        }
-        else {
-          this.invaders[i].Update();
-        }
-      }
 
       this.laserShots.forEach(element => {
         element.Clear()
@@ -350,35 +355,46 @@ class Battlefield {
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
-      // this.invaders.forEach(( element, index ) => {
-      //   if(element.health === 0){
-      //     element.Clear();
-      //     this.invaders.splice(index, 1);
-      //   }
-      // });
+      this.invaders.forEach(( element, index ) => {
+        if(element.health === 0){
+          element.Clear();
+          this.invaders.splice(index, 1);
+        }else{
+          element.Update()
+        }
+      });
 
       this.laserShots.forEach(element => {
         element.Clear()
         element.Update();
       });
 
+      this.shields.forEach(element => {
+        element.Update();
+      });
+
 
 
       for (let j = this.invaders.length - 1; j >= 0; j--) {
-        for (let l = this.invaders[j].pixels.length - 1; l >= 0; l--) {
-          for (let i = this.laserShots.length - 1; i >= 0; i--) {
-            for (let k = this.laserShots[i].pixels.length - 2; k >= 0; k--) {
-              if (this.laserShots[i].pixels[k].x === this.invaders[j].pixels[l].x && this.invaders[j].pixels[l].y >= this.laserShots[i].pixels[k].y) {
-                this.invaders[j].health = 0;
-                this.laserShots[i].Clear();
-                this.laserShots.splice(j, 1);
-              } else if (this.laserShots[i].pixels[k].y <= 0) {
-                this.laserShots[i].Clear();
-                this.laserShots.splice(i, 1);
-              }
-            }
-          }
+        if (this.invaders[j].health == 0) {
+          this.invaders[j].Clear();
+          this.invaders.splice(j, 1);
+          continue;
         }
+        // for (let l = this.invaders[j].pixels.length - 1; l >= 0; l--) {
+        //   for (let i = this.laserShots.length - 1; i >= 0; i--) {
+        //     for (let k = this.laserShots[i].pixels.length - 2; k >= 0; k--) {
+        //       if (this.laserShots[i].pixels[k].x === this.invaders[j].pixels[l].x && this.invaders[j].pixels[l].y >= this.laserShots[i].pixels[k].y) {
+        //         this.invaders[j].health = 0;
+        //         this.laserShots[i].Clear();
+        //         this.laserShots.splice(j, 1);
+        //       } else if (this.laserShots[i].pixels[k].y <= 0) {
+        //         this.laserShots[i].Clear();
+        //         this.laserShots.splice(i, 1);
+        //       }
+        //     }
+        //   }
+        // }
       }
 
 
