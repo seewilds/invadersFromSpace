@@ -231,6 +231,14 @@ class Invader {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
+  Hit(x : number, y: number){
+    for(let i = 0; i < this.pixels.length; i++){
+      if(this.pixels[i].hit(x, y)){
+        return true;
+      }
+      return false;
+    }
+  }
   Update() {
     this.Clear();
     if (this.health === 0) {
@@ -338,7 +346,7 @@ class Battlefield {
     let spaceBetween = Math.floor(remainder / (gameSetup.shieldCount + 2));
   
     for (let i = 0; i < gameSetup.shieldCount; i++) {
-      this.shields[i] = new Shield(ShieldSprite, this.pixelsPerPixel, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * invaderHeight + 5, this.context!);
+      this.shields[i] = new Shield(ShieldSprite, this.pixelsPerPixel, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5  * invaderHeight + 5, this.context!);
     }
   }
 
@@ -347,10 +355,10 @@ class Battlefield {
     if (deltaTime >= this.updateInterval) {
 
 
-      this.laserShots.forEach(element => {
-        element.Clear()
-        element.Update();
-      });
+      // this.laserShots.forEach(element => {
+      //   element.Clear()
+      //   element.Update();
+      // });
 
       this.lastUpdate = timestamp;
     }
@@ -374,28 +382,40 @@ class Battlefield {
       });
 
 
-
-      for (let j = this.invaders.length - 1; j >= 0; j--) {
-        if (this.invaders[j].health == 0) {
-          this.invaders[j].Clear();
-          this.invaders.splice(j, 1);
-          continue;
+      for (let i = this.invaders.length - 1; i >= 0; i--) {
+        for (let j = this.laserShots.length - 1; j >= 0; j--) {
+          if(this.laserShots[j].pixels.some(pixel=> this.invaders[i].Hit(pixel.x, pixel.y))){
+            console.log("hit")
+            this.invaders[i].health = 0;
+            this.invaders[i].Clear() 
+            this.invaders[i].Update();
+            this.laserShots[j].Clear();
+            this.laserShots.splice(j, 1);
+          }
         }
-        // for (let l = this.invaders[j].pixels.length - 1; l >= 0; l--) {
-        //   for (let i = this.laserShots.length - 1; i >= 0; i--) {
-        //     for (let k = this.laserShots[i].pixels.length - 2; k >= 0; k--) {
-        //       if (this.laserShots[i].pixels[k].x === this.invaders[j].pixels[l].x && this.invaders[j].pixels[l].y >= this.laserShots[i].pixels[k].y) {
-        //         this.invaders[j].health = 0;
-        //         this.laserShots[i].Clear();
-        //         this.laserShots.splice(j, 1);
-        //       } else if (this.laserShots[i].pixels[k].y <= 0) {
-        //         this.laserShots[i].Clear();
-        //         this.laserShots.splice(i, 1);
-        //       }
-        //     }
-        //   }
-        // }
       }
+
+      // for (let j = this.invaders.length - 1; j >= 0; j--) {
+      //   if (this.invaders[j].health == 0) {
+      //     this.invaders[j].Clear();
+      //     this.invaders.splice(j, 1);
+      //     continue;
+      //   }
+      //   for (let l = this.invaders[j].pixels.length - 1; l >= 0; l--) {
+      //     for (let i = this.laserShots.length - 1; i >= 0; i--) {
+      //       for (let k = this.laserShots[i].pixels.length - 2; k >= 0; k--) {
+      //         if (this.invaders[j].pixels[l].hit(this.laserShots[i].pixels[k].x, this.laserShots[i].pixels[k].y)) {
+      //           this.invaders[j].health = 0;
+      //           this.laserShots[i].Clear();
+      //           this.laserShots.splice(j, 1);
+      //         } else if (this.laserShots[i].pixels[k].y <= 0) {
+      //           this.laserShots[i].Clear();
+      //           this.laserShots.splice(i, 1);
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
 
 
     }
@@ -421,6 +441,12 @@ class Pixel {
     this.y = y;
     context.fillStyle = this.colour;
     context.fillRect(this.x, this.y, this.width, this.height);
+  }
+  hit(x: number, y:number): boolean{
+    return x >= this.x &&
+           x <= this.x + this.width &&
+           y >= this.y &&
+           y <= this.y + this.height;
   }
 }
 
