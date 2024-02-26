@@ -232,12 +232,7 @@ class Invader {
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
   Hit(x : number, y: number){
-    for(let i = 0; i < this.pixels.length; i++){
-      if(this.pixels[i].hit(x, y)){
-        return true;
-      }
-      return false;
-    }
+    return this.pixels.some(pixel => pixel.hit(x, y));
   }
   Update() {
     this.Clear();
@@ -363,14 +358,15 @@ class Battlefield {
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
-      this.invaders.forEach(( element, index ) => {
-        if(element.health === 0){
-          element.Clear();
-          this.invaders.splice(index, 1);
-        }else{
-          element.Update()
+
+      for (let i = this.invaders.length - 1; i >= 0; i--) {
+        if (this.invaders[i].health === 0) {
+          this.invaders[i].Clear();
+          this.invaders.splice(i, 1);
+        } else {
+          this.invaders[i].Update();
         }
-      });
+      }
 
       this.laserShots.forEach(element => {
         element.Clear()
@@ -387,7 +383,6 @@ class Battlefield {
           if(this.laserShots[j].pixels.some(pixel=> this.invaders[i].Hit(pixel.x, pixel.y))){
             console.log("hit")
             this.invaders[i].health = 0;
-            this.invaders[i].Clear() 
             this.invaders[i].Update();
             this.laserShots[j].Clear();
             this.laserShots.splice(j, 1);
@@ -443,10 +438,7 @@ class Pixel {
     context.fillRect(this.x, this.y, this.width, this.height);
   }
   hit(x: number, y:number): boolean{
-    return x >= this.x &&
-           x <= this.x + this.width &&
-           y >= this.y &&
-           y <= this.y + this.height;
+    return Math.abs(x - this.x) <= 2    && y == this.y; 
   }
 }
 
