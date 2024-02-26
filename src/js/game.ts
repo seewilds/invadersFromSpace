@@ -350,15 +350,6 @@ class Battlefield {
     if (deltaTime >= this.updateInterval) {
 
 
-      // this.laserShots.forEach(element => {
-      //   element.Clear()
-      //   element.Update();
-      // });
-
-      this.lastUpdate = timestamp;
-    }
-    else if (deltaTime >= 20) {
-
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
           this.invaders[i].Clear();
@@ -367,6 +358,12 @@ class Battlefield {
           this.invaders[i].Update();
         }
       }
+
+      this.lastUpdate = timestamp;
+    }
+    else if (deltaTime >= 20) {
+
+
 
       this.laserShots.forEach(element => {
         element.Clear()
@@ -389,30 +386,6 @@ class Battlefield {
           }
         }
       }
-
-      // for (let j = this.invaders.length - 1; j >= 0; j--) {
-      //   if (this.invaders[j].health == 0) {
-      //     this.invaders[j].Clear();
-      //     this.invaders.splice(j, 1);
-      //     continue;
-      //   }
-      //   for (let l = this.invaders[j].pixels.length - 1; l >= 0; l--) {
-      //     for (let i = this.laserShots.length - 1; i >= 0; i--) {
-      //       for (let k = this.laserShots[i].pixels.length - 2; k >= 0; k--) {
-      //         if (this.invaders[j].pixels[l].hit(this.laserShots[i].pixels[k].x, this.laserShots[i].pixels[k].y)) {
-      //           this.invaders[j].health = 0;
-      //           this.laserShots[i].Clear();
-      //           this.laserShots.splice(j, 1);
-      //         } else if (this.laserShots[i].pixels[k].y <= 0) {
-      //           this.laserShots[i].Clear();
-      //           this.laserShots.splice(i, 1);
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-
-
     }
     requestAnimationFrame(this.Update.bind(this));
   }
