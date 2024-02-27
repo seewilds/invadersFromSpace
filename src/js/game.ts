@@ -229,7 +229,12 @@ class Invader {
   }
   Clear() {
     this.context.fillStyle = "black";
-    this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    if(this.health > 0){
+      this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    }else{
+      this.context.fillRect(this.pixels[0].x - (this.explosion.activePixels[0] + 1) * this.pixelsPerPixel, this.pixels[0].y, this.explosion.cols * this.pixelsPerPixel, this.explosion.rows * this.pixelsPerPixel);
+    }
+    
   }
   Hit(x : number, y: number){
     return this.pixels.some(pixel => pixel.hit(x, y));
@@ -349,7 +354,6 @@ class Battlefield {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
 
-
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
           this.invaders[i].Clear();
@@ -362,9 +366,6 @@ class Battlefield {
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
-
-
-
       this.laserShots.forEach(element => {
         element.Clear()
         element.Update();
@@ -373,7 +374,6 @@ class Battlefield {
       this.shields.forEach(element => {
         element.Update();
       });
-
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {

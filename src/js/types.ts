@@ -1,7 +1,7 @@
 enum InvaderType{
     Squid,
     Crab,
-    Octopus
+    Octopus 
 }
 
 interface InvaderRow {
@@ -66,8 +66,8 @@ const Shot : Sprite = {
 }
 
 const Explosion : Sprite = {
-    rows: 13,
-    cols: 8,
+    rows: 8,
+    cols: 13,
     activePixels: [4,8,14,18,20,24,28,36,42,48,42,43,53,54,5864,70,73,75,78,72,75,79,82],
     activePixelsAlt: [4,8,14,18,20,24,28,36,42,48,42,43,53,54,5864,70,73,75,78,72,75,79,82],
 }

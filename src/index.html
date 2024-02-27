@@ -9,7 +9,7 @@
 <body>
     <script type="module">
         import { Defender, Battlefield, Invader, Shield, Spaceship } from './js/game.ts'
-        import { Crab, Octopus, Squid, Shield as Shieldy, Saucer, InvaderType } from "./js/types.ts"
+        import { Crab, Octopus, Squid, Shield as Shieldy, Saucer, InvaderType, Explostion } from "./js/types.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
         var battlefield = new Battlefield(
@@ -18,7 +18,7 @@
             {
                 setup: [{ count: 10, colour: "red", type: InvaderType.Squid, sprite: Squid },
                 { count: 9, colour: "blue", type: InvaderType.Octopus, sprite: Octopus },
-                { count: 7, colour: "pink", type: InvaderType.Octopus, sprite: Crab },
+                { count: 7, colour: "pink", type: InvaderType.Crab, sprite: Crab },
                 { count: 8, colour: "green", type: InvaderType.Octopus, sprite: Octopus },],
                 shieldCount : 4
             });
