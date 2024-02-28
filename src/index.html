@@ -16,10 +16,10 @@
             document.createElement("canvas"),
             2,
             {
-                setup: [{ count: 10, colour: "red", type: InvaderType.Squid, sprite: Squid },
-                { count: 9, colour: "blue", type: InvaderType.Octopus, sprite: Octopus },
-                { count: 7, colour: "pink", type: InvaderType.Crab, sprite: Crab },
-                { count: 8, colour: "green", type: InvaderType.Octopus, sprite: Octopus },],
+                setup: [{ count: 10, colour: "red", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
+                { count: 9, colour: "blue", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
+                { count: 7, colour: "pink", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
+                { count: 8, colour: "green", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },],
                 shieldCount : 4
             });
 

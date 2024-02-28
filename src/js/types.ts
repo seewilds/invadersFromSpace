@@ -8,7 +8,8 @@ interface InvaderRow {
     count : number;
     type : InvaderType;
     sprite : Sprite;
-    colour : string
+    colour : string;
+    directionStart : number
 }
 
 interface GameSetup {
