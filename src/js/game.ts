@@ -392,7 +392,7 @@ class Battlefield {
 
       for (let i = this.shields.length - 1; i >= 0; i--) {
         if (this.shields[i].pixels.length === 0) {
-          this.shields[i].Clear();
+          this.shields[i].Clear();  
           this.shields.splice(i, 1);
         } else if (this.shields[i].hits.length > 0) {
           this.shields[i].Update();
@@ -413,7 +413,6 @@ class Battlefield {
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (this.laserShots[j].pixels.some(pixel => this.invaders[i].Hit(pixel.x, pixel.y))) {
-            console.log("hit")
             this.invaders[i].health = 0;
             this.invaders[i].Update(0);
             this.laserShots[j].Clear();
@@ -422,6 +421,25 @@ class Battlefield {
         }
       }
     }
+
+  //   let index = 0;
+  //   for (let i = this.shields.length - 1; i >= 0; i--) {
+  //     for (let j = this.laserShots.length - 1; j >= 0; j--) {      
+  //       for(let l = this.laserShots[j].pixels.length - 1; l >= 0; l--){
+  //         index = this.shields[i].pixels.findIndex(pixel => pixel.x === this.laserShots[j].pixels[0].x);
+  //         if(index >= 0){
+  //           this.shields[i].Hit(index);
+  //           this.laserShots[j].Clear();
+  //           this.laserShots.splice(j);
+  //           l = 0;
+  //           j = this.laserShots.length === 0 ? 0 : j;
+  //           break;
+            
+  //         }          
+  //     }
+  //   }
+
+  // }
 
 
 
