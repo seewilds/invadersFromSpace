@@ -31,6 +31,12 @@ class Defender {
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
+      if (
+        this.pixels.some(pixel => pixel.x <= 10) && this.deltaX < 0
+        || this.pixels.some(pixel => pixel.x >= this.context.canvas.width - 10) && this.deltaX > 0
+      ) {
+        this.deltaX = 0;
+      }
       this.context.fillStyle = "black";
       this.context.clearRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
       this.context.fillRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
@@ -44,13 +50,17 @@ class Defender {
   HandleKeyDown(event: KeyboardEvent) {
     if (event.key == 'a') {
       this.deltaX = -this.pixelsPerPixel;
+      return;
     }
     if (event.key == 'd') {
       this.deltaX = this.pixelsPerPixel;
+      return;
     }
-    if (event.key == ' ') {
+    if (event.key === ' ') {
       this.addShots(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context));
     }
+
+
   }
   HandleKeyUp(event: KeyboardEvent) {
     if (event.key == 'a') {
@@ -103,11 +113,14 @@ class Shield {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
+  Hit(index: number) {
+    this.hits.push(index);
+  }
   Update() {
-    // for(let i = this.hits.length; i >= 0; i--){
-    //   this.pixels.splice(this.hits[i]);
-    //   this.hits.splice(i);
-    // }
+    for (let i = this.hits.length - 1; i >= 0; i--) {
+      this.pixels.splice(this.hits[i]);
+      this.hits.pop();
+    }
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y);
     });
