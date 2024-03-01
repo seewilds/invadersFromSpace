@@ -25,9 +25,7 @@ class Defender {
     this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "#1FFE1F");
     this.addShots = addShots;
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
-    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
-    requestAnimationFrame(this.Update.bind(this));
-  }
+    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));  }
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
@@ -45,7 +43,6 @@ class Defender {
       });
       this.lastUpdate = timestamp;
     }
-    requestAnimationFrame(this.Update.bind(this));
   }
   HandleKeyDown(event: KeyboardEvent) {
     if (event.key == 'a') {
@@ -115,7 +112,7 @@ class Shield {
   }
   Clear() {
     this.context.fillStyle = "black";
-    this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    this.context.fillRect(this.x0 - this.sprite.activePixels[0] * this.pixelsPerPixel, this.y0, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
   Hit(index: number) {
     this.pixels.splice(index + 1);
@@ -152,7 +149,6 @@ class Spaceship {
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "silver");
-    requestAnimationFrame(this.Update.bind(this));
   }
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
@@ -176,7 +172,6 @@ class Spaceship {
       });
       this.lastUpdate = timestamp;
     }
-    requestAnimationFrame(this.Update.bind(this));
   }
 }
 
@@ -378,6 +373,7 @@ class Battlefield {
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
+      this.defender.Update(timestamp)
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
           this.invaders[i].Clear();
@@ -404,9 +400,9 @@ class Battlefield {
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
-      this.laserShots.forEach(element => {
-        element.Clear()
-        element.Update();
+      this.defender.Update(timestamp)
+      this.laserShots.forEach(shot => {
+        shot.Update();
       });
 
 
@@ -416,7 +412,7 @@ class Battlefield {
             this.invaders[i].health = 0;
             this.invaders[i].Update(0);
             this.laserShots[j].Clear();
-            this.laserShots.splice(j, 1);
+            this.laserShots.splice(j + 1);
           }
         }
       }
@@ -430,7 +426,7 @@ class Battlefield {
           if(index >= 0){
             this.shields[i].Hit(index);
             this.laserShots[j].Clear();
-            this.laserShots.splice(j);
+            this.laserShots.splice(j + 1);
             l = 0;
           }          
       }
