@@ -99,6 +99,8 @@ class Shield {
   pixelsPerPixel: number;
   x: number;
   y: number;
+  x0 : number;
+  y0 : number;
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.hits = [];
@@ -108,19 +110,17 @@ class Shield {
     this.x = x;
     this.y = y;
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "#1FFE1F");
+    this.x0 = this.pixels[0].x;
+    this.y0 = this.pixels[0].y;
   }
   Clear() {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
   Hit(index: number) {
-    this.hits.push(index);
+    this.pixels.splice(index + 1);
   }
   Update() {
-    for (let i = this.hits.length - 1; i >= 0; i--) {
-      this.pixels.splice(this.hits[i]);
-      this.hits.pop();
-    }
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y);
     });
@@ -422,24 +422,21 @@ class Battlefield {
       }
     }
 
-  //   let index = 0;
-  //   for (let i = this.shields.length - 1; i >= 0; i--) {
-  //     for (let j = this.laserShots.length - 1; j >= 0; j--) {      
-  //       for(let l = this.laserShots[j].pixels.length - 1; l >= 0; l--){
-  //         index = this.shields[i].pixels.findIndex(pixel => pixel.x === this.laserShots[j].pixels[0].x);
-  //         if(index >= 0){
-  //           this.shields[i].Hit(index);
-  //           this.laserShots[j].Clear();
-  //           this.laserShots.splice(j);
-  //           l = 0;
-  //           j = this.laserShots.length === 0 ? 0 : j;
-  //           break;
-            
-  //         }          
-  //     }
-  //   }
+    let index = 0;
+    for (let i = this.shields.length - 1; i >= 0; i--) {
+      for (let j = this.laserShots.length - 1; j >= 0; j--) {      
+        for(let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--){
+          index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
+          if(index >= 0){
+            this.shields[i].Hit(index);
+            this.laserShots[j].Clear();
+            this.laserShots.splice(j);
+            l = 0;
+          }          
+      }
+    }
 
-  // }
+  }
 
 
 
