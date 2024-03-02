@@ -400,6 +400,7 @@ class Battlefield {
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
+      
       this.defender.Update(timestamp)
       this.laserShots.forEach(shot => {
         shot.Update();
@@ -412,7 +413,7 @@ class Battlefield {
             this.invaders[i].health = 0;
             this.invaders[i].Update(0);
             this.laserShots[j].Clear();
-            this.laserShots.splice(j + 1);
+            this.laserShots.splice(j, 1);
           }
         }
       }
@@ -426,12 +427,11 @@ class Battlefield {
           if(index >= 0){
             this.shields[i].Hit(index);
             this.laserShots[j].Clear();
-            this.laserShots.splice(j + 1);
+            this.laserShots.splice(j, 1);
             l = 0;
           }          
       }
     }
-
   }
 
 
