@@ -433,9 +433,6 @@ class Battlefield {
       }
     }
   }
-
-
-
     requestAnimationFrame(this.Update.bind(this));
   }
 }
