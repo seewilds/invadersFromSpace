@@ -194,7 +194,7 @@ class Laser {
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
-    this.deltaY = 5;
+    this.deltaY = 1;
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = x;
     this.y = y;
@@ -261,25 +261,23 @@ class Invader {
     return this.pixels.some(pixel => pixel.hit(x, y));
   }
   Update(timestamp: number, deltaX: number) {
-    if (this.health === 0 || timestamp - this.lastUpdate >= this.updateInterval) {
-      this.Clear();
-      deltaX *= this.direction;
-      if (this.health === 0) {
-        this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, this.colour)
-        this.altActive = false;
-      }
-      else if (this.altActive) {
-        this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.activePixelsAlt, this.colour)
-        this.altActive = false;
-      } else {
-        this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.activePixels, this.colour);
-        this.altActive = true;
-      }
-      this.pixels.forEach(pixel => {
-        pixel.Update(this.context, pixel.x, pixel.y);
-      });
-      this.lastUpdate = timestamp;
+    this.Clear();
+    deltaX *= this.direction;
+    if (this.health === 0) {
+      this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, this.colour)
+      this.altActive = false;
     }
+    else if (this.altActive) {
+      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.activePixelsAlt, this.colour)
+      this.altActive = false;
+    } else {
+      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.activePixels, this.colour);
+      this.altActive = true;
+    }
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x, pixel.y);
+    });
+    this.lastUpdate = timestamp;
   }
 }
 
@@ -396,17 +394,11 @@ class Battlefield {
         }
       }
 
-
-
       this.lastUpdate = timestamp;
     }
-    else if (deltaTime >= 20) {
+    else if (deltaTime >= 1) {
 
       this.defender.Update(timestamp);
-
-      this.laserShots.forEach(shot => {
-        shot.Update();
-      });
 
       for (let i = this.shields.length - 1; i >= 0; i--) {
         if (this.shields[i].pixels.length === 0) {
@@ -419,11 +411,6 @@ class Battlefield {
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
-          this.invaders[i].Update(timestamp, 0);
-        } else {
-          if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
-            this.deltaX *= 0;
-          }
           this.invaders[i].Update(timestamp, 0);
         }
       }
@@ -454,6 +441,9 @@ class Battlefield {
         }
       }
 
+      this.laserShots.forEach(shot => {
+        shot.Update();
+      });
     }
 
     requestAnimationFrame(this.Update.bind(this));
