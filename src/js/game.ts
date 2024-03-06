@@ -1,4 +1,5 @@
-import { Sprite, Shot, Explosion, GameSetup, InvaderType, ShieldSprite, Crab, Octopus, DefenderSprite } from "./types.ts"
+import { CharacterSprite, Sprite, Shot, Explosion, GameSetup, InvaderType, ShieldSprite, DefenderSprite } from "./types.ts"
+import {Crab, Squid, Octopus} from "./invaders.ts"
 
 class Defender {
   context: CanvasRenderingContext2D;
@@ -22,12 +23,13 @@ class Defender {
     this.y = height - this.sprite.cols * this.pixelsPerPixel - 2 * this.pixelsPerPixel;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "#1FFE1F");
+    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "#1FFE1F");
     this.addShots = addShots;
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
-    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
+    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));  
   }
-  Update(timestamp) {
+  
+    Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       if (
@@ -45,6 +47,7 @@ class Defender {
       this.lastUpdate = timestamp;
     }
   }
+  
   HandleKeyDown(event: KeyboardEvent) {
     if (event.key == 'a') {
       this.deltaX = -this.pixelsPerPixel;
@@ -57,9 +60,8 @@ class Defender {
     if (event.key === ' ') {
       this.addShots(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context));
     }
-
-
   }
+  
   HandleKeyUp(event: KeyboardEvent) {
     if (event.key == 'a') {
       this.deltaX = 0;
@@ -86,7 +88,6 @@ function spriteFactory(height: number, width: number, pixelsPerPixel: number, xS
   return spriteArray;
 }
 
-
 class Shield {
   context: CanvasRenderingContext2D;
   hits: number[];
@@ -97,8 +98,8 @@ class Shield {
   pixelsPerPixel: number;
   x: number;
   y: number;
-  x0: number;
-  y0: number;
+  x0 : number;
+  y0 : number;
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.hits = [];
@@ -107,21 +108,18 @@ class Shield {
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = x;
     this.y = y;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "#1FFE1F");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "#1FFE1F");
     this.x0 = this.pixels[0].x;
     this.y0 = this.pixels[0].y;
   }
   Clear() {
     this.context.fillStyle = "black";
-    this.context.fillRect(this.x0 - this.sprite.activePixels[0] * this.pixelsPerPixel, this.y0, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    this.context.fillRect(this.x0 - this.sprite.pixels[0] * this.pixelsPerPixel, this.y0, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
   Hit(index: number) {
-    this.Clear();
-    this.pixels.splice(index,1);
-    this.Update();
+    this.pixels.splice(index + 1);
   }
   Update() {
-    this.Clear();
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y);
     });
@@ -152,13 +150,13 @@ class Spaceship {
     this.direction = 0;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "silver");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "silver");
   }
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       this.context.fillStyle = "black";
-      this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+      this.context.fillRect(this.pixels[0].x - this.sprite.pixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
       if (this.pixels[0].x < 0) {
         this.deltaX = 5
       }
@@ -194,14 +192,14 @@ class Laser {
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
-    this.deltaY = 1;
+    this.deltaY = 5;
     this.pixelsPerPixel = pixelsPerPixel;
     this.x = x;
     this.y = y;
     this.direction = 0;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, "orange");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "orange");
   }
   Update() {
     this.Clear();
@@ -215,13 +213,11 @@ class Laser {
   }
 }
 
-
-
 class Invader {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
-  sprite: Sprite;
+  sprite: CharacterSprite;
   explosion: Sprite;
   colour: string;
   altActive: boolean;
@@ -231,7 +227,7 @@ class Invader {
   y: number;
   updateInterval: number;
   lastUpdate: number;
-  constructor(sprite: Sprite, colour: string, pixelsPerPixel: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D) {
+  constructor(sprite: CharacterSprite, colour: string, pixelsPerPixel: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D) {
     this.health = 1;
     this.context = context;
     this.explosion = Explosion;
@@ -243,41 +239,44 @@ class Invader {
     this.y = y;
     this.updateInterval = 200;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.activePixels, this.colour);
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, this.colour);
     this.altActive = false;
   }
+
   getWidth() {
     return this.sprite.cols * this.pixelsPerPixel;
   }
+
   Clear() {
     this.context.fillStyle = "black";
     if (this.health > 0) {
-      this.context.fillRect(this.pixels[0].x - this.sprite.activePixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+      this.context.fillRect(this.pixels[0].x - this.sprite.pixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
     } else {
-      this.context.fillRect(this.pixels[0].x - (this.explosion.activePixels[0] + 1) * this.pixelsPerPixel, this.pixels[0].y, this.explosion.cols * this.pixelsPerPixel, this.explosion.rows * this.pixelsPerPixel);
+      this.context.fillRect(this.pixels[0].x - (this.explosion.pixels[0] + 1) * this.pixelsPerPixel, this.pixels[0].y, this.explosion.cols * this.pixelsPerPixel, this.explosion.rows * this.pixelsPerPixel);
     }
   }
+
   Hit(x: number, y: number) {
     return this.pixels.some(pixel => pixel.hit(x, y));
   }
-  Update(timestamp: number, deltaX: number) {
+
+  Update(deltaX: number) {
     this.Clear();
     deltaX *= this.direction;
     if (this.health === 0) {
-      this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.activePixels, this.colour)
+      this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.pixels, this.colour)
       this.altActive = false;
     }
     else if (this.altActive) {
-      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.activePixelsAlt, this.colour)
+      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.alternatePixels, this.colour)
       this.altActive = false;
     } else {
-      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.activePixels, this.colour);
+      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.pixels, this.colour);
       this.altActive = true;
     }
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y);
     });
-    this.lastUpdate = timestamp;
   }
 }
 
@@ -377,11 +376,10 @@ class Battlefield {
 
   Update(timestamp) {
     const deltaTime = timestamp - this.lastUpdate;
-
     if (deltaTime >= this.updateInterval) {
-
+      
       this.defender.Update(timestamp)
-
+      
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
           this.invaders[i].Clear();
@@ -390,62 +388,56 @@ class Battlefield {
           if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
             this.deltaX *= 0;
           }
-          this.invaders[i].Update(timestamp, 0);
+          this.invaders[i].Update(0);
         }
       }
 
-      this.lastUpdate = timestamp;
-    }
-    else if (deltaTime >= 1) {
-
-      this.defender.Update(timestamp);
-
       for (let i = this.shields.length - 1; i >= 0; i--) {
         if (this.shields[i].pixels.length === 0) {
-          this.shields[i].Clear();
+          this.shields[i].Clear();  
           this.shields.splice(i, 1);
+        } else if (this.shields[i].hits.length > 0) {
+          this.shields[i].Update();
         } else {
           this.shields[i].Update();
         }
       }
 
-      for (let i = this.invaders.length - 1; i >= 0; i--) {
-        if (this.invaders[i].health === 0) {
-          this.invaders[i].Update(timestamp, 0);
-        }
-      }
-
-      let index = 0;
-      for (let i = this.shields.length - 1; i >= 0; i--) {
-        for (let j = this.laserShots.length - 1; j >= 0; j--) {
-          for (let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--) {
-            index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
-            if (index >= 0) {
-              this.shields[i].Hit(index);
-              this.laserShots[j].Update();
-              this.laserShots.splice(j, 1);
-              l = 0;
-            }
-          }
-        }
-      }
+      this.lastUpdate = timestamp;
+    }
+    else if (deltaTime >= 20) {
+      
+      this.defender.Update(timestamp)
+      this.laserShots.forEach(shot => {
+        shot.Update();
+      });
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (this.laserShots[j].pixels.some(pixel => this.invaders[i].Hit(pixel.x, pixel.y))) {
             this.invaders[i].health = 0;
-            this.invaders[i].Update(timestamp, 0);
+            this.invaders[i].Update(0);
             this.laserShots[j].Clear();
             this.laserShots.splice(j, 1);
           }
         }
       }
-
-      this.laserShots.forEach(shot => {
-        shot.Update();
-      });
     }
 
+    let index = 0;
+    for (let i = this.shields.length - 1; i >= 0; i--) {
+      for (let j = this.laserShots.length - 1; j >= 0; j--) {      
+        for(let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--){
+          index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
+          if(index >= 0){
+            this.shields[i].Hit(index);
+            this.laserShots[j].Clear();
+            this.laserShots.splice(j, 1);
+            l = 0;
+          }          
+      }
+    }
+  }
     requestAnimationFrame(this.Update.bind(this));
   }
 }
