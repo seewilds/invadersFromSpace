@@ -162,4 +162,4 @@ const ascii: Character = {
 }
 
 
-export { CharacterSprite, Sprite, Octopus, Crab, Squid, ShieldSprite, Saucer, Shot, Explosion, GameSetup, InvaderType, DefenderSprite }
+export { CharacterSprite, Sprite, Octopus, Crab, Squid, ShieldSprite, Saucer, Shot, Explosion, GameSetup, InvaderType, DefenderSprite, Character }
