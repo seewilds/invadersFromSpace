@@ -8,9 +8,11 @@
 
 <body>
     <script type="module">
-        import { Defender, Battlefield, Invader, Shield, Spaceship } from './js/game.ts'
+        import { Defender, Battlefield, Invader, Shield, Spaceship } from './js/characters.ts'
+        import { Battlefield } from './js/game.ts'
+        import { Invader } from './js/invader.ts'
         import { Shield as Shieldy, Saucer, InvaderType, Explostion } from "./js/types.ts"
-        import {Crab, Squid, Octopus} from "./js/invaders.ts"
+        import {Crab, Squid, Octopus} from "./js/sprites.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
         var battlefield = new Battlefield(

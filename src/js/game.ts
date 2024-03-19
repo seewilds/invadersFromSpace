@@ -1,5 +1,10 @@
-import { CharacterSprite, Sprite, Shot, Explosion, GameSetup, InvaderType, ShieldSprite, DefenderSprite } from "./types.ts"
-import {Crab, Squid, Octopus} from "./invaders.ts"
+import {  Sprite, GameSetup, InvaderType } from "./types.ts"
+import { Invader} from "./invader.ts"
+import { Pixel } from "./pixel.ts";
+import { DefenderSprite, ShieldSprite, Shot } from "./sprites.ts";
+import { spriteFactory } from "./factories.ts";
+import {printText} from "./characters"
+
 
 class Defender {
   context: CanvasRenderingContext2D;
@@ -72,21 +77,7 @@ class Defender {
   }
 }
 
-function spriteFactory(height: number, width: number, pixelsPerPixel: number, xStart: number, yStart: number, activePixels: number[], colour: string) {
-  let spriteArray = new Array(activePixels.length);
-  let activePixelsSet = 0;
-  let loopNumber = 0;
-  for (let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
-      if (activePixels.includes(loopNumber)) {
-        spriteArray[activePixelsSet] = new Pixel(pixelsPerPixel, pixelsPerPixel, xStart + j * pixelsPerPixel, yStart + pixelsPerPixel * i, colour);
-        activePixelsSet++;
-      }
-      loopNumber++;
-    }
-  }
-  return spriteArray;
-}
+
 
 class Shield {
   context: CanvasRenderingContext2D;
@@ -213,72 +204,7 @@ class Laser {
   }
 }
 
-class Invader {
-  context: CanvasRenderingContext2D;
-  health: number;
-  pixels: Pixel[];
-  sprite: CharacterSprite;
-  explosion: Sprite;
-  colour: string;
-  altActive: boolean;
-  direction: number;
-  pixelsPerPixel: number;
-  x: number;
-  y: number;
-  updateInterval: number;
-  lastUpdate: number;
-  constructor(sprite: CharacterSprite, colour: string, pixelsPerPixel: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D) {
-    this.health = 1;
-    this.context = context;
-    this.explosion = Explosion;
-    this.sprite = sprite;
-    this.colour = colour;
-    this.direction = direction;
-    this.pixelsPerPixel = pixelsPerPixel;
-    this.x = x;
-    this.y = y;
-    this.updateInterval = 200;
-    this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, this.colour);
-    this.altActive = false;
-  }
 
-  getWidth() {
-    return this.sprite.cols * this.pixelsPerPixel;
-  }
-
-  Clear() {
-    this.context.fillStyle = "black";
-    if (this.health > 0) {
-      this.context.fillRect(this.pixels[0].x - this.sprite.pixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-    } else {
-      this.context.fillRect(this.pixels[0].x - (this.explosion.pixels[0] + 1) * this.pixelsPerPixel, this.pixels[0].y, this.explosion.cols * this.pixelsPerPixel, this.explosion.rows * this.pixelsPerPixel);
-    }
-  }
-
-  Hit(x: number, y: number) {
-    return this.pixels.some(pixel => pixel.hit(x, y));
-  }
-
-  Update(deltaX: number) {
-    this.Clear();
-    deltaX *= this.direction;
-    if (this.health === 0) {
-      this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.pixels, this.colour)
-      this.altActive = false;
-    }
-    else if (this.altActive) {
-      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.alternatePixels, this.colour)
-      this.altActive = false;
-    } else {
-      this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.pixels, this.colour);
-      this.altActive = true;
-    }
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y);
-    });
-  }
-}
 
 
 // space invaders is 128 x 128 pixels
@@ -375,95 +301,74 @@ class Battlefield {
   }
 
   Update(timestamp) {
-    const deltaTime = timestamp - this.lastUpdate;
-    if (deltaTime >= this.updateInterval) {
+    printText("Invaders From Space!", 0, 0, 4, "green", this.context!);
+  //   const deltaTime = timestamp - this.lastUpdate;
+  //   if (deltaTime >= this.updateInterval) {
       
-      this.defender.Update(timestamp)
+  //     this.defender.Update(timestamp)
       
-      for (let i = this.invaders.length - 1; i >= 0; i--) {
-        if (this.invaders[i].health === 0) {
-          this.invaders[i].Clear();
-          this.invaders.splice(i, 1);
-        } else {
-          if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
-            this.deltaX *= 0;
-          }
-          this.invaders[i].Update(0);
-        }
-      }
+  //     for (let i = this.invaders.length - 1; i >= 0; i--) {
+  //       if (this.invaders[i].health === 0) {
+  //         this.invaders[i].Clear();
+  //         this.invaders.splice(i, 1);
+  //       } else {
+  //         if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
+  //           this.deltaX *= 0;
+  //         }
+  //         this.invaders[i].Update(0);
+  //       }
+  //     }
 
-      for (let i = this.shields.length - 1; i >= 0; i--) {
-        if (this.shields[i].pixels.length === 0) {
-          this.shields[i].Clear();  
-          this.shields.splice(i, 1);
-        } else if (this.shields[i].hits.length > 0) {
-          this.shields[i].Update();
-        } else {
-          this.shields[i].Update();
-        }
-      }
+  //     for (let i = this.shields.length - 1; i >= 0; i--) {
+  //       if (this.shields[i].pixels.length === 0) {
+  //         this.shields[i].Clear();  
+  //         this.shields.splice(i, 1);
+  //       } else if (this.shields[i].hits.length > 0) {
+  //         this.shields[i].Update();
+  //       } else {
+  //         this.shields[i].Update();
+  //       }
+  //     }
 
-      this.lastUpdate = timestamp;
-    }
-    else if (deltaTime >= 20) {
+  //     this.lastUpdate = timestamp;
+  //   }
+  //   else if (deltaTime >= 20) {
       
-      this.defender.Update(timestamp)
-      this.laserShots.forEach(shot => {
-        shot.Update();
-      });
+  //     this.defender.Update(timestamp)
+  //     this.laserShots.forEach(shot => {
+  //       shot.Update();
+  //     });
 
-      for (let i = this.invaders.length - 1; i >= 0; i--) {
-        for (let j = this.laserShots.length - 1; j >= 0; j--) {
-          if (this.laserShots[j].pixels.some(pixel => this.invaders[i].Hit(pixel.x, pixel.y))) {
-            this.invaders[i].health = 0;
-            this.invaders[i].Update(0);
-            this.laserShots[j].Clear();
-            this.laserShots.splice(j, 1);
-          }
-        }
-      }
-    }
+  //     for (let i = this.invaders.length - 1; i >= 0; i--) {
+  //       for (let j = this.laserShots.length - 1; j >= 0; j--) {
+  //         if (this.laserShots[j].pixels.some(pixel => this.invaders[i].Hit(pixel.x, pixel.y))) {
+  //           this.invaders[i].health = 0;
+  //           this.invaders[i].Update(0);
+  //           this.laserShots[j].Clear();
+  //           this.laserShots.splice(j, 1);
+  //         }
+  //       }
+  //     }
+  //   }
 
-    let index = 0;
-    for (let i = this.shields.length - 1; i >= 0; i--) {
-      for (let j = this.laserShots.length - 1; j >= 0; j--) {      
-        for(let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--){
-          index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
-          if(index >= 0){
-            this.shields[i].Hit(index);
-            this.laserShots[j].Clear();
-            this.laserShots.splice(j, 1);
-            l = 0;
-          }          
-      }
-    }
-  }
+  //   let index = 0;
+  //   for (let i = this.shields.length - 1; i >= 0; i--) {
+  //     for (let j = this.laserShots.length - 1; j >= 0; j--) {      
+  //       for(let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--){
+  //         index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
+  //         if(index >= 0){
+  //           this.shields[i].Hit(index);
+  //           this.laserShots[j].Clear();
+  //           this.laserShots.splice(j, 1);
+  //           l = 0;
+  //         }          
+  //     }
+  //   }
+  // }
     requestAnimationFrame(this.Update.bind(this));
   }
 }
 
-class Pixel {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  colour: string;
-  constructor(width: number, height: number, x: number, y: number, colour: string) {
-    this.width = width;
-    this.height = height;
-    this.x = x;
-    this.y = y;
-    this.colour = colour;
-  }
-  Update(context: CanvasRenderingContext2D, x: number, y: number) {
-    this.x = x;
-    this.y = y;
-    context.fillStyle = this.colour;
-    context.fillRect(this.x, this.y, this.width, this.height);
-  }
-  hit(x: number, y: number): boolean {
-    return Math.abs(x - this.x) <= 2 && y == this.y;
-  }
-}
 
-export { Defender, Battlefield, Invader, Shield, Spaceship, Laser };
+
+export { Defender, Battlefield, Shield, Spaceship, Laser };
