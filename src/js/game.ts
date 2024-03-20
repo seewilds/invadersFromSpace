@@ -301,7 +301,10 @@ class Battlefield {
   }
 
   Update(timestamp) {
-    printText("I", 10, 10, 4, "green", this.context!);
+    printText("SPACE INVADERS", 10, 10, 4, "green", this.context!);
+    printText("TA DAH", 10, 20 * this.pixelsPerPixel, 2, "blue", this.context!);
+    printText("THIS IS ALL SO HARD", 10, 30 * this.pixelsPerPixel, 3, "red", this.context!);
+
   //   const deltaTime = timestamp - this.lastUpdate;
   //   if (deltaTime >= this.updateInterval) {
       

@@ -48,7 +48,7 @@ function printText(text : string, xStart : number, yStart : number, pixelsPerPix
     console.log(lettersArray)
     let letters : Pixel[][] = Array(lettersArray.length);
     for(let i = 0; i < lettersArray.length; i++){
-        letters[i] = spriteFactory(8,7, pixelsPerPixel, xStart, yStart, lettersArray[i].pixels, colour) 
+        letters[i] = spriteFactory(8, 7, pixelsPerPixel, xStart + i * 6 * pixelsPerPixel, yStart, lettersArray[i].pixels, colour) 
     }
     console.log(letters);
     letters.forEach((letter, index) => letter.forEach(x => x.Update(context, x.x, x.y)));
