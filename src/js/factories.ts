@@ -1,7 +1,7 @@
 import { Pixel } from "./pixel";
 
-export function spriteFactory(height: number, width: number, pixelsPerPixel: number, xStart: number, yStart: number, activePixels: number[], colour: string) {
-  let spriteArray = new Array(activePixels.length);
+export function spriteFactory(height: number, width: number, pixelsPerPixel: number, xStart: number, yStart: number, activePixels: number[], colour: string): Pixel[] {
+  let spriteArray : Pixel[] = new Array(activePixels.length);
   let activePixelsSet = 0;
   let loopNumber = 0;
   for (let i = 0; i < height; i++) {

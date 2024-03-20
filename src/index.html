@@ -13,6 +13,7 @@
         import { Invader } from './js/invader.ts'
         import { Shield as Shieldy, Saucer, InvaderType, Explostion } from "./js/types.ts"
         import {Crab, Squid, Octopus} from "./js/sprites.ts"
+        import {printText} from "./js/characters.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
         var battlefield = new Battlefield(
@@ -25,7 +26,6 @@
                 { count: 8, colour: "green", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },],
                 shieldCount : 4
             });
-
         document.addEventListener('DOMContentLoaded', (event) => {
             battlefield.start();
         });
