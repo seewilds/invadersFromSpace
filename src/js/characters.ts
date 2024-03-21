@@ -72,9 +72,10 @@ class Text {
         return 7 * this.pixelsPerPixel;
     }
 
-    Clear() {
-        this.context.fillStyle = "black";
-        //this.context.fillRect(this.pixels[0].x - this.sprite.pixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    Clear() {       
+        this.pixels.forEach(pixels => {
+            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, "black"));
+        });
     }
 
     Update(deltaX: number) {
