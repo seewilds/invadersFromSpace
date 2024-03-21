@@ -3,7 +3,7 @@ import { Invader} from "./invader.ts"
 import { Pixel } from "./pixel.ts";
 import { DefenderSprite, ShieldSprite, Shot } from "./sprites.ts";
 import { spriteFactory } from "./factories.ts";
-import {printText} from "./characters"
+import {printText, Text} from "./characters"
 
 
 class Defender {
@@ -301,10 +301,12 @@ class Battlefield {
   }
 
   Update(timestamp) {
-    printText("SPACE INVADERS", 10, 10, 4, "green", this.context!);
-    printText("TA DAH", 10, 20 * this.pixelsPerPixel, 2, "blue", this.context!);
-    printText("THIS IS ALL SO HARD", 10, 30 * this.pixelsPerPixel, 3, "red", this.context!);
-
+    let title = new Text("SPACE INVADERS", "green", this.pixelsPerPixel, 10, 10, this.context!);
+    let tadah = new Text("TA DAH", "rgba(11, 180, 243, 0.28)", 3, 10, 50, this.context!);
+    let hard = new Text("THIS IS ALL SO HARD", "rgba(205, 62, 81, 0.8)", 2, 10, 100, this.context!);
+    title.Update(0);
+    tadah.Update(0);
+    hard.Update(0);
   //   const deltaTime = timestamp - this.lastUpdate;
   //   if (deltaTime >= this.updateInterval) {
       

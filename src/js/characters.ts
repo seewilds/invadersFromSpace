@@ -43,15 +43,59 @@ const ascii: Character = {
     " " : SPACE
 }
 
-function printText(text : string, xStart : number, yStart : number, pixelsPerPixel : number, colour : string , context: CanvasRenderingContext2D) :void {
+
+class Text {
+    context: CanvasRenderingContext2D;
+    text: string;
+    pixels: Pixel[][];
+    explosion: Sprite;
+    colour: string;
+    direction: number;
+    pixelsPerPixel: number;
+    x: number;
+    y: number;
+    updateInterval: number;
+    lastUpdate: number;
+    constructor(text: string, colour: string, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+        this.context = context;
+        this.text = text;
+        this.colour = colour;
+        this.pixelsPerPixel = pixelsPerPixel;
+        this.x = x;
+        this.y = y;
+        this.updateInterval = 200;
+        this.lastUpdate = performance.now();
+        this.pixels = textFactory(this.text, this.x, this.y, this.pixelsPerPixel, this.colour);
+    }
+
+    getWidth() {
+        return 7 * this.pixelsPerPixel;
+    }
+
+    Clear() {
+        this.context.fillStyle = "black";
+        //this.context.fillRect(this.pixels[0].x - this.sprite.pixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    }
+
+    Update(deltaX: number) {
+        //this.Clear();
+        this.pixels = textFactory(this.text, this.x += deltaX, this.y, this.pixelsPerPixel, this.colour);
+        this.pixels.forEach(pixels => {
+            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y));
+        });
+    }
+}
+
+
+
+function textFactory(text : string, xStart : number, yStart : number, pixelsPerPixel : number, colour : string) : Pixel[][] {
     let lettersArray = text.split('').map(char => ascii[char]);
     console.log(lettersArray)
     let letters : Pixel[][] = Array(lettersArray.length);
-    for(let i = 0; i < lettersArray.length; i++){
-        letters[i] = spriteFactory(8, 7, pixelsPerPixel, xStart + i * 6 * pixelsPerPixel, yStart, lettersArray[i].pixels, colour) 
+    for(let i = 0; i < lettersArray.length; i++) {
+        letters[i] = spriteFactory(8, 7, pixelsPerPixel, xStart + i * 6 * pixelsPerPixel, yStart, lettersArray[i].pixels, colour) ;
     }
-    console.log(letters);
-    letters.forEach((letter, index) => letter.forEach(x => x.Update(context, x.x, x.y)));
+    return letters;
 }
 
-export { ascii, printText }
+export { ascii, textFactory as printText, Text }
