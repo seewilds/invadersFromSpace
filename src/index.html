@@ -9,25 +9,27 @@
 <body>
     <script type="module">
         import { Defender, Battlefield, Invader, Shield, Spaceship } from './js/characters.ts'
-        import { Battlefield } from './js/game.ts'
+        import { Battlefield, TitleScreen } from './js/game.ts'
         import { Invader } from './js/invader.ts'
         import { Shield as Shieldy, Saucer, InvaderType, Explostion } from "./js/types.ts"
         import {Crab, Squid, Octopus} from "./js/sprites.ts"
         import {printText} from "./js/characters.ts"
 
         var defender, crab, octopus, squid, shield, spaceship;
-        var battlefield = new Battlefield(
-            document.createElement("canvas"),
-            2,
-            {
-                setup: [{ count: 10, colour: "red", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
-                { count: 9, colour: "blue", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                { count: 7, colour: "pink", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
-                { count: 8, colour: "green", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },],
-                shieldCount : 4
-            });
+        // var battlefield = new Battlefield(
+        //     document.createElement("canvas"),
+        //     2,
+        //     {
+        //         setup: [{ count: 10, colour: "red", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
+        //         { count: 9, colour: "blue", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
+        //         { count: 7, colour: "pink", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
+        //         { count: 8, colour: "green", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },],
+        //         shieldCount : 4
+        //     });
+        let title = new TitleScreen(document.createElement("canvas"), 2);
         document.addEventListener('DOMContentLoaded', (event) => {
-            battlefield.start();
+            //battlefield.start();
+            title.start();
         });
     </script>
 </body>

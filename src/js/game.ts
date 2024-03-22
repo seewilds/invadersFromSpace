@@ -205,7 +205,41 @@ class Laser {
 }
 
 
-
+class TitleScreen {
+  canvas: HTMLCanvasElement;
+  context: CanvasRenderingContext2D | null;
+  scale: number;
+  pixelsPerPixel: number;
+  title: Text;
+  subtitle : Text;
+  pressStart: Text;
+  footer: Text;
+  lastUpdate : number;
+  constructor(canvas: HTMLCanvasElement, scale: number){
+    this.scale = scale;
+    this.canvas = canvas;
+    this.pixelsPerPixel = this.scale * this.scale;
+    this.canvas.width = 128 * this.pixelsPerPixel;
+    this.canvas.height = 128 * this.pixelsPerPixel;
+    this.context = canvas.getContext("2d");
+    this.context!.fillStyle = "black";
+    this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    this.title = new Text("SPACE INVADERS", "green", this.pixelsPerPixel, 10, 10, this.context!);
+    this.subtitle = new Text("TA DAH", "rgba(11, 180, 243, 0.28)", 3, 10, 50, this.context!);
+    this.pressStart = new Text("THIS IS ALL SO HARD", "rgba(205, 62, 81, 0.8)", 2, 10, 100, this.context!);
+    this.lastUpdate = performance.now();
+  }
+  start() {
+    requestAnimationFrame(this.Update.bind(this));
+  }
+  Update(timestamp) {
+    this.title.Update(0, 3);
+    this.subtitle.Update(0, 0);
+    this.pressStart.Update(0, 0);
+    requestAnimationFrame(this.Update.bind(this));
+  }
+}
 
 // space invaders is 128 x 128 pixels
 class Battlefield {
@@ -301,79 +335,73 @@ class Battlefield {
   }
 
   Update(timestamp) {
-    let title = new Text("SPACE INVADERS", "green", this.pixelsPerPixel, 10, 10, this.context!);
-    let tadah = new Text("TA DAH", "rgba(11, 180, 243, 0.28)", 3, 10, 50, this.context!);
-    let hard = new Text("THIS IS ALL SO HARD", "rgba(205, 62, 81, 0.8)", 2, 10, 100, this.context!);
-    title.Update(0);
-    tadah.Update(0);
-    hard.Update(0);
-  //   const deltaTime = timestamp - this.lastUpdate;
-  //   if (deltaTime >= this.updateInterval) {
+    const deltaTime = timestamp - this.lastUpdate;
+    if (deltaTime >= this.updateInterval) {
       
-  //     this.defender.Update(timestamp)
+      this.defender.Update(timestamp)
       
-  //     for (let i = this.invaders.length - 1; i >= 0; i--) {
-  //       if (this.invaders[i].health === 0) {
-  //         this.invaders[i].Clear();
-  //         this.invaders.splice(i, 1);
-  //       } else {
-  //         if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
-  //           this.deltaX *= 0;
-  //         }
-  //         this.invaders[i].Update(0);
-  //       }
-  //     }
+      for (let i = this.invaders.length - 1; i >= 0; i--) {
+        if (this.invaders[i].health === 0) {
+          this.invaders[i].Clear();
+          this.invaders.splice(i, 1);
+        } else {
+          if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
+            this.deltaX *= 0;
+          }
+          this.invaders[i].Update(0);
+        }
+      }
 
-  //     for (let i = this.shields.length - 1; i >= 0; i--) {
-  //       if (this.shields[i].pixels.length === 0) {
-  //         this.shields[i].Clear();  
-  //         this.shields.splice(i, 1);
-  //       } else if (this.shields[i].hits.length > 0) {
-  //         this.shields[i].Update();
-  //       } else {
-  //         this.shields[i].Update();
-  //       }
-  //     }
+      for (let i = this.shields.length - 1; i >= 0; i--) {
+        if (this.shields[i].pixels.length === 0) {
+          this.shields[i].Clear();  
+          this.shields.splice(i, 1);
+        } else if (this.shields[i].hits.length > 0) {
+          this.shields[i].Update();
+        } else {
+          this.shields[i].Update();
+        }
+      }
 
-  //     this.lastUpdate = timestamp;
-  //   }
-  //   else if (deltaTime >= 20) {
+      this.lastUpdate = timestamp;
+    }
+    else if (deltaTime >= 20) {
       
-  //     this.defender.Update(timestamp)
-  //     this.laserShots.forEach(shot => {
-  //       shot.Update();
-  //     });
+      this.defender.Update(timestamp)
+      this.laserShots.forEach(shot => {
+        shot.Update();
+      });
 
-  //     for (let i = this.invaders.length - 1; i >= 0; i--) {
-  //       for (let j = this.laserShots.length - 1; j >= 0; j--) {
-  //         if (this.laserShots[j].pixels.some(pixel => this.invaders[i].Hit(pixel.x, pixel.y))) {
-  //           this.invaders[i].health = 0;
-  //           this.invaders[i].Update(0);
-  //           this.laserShots[j].Clear();
-  //           this.laserShots.splice(j, 1);
-  //         }
-  //       }
-  //     }
-  //   }
+      for (let i = this.invaders.length - 1; i >= 0; i--) {
+        for (let j = this.laserShots.length - 1; j >= 0; j--) {
+          if (this.laserShots[j].pixels.some(pixel => this.invaders[i].Hit(pixel.x, pixel.y))) {
+            this.invaders[i].health = 0;
+            this.invaders[i].Update(0);
+            this.laserShots[j].Clear();
+            this.laserShots.splice(j, 1);
+          }
+        }
+      }
+    }
 
-  //   let index = 0;
-  //   for (let i = this.shields.length - 1; i >= 0; i--) {
-  //     for (let j = this.laserShots.length - 1; j >= 0; j--) {      
-  //       for(let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--){
-  //         index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
-  //         if(index >= 0){
-  //           this.shields[i].Hit(index);
-  //           this.laserShots[j].Clear();
-  //           this.laserShots.splice(j, 1);
-  //           l = 0;
-  //         }          
-  //     }
-  //   }
-  // }
+    let index = 0;
+    for (let i = this.shields.length - 1; i >= 0; i--) {
+      for (let j = this.laserShots.length - 1; j >= 0; j--) {      
+        for(let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--){
+          index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
+          if(index >= 0){
+            this.shields[i].Hit(index);
+            this.laserShots[j].Clear();
+            this.laserShots.splice(j, 1);
+            l = 0;
+          }          
+      }
+    }
+  }
     requestAnimationFrame(this.Update.bind(this));
   }
 }
 
 
 
-export { Defender, Battlefield, Shield, Spaceship, Laser };
+export { Defender, Battlefield, Shield, Spaceship, Laser, TitleScreen };

@@ -78,9 +78,9 @@ class Text {
         });
     }
 
-    Update(deltaX: number) {
-        //this.Clear();
-        this.pixels = textFactory(this.text, this.x += deltaX, this.y, this.pixelsPerPixel, this.colour);
+    Update(deltaX: number, deltaY: number) {
+        this.Clear();
+        this.pixels = textFactory(this.text, this.x, this.y += deltaY, this.pixelsPerPixel, this.colour);
         this.pixels.forEach(pixels => {
             pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y));
         });
