@@ -82,7 +82,7 @@ class Text {
         this.Clear();
         this.pixels = textFactory(this.text, this.x, this.y += deltaY, this.pixelsPerPixel, this.colour);
         this.pixels.forEach(pixels => {
-            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y));
+            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y += deltaY));
         });
     }
 }

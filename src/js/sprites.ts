@@ -248,7 +248,7 @@ const V: Sprite = {
 const W: Sprite = {
     rows: 8,
     cols: 7,
-    pixels: [8, 12, 15, 19, 22, 26, 28, 32, 35, 37, 39, 42, 43, 45, 46, 49, 53]
+    pixels: [8, 12, 15, 19, 22, 26, 29, 33, 36, 38, 40, 43, 44, 46, 47, 50, 54]
 }
 
 const X: Sprite = {
@@ -273,6 +273,11 @@ const SPACE: Sprite = {
     rows: 8,
     cols: 7,
     pixels: []
+}
+
+const characterConstants = {
+    rows: 8,
+    cols : 7
 }
 
 export { Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE, ShieldSprite, Saucer, Shot, Explosion, DefenderSprite, Crab, Octopus, Squid }

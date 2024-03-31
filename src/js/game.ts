@@ -34,7 +34,7 @@ class Defender {
     window.addEventListener('keyup', (event) => this.HandleKeyUp(event));  
   }
   
-    Update(timestamp) {
+    Update(timestamp) : void {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       if (
@@ -53,7 +53,7 @@ class Defender {
     }
   }
   
-  HandleKeyDown(event: KeyboardEvent) {
+  HandleKeyDown(event: KeyboardEvent): void {
     if (event.key == 'a') {
       this.deltaX = -this.pixelsPerPixel;
       return;
@@ -67,7 +67,7 @@ class Defender {
     }
   }
   
-  HandleKeyUp(event: KeyboardEvent) {
+  HandleKeyUp(event: KeyboardEvent) :void {
     if (event.key == 'a') {
       this.deltaX = 0;
     }
@@ -103,14 +103,14 @@ class Shield {
     this.x0 = this.pixels[0].x;
     this.y0 = this.pixels[0].y;
   }
-  Clear() {
+  Clear() :void {
     this.context.fillStyle = "black";
     this.context.fillRect(this.x0 - this.sprite.pixels[0] * this.pixelsPerPixel, this.y0, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
-  Hit(index: number) {
+  Hit(index: number): void {
     this.pixels.splice(index + 1);
   }
-  Update() {
+  Update() :void {
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y);
     });
@@ -143,7 +143,7 @@ class Spaceship {
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "silver");
   }
-  Update(timestamp) {
+  Update(timestamp) : void{
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       this.context.fillStyle = "black";
@@ -192,13 +192,13 @@ class Laser {
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "orange");
   }
-  Update() {
+  Update(): void{
     this.Clear();
     this.pixels.forEach((pixel, index) => {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
     });
   }
-  Clear() {
+  Clear(): void {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
@@ -225,15 +225,15 @@ class TitleScreen {
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.title = new Text("SPACE INVADERS", "green", this.pixelsPerPixel, 10, 10, this.context!);
-    this.subtitle = new Text("TA DAH", "rgba(11, 180, 243, 0.28)", 3, 10, 50, this.context!);
-    this.pressStart = new Text("THIS IS ALL SO HARD", "rgba(205, 62, 81, 0.8)", 2, 10, 100, this.context!);
+    this.title = new Text("INVADERS FROM SPACE", "green", this.pixelsPerPixel, 10, 10, this.context!);
+    this.subtitle = new Text("HAND ROLLED WITH LOVE", "rgba(11, 180, 243, 0.28)", 3, 10, 50, this.context!);
+    this.pressStart = new Text("PRESS SPACE TO START", "rgba(205, 62, 81, 0.8)", 2, 10, 100, this.context!);
     this.lastUpdate = performance.now();
   }
-  start() {
+  start(): void {
     requestAnimationFrame(this.Update.bind(this));
   }
-  Update(timestamp) {
+  Update(timestamp : number): void {
     this.title.Update(0, 3);
     this.subtitle.Update(0, 0);
     this.pressStart.Update(0, 0);
@@ -281,7 +281,7 @@ class Battlefield {
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  start() {
+  start(): void {
     requestAnimationFrame(this.Update.bind(this));
   }
 
@@ -289,7 +289,7 @@ class Battlefield {
     this.laserShots = [...this.laserShots, laser];
   };
 
-  setupInvaders(gameSetup: GameSetup) {
+  setupInvaders(gameSetup: GameSetup): void  {
     let arrayIndex = 0;
     let rowIndex = 0;
     gameSetup.setup.forEach(element => {
@@ -322,7 +322,7 @@ class Battlefield {
     });
   }
 
-  setupShields(gameSetup: GameSetup) {
+  setupShields(gameSetup: GameSetup): void  {
     let shieldWidth = ShieldSprite.cols * this.pixelsPerPixel;
     gameSetup.shieldCount = gameSetup.shieldCount * shieldWidth >= this.canvas.width ? Math.floor(this.canvas.width / shieldWidth) : gameSetup.shieldCount;
     let invaderHeight = ShieldSprite.cols * this.pixelsPerPixel;
@@ -334,7 +334,7 @@ class Battlefield {
     }
   }
 
-  Update(timestamp) {
+  Update(timestamp): void  {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       
