@@ -209,40 +209,41 @@ class TitleScreen {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
   scale: number;
-  pixelsPerPixel: number;
   title: Text;
+  titleScale: number;
   subtitle : Text;
+  subTitleScale: number;
   pressStart: Text;
+  pressStartScale: number;
   lastUpdate : number;
   constructor(canvas: HTMLCanvasElement, scale: number){
     this.scale = scale;
+    this.titleScale = this.scale;
+    this.pressStartScale = this.scale / 2;
     this.canvas = canvas;
-    this.pixelsPerPixel = this.scale * this.scale;
-    this.canvas.width = 128 * this.pixelsPerPixel;
-    this.canvas.height = 128 * this.pixelsPerPixel;
+    this.canvas.width = 128 * this.scale;
+    this.canvas.height = 128 * this.scale;
     this.context = canvas.getContext("2d");
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.title = new Text("INVADERS FROM SPACE", "green", this.pixelsPerPixel, this.centre("INVADERS FROM SPACE"), 0, this.context!, 6);
-    this.subtitle = new Text("HAND ROLLED WITH LOVE", "rgba(11, 180, 243, 0.28)", 3, this.centre("HAND ROLLED WITH LOVE"), 50, this.context!);
-    this.pressStart = new Text("PRESS SPACE TO START", "rgba(205, 62, 81, 0.8)", 2, 10, 100, this.context!);
+    this.title = new Text("INVADERS FROM SPACE", "green", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), 0, this.context!, 6);
+    this.pressStart = new Text("PRESS SPACE TO START", "rgba(205, 62, 81, 0.8)", this.pressStartScale, this.centreX("PRESS SPACE TO START", this.pressStartScale), this.centreY("PRESS SPACE TO START", this.pressStartScale), this.context!);
     this.lastUpdate = performance.now();
   }
-  getWidth(text: string): number {
-    console.log(characterConstants.rows * this.scale * text.length)
-    return characterConstants.cols * this.scale * text.length + 10 * text.length;
-}
-  centre(text: string): number{
-    console.log(this.canvas.width - (characterConstants.cols * this.scale * text.length) )
-    return (this.canvas.width - (6 * this.pixelsPerPixel * text.length) ) / 2;
+  
+  centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number{
+    return (this.canvas.width - (spacingOverride * scale * text.length) ) / 2;
+  }
+  centreY(text:string, scale: number){
+    return (this.canvas.height - (characterConstants.rows * scale)) / 2;
   }
   start(): void {
     requestAnimationFrame(this.Update.bind(this));
   }
   Update(timestamp : number): void {
     this.title.Update(0, 0);
-    this.subtitle.Update(0, 0);
+    //this.subtitle.Update(0, 0);
     this.pressStart.Update(0, 0);
     requestAnimationFrame(this.Update.bind(this));
   }
