@@ -38,12 +38,9 @@ class Invader {
     }
 
     Clear() {
-        this.context.fillStyle = "black";
-        if (this.health > 0) {
-            this.context.fillRect(this.pixels[0].x - this.sprite.pixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-        } else {
-            this.context.fillRect(this.pixels[0].x - (this.explosion.pixels[0] + 1) * this.pixelsPerPixel, this.pixels[0].y, this.explosion.cols * this.pixelsPerPixel, this.explosion.rows * this.pixelsPerPixel);
-        }
+        this.pixels.forEach(pixel => {
+            pixel.Update(this.context, pixel.x, pixel.y, "black");
+        });
     }
 
     Hit(x: number, y: number) {
