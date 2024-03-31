@@ -1,7 +1,7 @@
 import {  Sprite, GameSetup, InvaderType } from "./types.ts"
 import { Invader} from "./invader.ts"
 import { Pixel } from "./pixel.ts";
-import { DefenderSprite, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
+import { DefenderSprite, Saucer, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
 import { spriteFactory } from "./factories.ts";
 import { Text} from "./characters"
 
@@ -121,50 +121,42 @@ class Spaceship {
   context: CanvasRenderingContext2D;
   pixels: Pixel[];
   sprite: Sprite;
-  key: boolean;
-  deltaX: number;
-  deltaY: number;
-  pixelsPerPixel: number;
+  scale: number;
+  colour: string;
   x: number;
   y: number;
+  deltaX: number;
+  deltaY: number;
   direction: number;
-  updateInterval: number;
-  lastUpdate: number;
-  constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  constructor(scale: number, x: number, y: number, colour:string, context: CanvasRenderingContext2D) {
     this.context = context;
-    this.sprite = sprite;
-    this.deltaX = 5;
-    this.deltaY = 2;
-    this.pixelsPerPixel = pixelsPerPixel;
+    this.sprite = Saucer;
+    this.colour = colour;
+    this.scale = scale;
     this.x = x;
     this.y = y;
+    this.deltaX = 2;
+    this.deltaY = 2;
     this.direction = 0;
-    this.updateInterval = 10;
-    this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "silver");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
   }
-  Update(timestamp) : void{
-    const deltaTime = timestamp - this.lastUpdate;
-    if (deltaTime >= this.updateInterval) {
-      this.context.fillStyle = "black";
-      this.context.fillRect(this.pixels[0].x - this.sprite.pixels[0] * this.pixelsPerPixel, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
-      if (this.pixels[0].x < 0) {
-        this.deltaX = 5
-      }
-      if (this.pixels[0].x > 512) {
-        this.deltaX = -5
-      }
-      if (this.pixels[0].x < 200) {
-        this.deltaY = 1
-      }
-      if (this.pixels[0].x > 300) {
-        this.deltaY = -1
-      }
-      this.pixels.forEach(pixel => {
-        pixel.Update(this.context, pixel.x += this.deltaX, pixel.y += this.deltaY);
-      });
-      this.lastUpdate = timestamp;
-    }
+  Clear(colour: string = "black"): void {       
+    this.pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, colour));
+  }
+  GetPosition(){
+    // left, right, top, bottom
+    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]
+      
+    
+  }
+  Update(deltaX: number, deltaY: number, colour: string = this.colour) : void{
+    this.Clear();
+    this.deltaX = deltaX;
+    this.deltaY = deltaY;
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x += this.deltaX, this.y += this.deltaY, this.sprite.pixels, this.colour);
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x, pixel.y);
+    });
   }
 }
 
@@ -226,6 +218,8 @@ class TitleScreen {
   pressStartFadeStart: number;
   pressStartFadeEnd: number;
 
+  spaceship: Spaceship;
+
   lastUpdate : number;
   constructor(canvas: HTMLCanvasElement, scale: number){
     this.scale = scale;
@@ -240,6 +234,8 @@ class TitleScreen {
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     
+    this.spaceship = new Spaceship(this.scale, 5, 5, "silver", this.context!);
+
     this.titleYStart = -100;
     this.titleYEnd = this.centreY("INVADERS FROM SPACE", this.titleScale) - characterConstants.rows * this.titleScale;
     this.titleYCurent = -100;
@@ -269,11 +265,15 @@ class TitleScreen {
 
   Update(timestamp : number): boolean {
     let begin = false;
-    if(this.startGame > 1){
+    if(this.startGame > 0){
+      this.UpdateSpaceship();
+    }
+    if(this.startGame > 1){      
       begin = this.fadeOut();
+      window.removeEventListener('keydown', (event) => this.HandleSpace(event));  
     }else{
       this.UpdateTitle();
-      this.UpdatePressStart();  
+      this.UpdatePressStart();
     }
     requestAnimationFrame(this.Update.bind(this));
     return begin;
@@ -294,6 +294,23 @@ class TitleScreen {
       this.pressStartFadeCurrent += 0.02;
       this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
     }
+    else{
+      this.startGame = 1;
+    }
+  }
+
+  UpdateSpaceship(){
+    let position = this.spaceship.GetPosition();
+    let deltaX = this.spaceship.deltaX;
+    let deltaY = this.spaceship.deltaY;
+    // || position[0].x < 0
+    if(position[1].x > this.canvas.width ){
+      deltaX = -1 * this.spaceship.deltaX;
+    }
+    if(position[2].y < 0 || position[3].y > this.canvas.height / 3){
+      deltaY = -1 * this.spaceship.deltaY;
+    }
+    this.spaceship.Update(deltaX, deltaY);
   }
 
   setTextToFinal(): void{
@@ -322,7 +339,7 @@ class TitleScreen {
 
 
   HandleSpace(event : KeyboardEvent): void{
-    if(event.key === " " && this.startGame === 0){
+    if(event.key === " " && this.startGame === 0){      
       this.setTextToFinal();
     }
     this.startGame += 1;
