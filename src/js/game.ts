@@ -215,6 +215,7 @@ class TitleScreen {
   titleYCurent: number;
   titleYStart :number;
   titleYEnd : number;
+  titleOpacity: number;
 
   subtitle : Text;
   subTitleScale: number;
@@ -242,7 +243,8 @@ class TitleScreen {
     this.titleYStart = -100;
     this.titleYEnd = this.centreY("INVADERS FROM SPACE", this.titleScale) - characterConstants.rows * this.titleScale;
     this.titleYCurent = -100;
-    this.title = new Text("INVADERS FROM SPACE", "green", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), -100, this.context!, 6);
+    this.titleOpacity = 1;
+    this.title = new Text("INVADERS FROM SPACE", "rgba(0, 128, 0, 1)", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), -100, this.context!, 6);
 
     this.pressStartFadeCurrent = 0;
     this.pressStartFadeStart = 0;
@@ -266,15 +268,15 @@ class TitleScreen {
   }
 
   Update(timestamp : number): boolean {
-    if(this.startGame === 1){
-    
-      return true;
+    let begin = false;
+    if(this.startGame > 1){
+      begin = this.fadeOut();
+    }else{
+      this.UpdateTitle();
+      this.UpdatePressStart();  
     }
-
-    this.UpdateTitle();
-    this.UpdatePressStart();  
     requestAnimationFrame(this.Update.bind(this));
-    return false;
+    return begin;
   }
 
   UpdateTitle(){
@@ -294,7 +296,7 @@ class TitleScreen {
     }
   }
 
-  setTextToFinal(){
+  setTextToFinal(): void{
     let remainder = 0;
     if(this.titleYCurent < 0){
       remainder = this.titleYEnd + this.titleYCurent * -1; 
@@ -303,14 +305,27 @@ class TitleScreen {
     }    
     this.titleYCurent = this.titleYEnd; 
     this.title.Update(0, remainder);
+    this.pressStartFadeCurrent = this.pressStartFadeEnd;
     this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeEnd})`);
   }
 
+  fadeOut(): boolean{
+    if(this.titleOpacity > 0 || this.pressStartFadeCurrent > 0){
+      this.titleOpacity -= 0.01;
+      this.pressStartFadeCurrent -= 0.01;
+      this.title.Update(0, 0, `rgba(0, 128, 0, ${this.titleOpacity})`);
+      this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
+      return false;
+    }
+    return true;
+  }
+
+
   HandleSpace(event : KeyboardEvent): void{
     if(event.key === " " && this.startGame === 0){
-      this.startGame += 1;
       this.setTextToFinal();
     }
+    this.startGame += 1;
   }
 
 }
