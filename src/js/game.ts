@@ -145,17 +145,16 @@ class Spaceship {
   }
   GetPosition(){
     // left, right, top, bottom
-    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]
-      
-    
+    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]          
   }
   Update(deltaX: number, deltaY: number, colour: string = this.colour) : void{
     this.Clear();
     this.deltaX = deltaX;
     this.deltaY = deltaY;
+    this.colour = colour;
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x += this.deltaX, this.y += this.deltaY, this.sprite.pixels, this.colour);
     this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y);
+      pixel.Update(this.context, pixel.x, pixel.y, this.colour);
     });
   }
 }
@@ -201,7 +200,7 @@ class TitleScreen {
   context: CanvasRenderingContext2D | null;
   scale: number;
   startGame : number;
-
+  
   title: Text;
   titleScale: number;
   titleYCurent: number;
@@ -219,6 +218,8 @@ class TitleScreen {
   pressStartFadeEnd: number;
 
   spaceship: Spaceship;
+
+  stars: Pixel[];
 
   lastUpdate : number;
   constructor(canvas: HTMLCanvasElement, scale: number){
@@ -240,14 +241,15 @@ class TitleScreen {
     this.titleYEnd = this.centreY("INVADERS FROM SPACE", this.titleScale) - characterConstants.rows * this.titleScale;
     this.titleYCurent = -100;
     this.titleOpacity = 1;
-    this.title = new Text("INVADERS FROM SPACE", "rgba(0, 128, 0, 1)", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), -100, this.context!, 6);
+    this.title = new Text("INVADERS FROM SPACE", "rgba(0, 255, 0, 1)", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), -100, this.context!, 6);
 
     this.pressStartFadeCurrent = 0;
     this.pressStartFadeStart = 0;
     this.pressStartFadeEnd = 0.8;
-    this.pressStart = new Text("PRESS SPACE TO START", `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`, this.pressStartScale, this.centreX("PRESS SPACE TO START", this.pressStartScale), this.centreY("PRESS SPACE TO START", this.pressStartScale), this.context!);
+    this.pressStart = new Text("PRESS SPACE TO START", `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`, this.pressStartScale, this.centreX("PRESS SPACE TO START", this.pressStartScale), this.centreY("PRESS SPACE TO START", this.pressStartScale), this.context!);
 
     this.lastUpdate = performance.now();
+    this.stars = this.setStars();
     window.addEventListener('keydown', (event) => this.HandleSpace(event));  
   }
   
@@ -264,6 +266,7 @@ class TitleScreen {
   }
 
   Update(timestamp : number): boolean {
+    this.UpdateStars();
     let begin = false;
     if(this.startGame > 0){
       this.UpdateSpaceship();
@@ -292,7 +295,7 @@ class TitleScreen {
     }
     if(this.pressStartFadeCurrent < this.pressStartFadeEnd){
       this.pressStartFadeCurrent += 0.02;
-      this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
+      this.pressStart.Update(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
     }
     else{
       this.startGame = 1;
@@ -310,7 +313,7 @@ class TitleScreen {
     if(position[2].y < 0 || position[3].y > this.canvas.height / 3){
       deltaY = -1 * this.spaceship.deltaY;
     }
-    this.spaceship.Update(deltaX, deltaY);
+    this.spaceship.Update(deltaX, deltaY, 'rgb(192,192,192, 0.7)');
   }
 
   setTextToFinal(): void{
@@ -323,20 +326,34 @@ class TitleScreen {
     this.titleYCurent = this.titleYEnd; 
     this.title.Update(0, remainder);
     this.pressStartFadeCurrent = this.pressStartFadeEnd;
-    this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeEnd})`);
+    this.pressStart.Update(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeEnd})`);
   }
 
   fadeOut(): boolean{
     if(this.titleOpacity > 0 || this.pressStartFadeCurrent > 0){
       this.titleOpacity -= 0.01;
       this.pressStartFadeCurrent -= 0.01;
-      this.title.Update(0, 0, `rgba(0, 128, 0, ${this.titleOpacity})`);
+      this.title.Update(0, 0, `rgba(0, 255, 0, ${this.titleOpacity})`);
       this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
       return false;
     }
     return true;
   }
 
+  setStars(): Pixel[] {
+    let starPixels: Pixel[] = [];
+    for(let i = 0; i < 75; i++){
+      let pixel = new Pixel(this.scale, this.scale, Math.floor(Math.random() * (this.canvas.width)), Math.floor(Math.random() * (this.canvas.height)), "white");
+      starPixels.push(pixel)
+    }
+    return starPixels;
+  }
+
+  UpdateStars(){
+    this.stars.forEach(star => {
+      star.Update(this.context!, star.x, star.y);
+    });
+  }
 
   HandleSpace(event : KeyboardEvent): void{
     if(event.key === " " && this.startGame === 0){      
