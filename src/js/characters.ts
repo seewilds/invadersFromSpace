@@ -1,7 +1,7 @@
-import { Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE } from "./sprites";
-import { Sprite, Character } from "./types"
+import { characterConstants, Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE } from "./sprites";
+import { Character } from "./types"
 import { Pixel } from "./pixel";
-import { spriteFactory } from "./factories";
+import { textFactory } from "./factories";
 
 const ascii: Character = {
     "0" : Zero,
@@ -43,14 +43,11 @@ const ascii: Character = {
     " " : SPACE
 }
 
-
 class Text {
     context: CanvasRenderingContext2D;
     text: string;
     pixels: Pixel[][];
-    explosion: Sprite;
     colour: string;
-    direction: number;
     pixelsPerPixel: number;
     x: number;
     y: number;
@@ -68,19 +65,19 @@ class Text {
         this.pixels = textFactory(this.text, this.x, this.y, this.pixelsPerPixel, this.colour);
     }
 
-    getWidth() {
-        return 7 * this.pixelsPerPixel;
+    getWidth(): number {
+        return characterConstants.rows * this.pixelsPerPixel * this.text.length;
     }
 
-    Clear() {       
+    Clear(colour: string = "black"): void {       
         this.pixels.forEach(pixels => {
-            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, "black"));
+            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, colour));
         });
     }
 
-    Update(deltaX: number, deltaY: number) {
+    Update(deltaX: number, deltaY: number): void {
         this.Clear();
-        this.pixels = textFactory(this.text, this.x, this.y += deltaY, this.pixelsPerPixel, this.colour);
+        this.pixels = textFactory(this.text, this.x += deltaX, this.y += deltaY, this.pixelsPerPixel, this.colour);
         this.pixels.forEach(pixels => {
             pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y += deltaY));
         });
@@ -88,15 +85,4 @@ class Text {
 }
 
 
-
-function textFactory(text : string, xStart : number, yStart : number, pixelsPerPixel : number, colour : string) : Pixel[][] {
-    let lettersArray = text.split('').map(char => ascii[char]);
-    console.log(lettersArray)
-    let letters : Pixel[][] = Array(lettersArray.length);
-    for(let i = 0; i < lettersArray.length; i++) {
-        letters[i] = spriteFactory(8, 7, pixelsPerPixel, xStart + i * 6 * pixelsPerPixel, yStart, lettersArray[i].pixels, colour) ;
-    }
-    return letters;
-}
-
-export { ascii, textFactory as printText, Text }
+export { ascii, Text }

@@ -3,7 +3,7 @@ import { Invader} from "./invader.ts"
 import { Pixel } from "./pixel.ts";
 import { DefenderSprite, ShieldSprite, Shot } from "./sprites.ts";
 import { spriteFactory } from "./factories.ts";
-import {printText, Text} from "./characters"
+import { Text} from "./characters"
 
 
 class Defender {

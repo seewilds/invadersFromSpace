@@ -1,6 +1,10 @@
+import { ascii } from "./characters";
 import { Pixel } from "./pixel";
+import { characterConstants } from "./sprites";
+import { Sprite } from "./types";
 
-export function spriteFactory(height: number, width: number, pixelsPerPixel: number, xStart: number, yStart: number, activePixels: number[], colour: string): Pixel[] {
+
+function spriteFactory(height: number, width: number, pixelsPerPixel: number, xStart: number, yStart: number, activePixels: number[], colour: string): Pixel[] {
   let spriteArray : Pixel[] = new Array(activePixels.length);
   let activePixelsSet = 0;
   let loopNumber = 0;
@@ -15,3 +19,14 @@ export function spriteFactory(height: number, width: number, pixelsPerPixel: num
   }
   return spriteArray;
 }
+
+function textFactory(text : string, xStart : number, yStart : number, pixelsPerPixel : number, colour : string) : Pixel[][] {
+  let lettersArray: Sprite[] = text.split('').map(char => ascii[char]);
+  let letters : Pixel[][] = Array(lettersArray.length);
+  for(let i = 0; i < lettersArray.length; i++) {
+      letters[i] = spriteFactory(characterConstants.rows, characterConstants.cols, pixelsPerPixel, xStart + i * 6 * pixelsPerPixel, yStart, lettersArray[i].pixels, colour) ;
+  }
+  return letters;
+}
+
+export {spriteFactory, textFactory}

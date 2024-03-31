@@ -280,4 +280,4 @@ const characterConstants = {
     cols : 7
 }
 
-export { Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE, ShieldSprite, Saucer, Shot, Explosion, DefenderSprite, Crab, Octopus, Squid }
+export { characterConstants, Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE, ShieldSprite, Saucer, Shot, Explosion, DefenderSprite, Crab, Octopus, Squid }
