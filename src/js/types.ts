@@ -4,6 +4,16 @@ enum InvaderType{
     Octopus 
 }
 
+interface Sprite {
+    rows: number;
+    cols: number;
+    pixels: number[];    
+}
+
+interface CharacterSprite extends Sprite {
+    alternatePixels: number[];
+}
+
 type Character = {
     [key : string] : Sprite;  
 }
@@ -20,18 +30,5 @@ interface GameSetup {
     setup : InvaderRow[];
     shieldCount : number
 }
-
-interface Sprite {
-    rows: number;
-    cols: number;
-    pixels: number[];
-    
-}
-
-interface CharacterSprite extends Sprite {
-    alternatePixels: number[];
-}
-
-
 
 export { Character, CharacterSprite, Sprite,  GameSetup, InvaderType }
