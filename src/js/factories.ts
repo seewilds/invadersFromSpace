@@ -20,11 +20,11 @@ function spriteFactory(height: number, width: number, pixelsPerPixel: number, xS
   return spriteArray;
 }
 
-function textFactory(text : string, xStart : number, yStart : number, pixelsPerPixel : number, colour : string) : Pixel[][] {
+function textFactory(text : string, xStart : number, yStart : number, pixelsPerPixel : number, colour : string, spacingOverride: number = characterConstants.cols) : Pixel[][] {
   let lettersArray: Sprite[] = text.split('').map(char => ascii[char]);
   let letters : Pixel[][] = Array(lettersArray.length);
   for(let i = 0; i < lettersArray.length; i++) {
-      letters[i] = spriteFactory(characterConstants.rows, characterConstants.cols, pixelsPerPixel, xStart + i * 6 * pixelsPerPixel, yStart, lettersArray[i].pixels, colour) ;
+      letters[i] = spriteFactory(characterConstants.rows, characterConstants.cols, pixelsPerPixel, xStart + i * pixelsPerPixel * spacingOverride, yStart, lettersArray[i].pixels, colour) ;
   }
   return letters;
 }

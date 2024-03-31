@@ -49,24 +49,22 @@ class Text {
     pixels: Pixel[][];
     colour: string;
     pixelsPerPixel: number;
+    spaceOverride : number;
     x: number;
     y: number;
     updateInterval: number;
     lastUpdate: number;
-    constructor(text: string, colour: string, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+    constructor(text: string, colour: string, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D, spaceOverride: number = characterConstants.cols) {
         this.context = context;
         this.text = text;
         this.colour = colour;
         this.pixelsPerPixel = pixelsPerPixel;
+        this.spaceOverride = spaceOverride;
         this.x = x;
         this.y = y;
         this.updateInterval = 200;
         this.lastUpdate = performance.now();
-        this.pixels = textFactory(this.text, this.x, this.y, this.pixelsPerPixel, this.colour);
-    }
-
-    getWidth(): number {
-        return characterConstants.rows * this.pixelsPerPixel * this.text.length;
+        this.pixels = textFactory(this.text, this.x, this.y, this.pixelsPerPixel, this.colour, this.spaceOverride);
     }
 
     Clear(colour: string = "black"): void {       
@@ -77,7 +75,7 @@ class Text {
 
     Update(deltaX: number, deltaY: number): void {
         this.Clear();
-        this.pixels = textFactory(this.text, this.x += deltaX, this.y += deltaY, this.pixelsPerPixel, this.colour);
+        this.pixels = textFactory(this.text, this.x += deltaX, this.y += deltaY, this.pixelsPerPixel, this.colour, this.spaceOverride);
         this.pixels.forEach(pixels => {
             pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y += deltaY));
         });

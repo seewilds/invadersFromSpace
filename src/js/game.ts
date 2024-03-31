@@ -1,7 +1,7 @@
 import {  Sprite, GameSetup, InvaderType } from "./types.ts"
 import { Invader} from "./invader.ts"
 import { Pixel } from "./pixel.ts";
-import { DefenderSprite, ShieldSprite, Shot } from "./sprites.ts";
+import { DefenderSprite, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
 import { spriteFactory } from "./factories.ts";
 import { Text} from "./characters"
 
@@ -213,7 +213,6 @@ class TitleScreen {
   title: Text;
   subtitle : Text;
   pressStart: Text;
-  footer: Text;
   lastUpdate : number;
   constructor(canvas: HTMLCanvasElement, scale: number){
     this.scale = scale;
@@ -225,16 +224,24 @@ class TitleScreen {
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.title = new Text("INVADERS FROM SPACE", "green", this.pixelsPerPixel, 10, 10, this.context!);
-    this.subtitle = new Text("HAND ROLLED WITH LOVE", "rgba(11, 180, 243, 0.28)", 3, 10, 50, this.context!);
+    this.title = new Text("INVADERS FROM SPACE", "green", this.pixelsPerPixel, this.centre("INVADERS FROM SPACE"), 0, this.context!, 6);
+    this.subtitle = new Text("HAND ROLLED WITH LOVE", "rgba(11, 180, 243, 0.28)", 3, this.centre("HAND ROLLED WITH LOVE"), 50, this.context!);
     this.pressStart = new Text("PRESS SPACE TO START", "rgba(205, 62, 81, 0.8)", 2, 10, 100, this.context!);
     this.lastUpdate = performance.now();
+  }
+  getWidth(text: string): number {
+    console.log(characterConstants.rows * this.scale * text.length)
+    return characterConstants.cols * this.scale * text.length + 10 * text.length;
+}
+  centre(text: string): number{
+    console.log(this.canvas.width - (characterConstants.cols * this.scale * text.length) )
+    return (this.canvas.width - (6 * this.pixelsPerPixel * text.length) ) / 2;
   }
   start(): void {
     requestAnimationFrame(this.Update.bind(this));
   }
   Update(timestamp : number): void {
-    this.title.Update(0, 3);
+    this.title.Update(0, 0);
     this.subtitle.Update(0, 0);
     this.pressStart.Update(0, 0);
     requestAnimationFrame(this.Update.bind(this));
