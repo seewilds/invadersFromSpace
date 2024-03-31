@@ -204,20 +204,31 @@ class Laser {
   }
 }
 
-
 class TitleScreen {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
   scale: number;
+  startGame : number;
+
   title: Text;
   titleScale: number;
+  titleYCurent: number;
+  titleYStart :number;
+  titleYEnd : number;
+
   subtitle : Text;
   subTitleScale: number;
+
   pressStart: Text;
   pressStartScale: number;
+  pressStartFadeCurrent: number;
+  pressStartFadeStart: number;
+  pressStartFadeEnd: number;
+
   lastUpdate : number;
   constructor(canvas: HTMLCanvasElement, scale: number){
     this.scale = scale;
+    this.startGame = 0;
     this.titleScale = this.scale;
     this.pressStartScale = this.scale / 2;
     this.canvas = canvas;
@@ -227,26 +238,81 @@ class TitleScreen {
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.title = new Text("INVADERS FROM SPACE", "green", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), 0, this.context!, 6);
-    this.pressStart = new Text("PRESS SPACE TO START", "rgba(205, 62, 81, 0.8)", this.pressStartScale, this.centreX("PRESS SPACE TO START", this.pressStartScale), this.centreY("PRESS SPACE TO START", this.pressStartScale), this.context!);
+    
+    this.titleYStart = -100;
+    this.titleYEnd = this.centreY("INVADERS FROM SPACE", this.titleScale) - characterConstants.rows * this.titleScale;
+    this.titleYCurent = -100;
+    this.title = new Text("INVADERS FROM SPACE", "green", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), -100, this.context!, 6);
+
+    this.pressStartFadeCurrent = 0;
+    this.pressStartFadeStart = 0;
+    this.pressStartFadeEnd = 0.8;
+    this.pressStart = new Text("PRESS SPACE TO START", `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`, this.pressStartScale, this.centreX("PRESS SPACE TO START", this.pressStartScale), this.centreY("PRESS SPACE TO START", this.pressStartScale), this.context!);
+
     this.lastUpdate = performance.now();
+    window.addEventListener('keydown', (event) => this.HandleSpace(event));  
   }
   
   centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number{
     return (this.canvas.width - (spacingOverride * scale * text.length) ) / 2;
   }
+
   centreY(text:string, scale: number){
     return (this.canvas.height - (characterConstants.rows * scale)) / 2;
   }
+
   start(): void {
     requestAnimationFrame(this.Update.bind(this));
   }
-  Update(timestamp : number): void {
-    this.title.Update(0, 0);
-    //this.subtitle.Update(0, 0);
-    this.pressStart.Update(0, 0);
+
+  Update(timestamp : number): boolean {
+    if(this.startGame === 1){
+    
+      return true;
+    }
+
+    this.UpdateTitle();
+    this.UpdatePressStart();  
     requestAnimationFrame(this.Update.bind(this));
+    return false;
   }
+
+  UpdateTitle(){
+    if(this.titleYCurent < this.titleYEnd){
+      this.titleYCurent += 2;
+      this.title.Update(0, 2);
+    }
+  }
+
+  UpdatePressStart(){
+    if(this.titleYCurent != this.titleYEnd){
+      return;
+    }
+    if(this.pressStartFadeCurrent < this.pressStartFadeEnd){
+      this.pressStartFadeCurrent += 0.02;
+      this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
+    }
+  }
+
+  setTextToFinal(){
+    let remainder = 0;
+    if(this.titleYCurent < 0){
+      remainder = this.titleYEnd + this.titleYCurent * -1; 
+    }else{
+      remainder = this.titleYEnd - this.titleYCurent;
+    }    
+    this.titleYCurent = this.titleYEnd; 
+    this.title.Update(0, remainder);
+    this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeEnd})`);
+  }
+
+  HandleSpace(event : KeyboardEvent): void{
+    if(event.key === " " && this.startGame === 0){
+      this.startGame += 1;
+      this.setTextToFinal();
+    }
+  }
+
 }
 
 // space invaders is 128 x 128 pixels

@@ -73,11 +73,14 @@ class Text {
         });
     }
 
-    Update(deltaX: number, deltaY: number): void {
+    Update(deltaX: number, deltaY: number, colour: string = this.colour): void {
         this.Clear();
-        this.pixels = textFactory(this.text, this.x += deltaX, this.y += deltaY, this.scale, this.colour, this.spaceOverride);
+        this.colour = colour;
+        this.x += deltaX;
+        this.y += deltaY;
+        this.pixels = textFactory(this.text, this.x, this.y, this.scale, this.colour, this.spaceOverride);
         this.pixels.forEach(pixels => {
-            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y += deltaY));
+            pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y));
         });
     }
 }
