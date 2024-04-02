@@ -1,9 +1,9 @@
-import {  Sprite, GameSetup, InvaderType } from "./types.ts"
-import { Invader} from "./invader.ts"
+import { Sprite, GameSetup, InvaderType } from "./types.ts"
+import { Invader } from "./invader.ts"
 import { Pixel } from "./pixel.ts";
 import { DefenderSprite, Saucer, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
 import { spriteFactory } from "./factories.ts";
-import { Text} from "./characters"
+import { Text } from "./characters"
 
 
 class Defender {
@@ -31,10 +31,10 @@ class Defender {
     this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "#1FFE1F");
     this.addShots = addShots;
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
-    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));  
+    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
   }
-  
-    Update(timestamp) : void {
+
+  Update(timestamp): void {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       if (
@@ -52,7 +52,7 @@ class Defender {
       this.lastUpdate = timestamp;
     }
   }
-  
+
   HandleKeyDown(event: KeyboardEvent): void {
     if (event.key == 'a') {
       this.deltaX = -this.pixelsPerPixel;
@@ -66,8 +66,8 @@ class Defender {
       this.addShots(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context));
     }
   }
-  
-  HandleKeyUp(event: KeyboardEvent) :void {
+
+  HandleKeyUp(event: KeyboardEvent): void {
     if (event.key == 'a') {
       this.deltaX = 0;
     }
@@ -89,8 +89,8 @@ class Shield {
   pixelsPerPixel: number;
   x: number;
   y: number;
-  x0 : number;
-  y0 : number;
+  x0: number;
+  y0: number;
   constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.hits = [];
@@ -103,14 +103,14 @@ class Shield {
     this.x0 = this.pixels[0].x;
     this.y0 = this.pixels[0].y;
   }
-  Clear() :void {
+  Clear(): void {
     this.context.fillStyle = "black";
     this.context.fillRect(this.x0 - this.sprite.pixels[0] * this.pixelsPerPixel, this.y0, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
   Hit(index: number): void {
     this.pixels.splice(index + 1);
   }
-  Update() :void {
+  Update(): void {
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y);
     });
@@ -128,7 +128,7 @@ class Spaceship {
   deltaX: number;
   deltaY: number;
   direction: number;
-  constructor(scale: number, x: number, y: number, colour:string, context: CanvasRenderingContext2D) {
+  constructor(scale: number, x: number, y: number, colour: string, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = Saucer;
     this.colour = colour;
@@ -140,14 +140,14 @@ class Spaceship {
     this.direction = 0;
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
   }
-  Clear(colour: string = "black"): void {       
+  Clear(colour: string = "black"): void {
     this.pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, colour));
   }
-  GetPosition(){
+  GetPosition() {
     // left, right, top, bottom
-    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]          
+    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]
   }
-  Update(deltaX: number, deltaY: number, colour: string = this.colour) : void{
+  Update(deltaX: number, deltaY: number, colour: string = this.colour): void {
     this.Clear();
     this.deltaX = deltaX;
     this.deltaY = deltaY;
@@ -183,7 +183,7 @@ class Laser {
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "orange");
   }
-  Update(): void{
+  Update(): void {
     this.Clear();
     this.pixels.forEach((pixel, index) => {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
@@ -199,16 +199,16 @@ class TitleScreen {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
   scale: number;
-  startGame : number;
-  
+  startGame: number;
+
   title: Text;
   titleScale: number;
   titleYCurent: number;
-  titleYStart :number;
-  titleYEnd : number;
+  titleYStart: number;
+  titleYEnd: number;
   titleOpacity: number;
 
-  subtitle : Text;
+  subtitle: Text;
   subTitleScale: number;
 
   pressStart: Text;
@@ -221,8 +221,8 @@ class TitleScreen {
 
   stars: Pixel[];
 
-  lastUpdate : number;
-  constructor(canvas: HTMLCanvasElement, scale: number){
+  lastUpdate: number;
+  constructor(canvas: HTMLCanvasElement, scale: number) {
     this.scale = scale;
     this.startGame = 0;
     this.titleScale = this.scale;
@@ -234,7 +234,7 @@ class TitleScreen {
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    
+
     this.spaceship = new Spaceship(this.scale, 5, 5, "silver", this.context!);
 
     this.titleYStart = -100;
@@ -250,14 +250,14 @@ class TitleScreen {
 
     this.lastUpdate = performance.now();
     this.stars = this.setStars();
-    window.addEventListener('keydown', (event) => this.HandleSpace(event));  
-  }
-  
-  centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number{
-    return (this.canvas.width - (spacingOverride * scale * text.length) ) / 2;
+    window.addEventListener('keydown', (event) => this.HandleSpace(event));
   }
 
-  centreY(text:string, scale: number){
+  centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
+    return (this.canvas.width - (spacingOverride * scale * text.length)) / 2;
+  }
+
+  centreY(text: string, scale: number) {
     return (this.canvas.height - (characterConstants.rows * scale)) / 2;
   }
 
@@ -265,16 +265,16 @@ class TitleScreen {
     requestAnimationFrame(this.Update.bind(this));
   }
 
-  Update(timestamp : number): boolean {
+  Update(timestamp: number): boolean {
     this.UpdateStars();
     let begin = false;
-    if(this.startGame > 0){
+    if (this.startGame > 0) {
       this.UpdateSpaceship();
     }
-    if(this.startGame > 1){      
+    if (this.startGame > 1) {
       begin = this.fadeOut();
-      window.removeEventListener('keydown', (event) => this.HandleSpace(event));  
-    }else{
+      window.removeEventListener('keydown', (event) => this.HandleSpace(event));
+    } else {
       this.UpdateTitle();
       this.UpdatePressStart();
     }
@@ -282,55 +282,55 @@ class TitleScreen {
     return begin;
   }
 
-  UpdateTitle(){
-    if(this.titleYCurent < this.titleYEnd){
+  UpdateTitle() {
+    if (this.titleYCurent < this.titleYEnd) {
       this.titleYCurent += 2;
       this.title.Update(0, 2);
     }
   }
 
-  UpdatePressStart(){
-    if(this.titleYCurent != this.titleYEnd){
+  UpdatePressStart() {
+    if (this.titleYCurent != this.titleYEnd) {
       return;
     }
-    if(this.pressStartFadeCurrent < this.pressStartFadeEnd){
+    if (this.pressStartFadeCurrent < this.pressStartFadeEnd) {
       this.pressStartFadeCurrent += 0.02;
       this.pressStart.Update(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
     }
-    else{
+    else {
       this.startGame = 1;
     }
   }
 
-  UpdateSpaceship(){
+  UpdateSpaceship() {
     let position = this.spaceship.GetPosition();
     let deltaX = this.spaceship.deltaX;
     let deltaY = this.spaceship.deltaY;
     // || position[0].x < 0
-    if(position[1].x > this.canvas.width ){
+    if (position[1].x > this.canvas.width) {
       deltaX = -1 * this.spaceship.deltaX;
     }
-    if(position[2].y < 0 || position[3].y > this.canvas.height / 3){
+    if (position[2].y < 0 || position[3].y > this.canvas.height / 3) {
       deltaY = -1 * this.spaceship.deltaY;
     }
     this.spaceship.Update(deltaX, deltaY, 'rgb(192,192,192, 0.7)');
   }
 
-  setTextToFinal(): void{
+  setTextToFinal(): void {
     let remainder = 0;
-    if(this.titleYCurent < 0){
-      remainder = this.titleYEnd + this.titleYCurent * -1; 
-    }else{
+    if (this.titleYCurent < 0) {
+      remainder = this.titleYEnd + this.titleYCurent * -1;
+    } else {
       remainder = this.titleYEnd - this.titleYCurent;
-    }    
-    this.titleYCurent = this.titleYEnd; 
+    }
+    this.titleYCurent = this.titleYEnd;
     this.title.Update(0, remainder);
     this.pressStartFadeCurrent = this.pressStartFadeEnd;
     this.pressStart.Update(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeEnd})`);
   }
 
-  fadeOut(): boolean{
-    if(this.titleOpacity > 0 || this.pressStartFadeCurrent > 0){
+  fadeOut(): boolean {
+    if (this.titleOpacity > 0 || this.pressStartFadeCurrent > 0) {
       this.titleOpacity -= 0.01;
       this.pressStartFadeCurrent -= 0.01;
       this.title.Update(0, 0, `rgba(0, 255, 0, ${this.titleOpacity})`);
@@ -342,21 +342,21 @@ class TitleScreen {
 
   setStars(): Pixel[] {
     let starPixels: Pixel[] = [];
-    for(let i = 0; i < 75; i++){
+    for (let i = 0; i < 75; i++) {
       let pixel = new Pixel(this.scale, this.scale, Math.floor(Math.random() * (this.canvas.width)), Math.floor(Math.random() * (this.canvas.height)), "white");
       starPixels.push(pixel)
     }
     return starPixels;
   }
 
-  UpdateStars(){
+  UpdateStars() {
     this.stars.forEach(star => {
       star.Update(this.context!, star.x, star.y);
     });
   }
 
-  HandleSpace(event : KeyboardEvent): void{
-    if(event.key === " " && this.startGame === 0){      
+  HandleSpace(event: KeyboardEvent): void {
+    if (event.key === " " && this.startGame === 0) {
       this.setTextToFinal();
     }
     this.startGame += 1;
@@ -377,7 +377,9 @@ class Battlefield {
   laserShots: Laser[];
   shields: Shield[];
   deltaX: number;
+  gameId: number;
   constructor(canvas: HTMLCanvasElement, scale: number, gameSetup: GameSetup) {
+    this.gameId = 0;
     this.invaders = new Array();
     this.scale = scale;
     this.canvas = canvas;
@@ -393,8 +395,8 @@ class Battlefield {
     this.deltaX = 1;
     this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.addShots, this.context!);
     this.setupInvaders(gameSetup);
-    this.setupShields(gameSetup);
-    this.updateInterval = 100;
+    //this.setupShields(gameSetup);
+    this.updateInterval = 200;
     this.lastUpdate = performance.now();
   }
 
@@ -405,14 +407,14 @@ class Battlefield {
   }
 
   start(): void {
-    requestAnimationFrame(this.Update.bind(this));
+    requestAnimationFrame(this.main.bind(this));
   }
 
   addShots = (laser: Laser) => {
     this.laserShots = [...this.laserShots, laser];
   };
 
-  setupInvaders(gameSetup: GameSetup): void  {
+  setupInvaders(gameSetup: GameSetup): void {
     let arrayIndex = 0;
     let rowIndex = 0;
     gameSetup.setup.forEach(element => {
@@ -445,7 +447,7 @@ class Battlefield {
     });
   }
 
-  setupShields(gameSetup: GameSetup): void  {
+  setupShields(gameSetup: GameSetup): void {
     let shieldWidth = ShieldSprite.cols * this.pixelsPerPixel;
     gameSetup.shieldCount = gameSetup.shieldCount * shieldWidth >= this.canvas.width ? Math.floor(this.canvas.width / shieldWidth) : gameSetup.shieldCount;
     let invaderHeight = ShieldSprite.cols * this.pixelsPerPixel;
@@ -457,12 +459,12 @@ class Battlefield {
     }
   }
 
-  Update(timestamp): void  {
+  main(timestamp): void {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
-      
+
       this.defender.Update(timestamp)
-      
+
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
           this.invaders[i].Clear();
@@ -477,7 +479,7 @@ class Battlefield {
 
       for (let i = this.shields.length - 1; i >= 0; i--) {
         if (this.shields[i].pixels.length === 0) {
-          this.shields[i].Clear();  
+          this.shields[i].Clear();
           this.shields.splice(i, 1);
         } else if (this.shields[i].hits.length > 0) {
           this.shields[i].Update();
@@ -489,7 +491,7 @@ class Battlefield {
       this.lastUpdate = timestamp;
     }
     else if (deltaTime >= 20) {
-      
+
       this.defender.Update(timestamp)
       this.laserShots.forEach(shot => {
         shot.Update();
@@ -509,19 +511,19 @@ class Battlefield {
 
     let index = 0;
     for (let i = this.shields.length - 1; i >= 0; i--) {
-      for (let j = this.laserShots.length - 1; j >= 0; j--) {      
-        for(let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--){
+      for (let j = this.laserShots.length - 1; j >= 0; j--) {
+        for (let l = this.laserShots[j].pixels.length - 2; l >= 0 && this.laserShots.length > 0; l--) {
           index = this.shields[i].pixels.findIndex(pixel => pixel.hit(this.laserShots[j].pixels[1].x, this.laserShots[j].pixels[1].y));
-          if(index >= 0){
+          if (index >= 0) {
             this.shields[i].Hit(index);
             this.laserShots[j].Clear();
             this.laserShots.splice(j, 1);
             l = 0;
-          }          
+          }
+        }
       }
     }
-  }
-    requestAnimationFrame(this.Update.bind(this));
+    this.gameId = requestAnimationFrame(this.main.bind(this));
   }
 }
 

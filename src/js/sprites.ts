@@ -20,8 +20,8 @@ const Shot: Sprite = {
 
 const Explosion: Sprite = {
     rows: 8,
-    cols: 13,
-    pixels: [4, 8, 14, 18, 20, 24, 28, 36, 42, 48, 42, 43, 53, 54, 58, 64, 70, 73, 75, 78, 72, 75, 79, 82]
+    cols: 12,
+    pixels: [4, 7, 13, 17, 18, 22, 26, 33, 39, 44, 48, 49, 58, 59, 63, 68, 74, 77, 78, 81, 85, 88, 91, 94]
 }
 
 const DefenderSprite: Sprite = {
