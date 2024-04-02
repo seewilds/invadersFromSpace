@@ -44,7 +44,7 @@ class Invader {
         });
     }
 
-    Hit(laser : Laser): boolean {        
+    hit(laser : Laser): boolean {        
         for(let i = 0; i < this.pixels.length; i++){
             for(let j = 0; j < laser.pixels.length - 1; j++){
                 if(Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y){
@@ -59,7 +59,7 @@ class Invader {
         this.Clear();
         deltaX *= this.direction;
         if (this.health === 0) {
-            this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.pixels, this.colour)
+            this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.pixels, "rgb(249, 200, 14)")
             this.altActive = false;
         }
         else if (this.altActive) {

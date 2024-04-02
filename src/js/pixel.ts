@@ -18,9 +18,6 @@ class Pixel {
         context.fillStyle = this.colour;
         context.fillRect(this.x, this.y, this.width, this.height);
     }
-    hit(x: number, y: number): boolean {
-        return Math.abs(x - this.x) <= 2 && y == this.y;
-    }
 }
 
 export { Pixel }
