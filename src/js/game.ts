@@ -28,7 +28,7 @@ class Defender {
     this.y = height - this.sprite.cols * this.pixelsPerPixel - 2 * this.pixelsPerPixel;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "#1FFE1F");
+    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "rgb(204, 218, 209)");
     this.addShots = addShots;
     window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
     window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
@@ -509,8 +509,8 @@ class Battlefield {
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (this.invaders[i].hit(this.laserShots[j])) {
-            this.invaders[i].health = 0;
-            this.invaders[i].Update(0);
+            // this.invaders[i].health = 0;
+            // this.invaders[i].Update(0);
             this.laserShots[j].Clear();
             this.laserShots.splice(j, 1);
           }

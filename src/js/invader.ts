@@ -34,10 +34,6 @@ class Invader {
         this.altActive = false;
     }
 
-    getWidth() {
-        return this.sprite.cols * this.pixelsPerPixel;
-    }
-
     Clear() {
         this.pixels.forEach(pixel => {
             pixel.Update(this.context, pixel.x, pixel.y, "black");
@@ -48,6 +44,8 @@ class Invader {
         for(let i = 0; i < this.pixels.length; i++){
             for(let j = 0; j < laser.pixels.length - 1; j++){
                 if(Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y){
+                    this.health = 0;
+                    this.Update(0);
                     return true;
                 }
             }   
