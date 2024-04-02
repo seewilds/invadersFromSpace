@@ -492,14 +492,15 @@ class Battlefield {
     }
     else if (deltaTime >= 20) {
 
-      this.defender.Update(timestamp)
+      this.defender.Update(timestamp);
+
       this.laserShots.forEach(shot => {
         shot.Update();
       });
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
-          if (this.laserShots[j].pixels.some(pixel => this.invaders[i].Hit(pixel.x, pixel.y))) {
+          if (this.invaders[i].Hit(this.laserShots[j])) {
             this.invaders[i].health = 0;
             this.invaders[i].Update(0);
             this.laserShots[j].Clear();

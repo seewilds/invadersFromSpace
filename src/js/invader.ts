@@ -1,4 +1,5 @@
 import { spriteFactory } from "./factories";
+import { Laser } from "./game";
 import { Pixel } from "./pixel";
 import { Explosion } from "./sprites";
 import { CharacterSprite, Sprite } from "./types"
@@ -43,8 +44,15 @@ class Invader {
         });
     }
 
-    Hit(x: number, y: number) {
-        return this.pixels.some(pixel => pixel.hit(x, y));
+    Hit(laser : Laser): boolean {        
+        for(let i = 0; i < this.pixels.length; i++){
+            for(let j = 0; j < laser.pixels.length - 1; j++){
+                if(Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y){
+                    return true;
+                }
+            }   
+        }
+        return false;
     }
 
     Update(deltaX: number) {
