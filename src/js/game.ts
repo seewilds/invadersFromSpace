@@ -15,20 +15,20 @@ class Defender {
   x: number;
   y: number;
   deltaX: number;
-  pixelsPerPixel: number;
+  scale: number;
   updateInterval: number;
   lastUpdate: number;
   addShots: Function;
-  constructor(pixelsPerPixel: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
+  constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = DefenderSprite;
     this.deltaX = 0;
-    this.pixelsPerPixel = pixelsPerPixel;
+    this.scale = scale;
     this.x = width / 2;
-    this.y = height - this.sprite.cols * this.pixelsPerPixel - 2 * this.pixelsPerPixel;
+    this.y = height - this.sprite.cols * this.scale - 2 * this.scale;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "rgb(204, 218, 209)");
+    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.x, this.y, this.sprite.pixels, "rgb(204, 218, 209)");
     this.addShots = addShots;
     window.addEventListener('keydown', (event) => this.handleKeyDown(event));
     window.addEventListener('keyup', (event) => this.handleKeyUp(event));
@@ -44,8 +44,8 @@ class Defender {
         this.deltaX = 0;
       }
       this.context.fillStyle = "black";
-      this.context.clearRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
-      this.context.fillRect(this.pixels[0].x - 6 * this.pixelsPerPixel, this.pixels[0].y, 13 * this.pixelsPerPixel, 8 * this.pixelsPerPixel);
+      this.context.clearRect(this.pixels[0].x - 6 * this.scale, this.pixels[0].y, 13 * this.scale, 8 * this.scale);
+      this.context.fillRect(this.pixels[0].x - 6 * this.scale, this.pixels[0].y, 13 * this.scale, 8 * this.scale);
       this.pixels.forEach(pixel => {
         pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
       });
@@ -55,15 +55,15 @@ class Defender {
 
   handleKeyDown(event: KeyboardEvent): void {
     if (event.key == 'a') {
-      this.deltaX = -this.pixelsPerPixel;
+      this.deltaX = -this.scale;
       return;
     }
     if (event.key == 'd') {
-      this.deltaX = this.pixelsPerPixel;
+      this.deltaX = this.scale;
       return;
     }
     if (event.key === ' ') {
-      this.addShots(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, this.context));
+      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, this.context));
     }
   }
 
@@ -77,8 +77,6 @@ class Defender {
   }
 }
 
-
-
 class Shield {
   context: CanvasRenderingContext2D;
   hits: number[];
@@ -86,27 +84,27 @@ class Shield {
   sprite: Sprite;
   key: boolean;
   deltaX: number;
-  pixelsPerPixel: number;
+  scale: number;
   x: number;
   y: number;
   x0: number;
   y0: number;
-  constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  constructor(sprite: Sprite, scale: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.hits = [];
     this.sprite = sprite;
     this.deltaX = 0;
-    this.pixelsPerPixel = pixelsPerPixel;
+    this.scale = scale;
     this.x = x;
     this.y = y;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "#1FFE1F");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, "#1FFE1F");
     this.x0 = this.pixels[0].x;
     this.y0 = this.pixels[0].y;
   }
 
   clear(): void {
     this.context.fillStyle = "black";
-    this.context.fillRect(this.x0 - this.sprite.pixels[0] * this.pixelsPerPixel, this.y0, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    this.context.fillRect(this.x0 - this.sprite.pixels[0] * this.scale, this.y0, this.sprite.cols * this.scale, this.sprite.rows * this.scale);
   }
 
   hit(laser: Laser): boolean {
@@ -179,23 +177,23 @@ class Laser {
   sprite: Sprite;
   key: boolean;
   deltaY: number;
-  pixelsPerPixel: number;
+  scale: number;
   x: number;
   y: number;
   direction: number;
   updateInterval: number;
   lastUpdate: number;
-  constructor(sprite: Sprite, pixelsPerPixel: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  constructor(sprite: Sprite, scale: number, x: number, y: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
     this.deltaY = 5;
-    this.pixelsPerPixel = pixelsPerPixel;
+    this.scale = scale;
     this.x = x;
     this.y = y;
     this.direction = 0;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "rgb(248, 102, 36)");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, "rgb(248, 102, 36)");
   }
 
   update(): void {
@@ -207,7 +205,7 @@ class Laser {
 
   clear(): void {
     this.context.fillStyle = "black";
-    this.context.fillRect(this.pixels[0].x, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
+    this.context.fillRect(this.pixels[0].x, this.pixels[0].y, this.sprite.cols * this.scale, this.sprite.rows * this.scale);
   }
 }
 
@@ -385,7 +383,6 @@ class Battlefield {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
   scale: number;
-  pixelsPerPixel: number;
   updateInterval: number;
   lastUpdate: number;
   invaders: Invader[];
@@ -399,9 +396,8 @@ class Battlefield {
     this.invaders = new Array();
     this.scale = scale;
     this.canvas = canvas;
-    this.pixelsPerPixel = this.scale * this.scale;
-    this.canvas.width = 196 * this.pixelsPerPixel;
-    this.canvas.height = 224 * this.pixelsPerPixel;
+    this.canvas.width = 196 * this.scale;
+    this.canvas.height = 224 * this.scale;
     this.context = canvas.getContext("2d");
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -409,9 +405,9 @@ class Battlefield {
     this.laserShots = [];
     this.shields = [];
     this.deltaX = 1;
-    this.defender = new Defender(this.pixelsPerPixel, this.canvas.width, this.canvas.height, this.addShots, this.context!);
+    this.defender = new Defender(this.scale, this.canvas.width, this.canvas.height - Math.floor(this.canvas.height * 0.10), this.addShots, this.context!);
     this.setupInvaders(gameSetup);
-    //this.setupShields(gameSetup);
+    this.setupShields(gameSetup);
     this.updateInterval = 200;
     this.lastUpdate = performance.now();
   }
@@ -434,28 +430,28 @@ class Battlefield {
     let arrayIndex = 0;
     let rowIndex = 0;
     gameSetup.setup.forEach(element => {
-      let invaderWidth = element.sprite.cols * this.pixelsPerPixel;
+      let invaderWidth = element.sprite.cols * this.scale;
       element.count = element.count * invaderWidth >= this.canvas.width ? Math.floor(this.canvas.width / invaderWidth) : element.count;
-      let invaderHeight = element.sprite.cols * this.pixelsPerPixel;
+      let invaderHeight = element.sprite.cols * this.scale;
       let remainder = this.canvas.width - invaderWidth * element.count;
       let spaceBetween = Math.floor(remainder / (element.count + 2));
       if (element.type == InvaderType.Squid) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 5, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 5 + 100, element.directionStart, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
       if (element.type == InvaderType.Octopus) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 100, element.directionStart, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
       if (element.type == InvaderType.Crab) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.pixelsPerPixel, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 100, element.directionStart, this.context!);
           arrayIndex++;
         }
         rowIndex++;
@@ -464,14 +460,14 @@ class Battlefield {
   }
 
   setupShields(gameSetup: GameSetup): void {
-    let shieldWidth = ShieldSprite.cols * this.pixelsPerPixel;
+    let shieldWidth = ShieldSprite.cols * this.scale;
     gameSetup.shieldCount = gameSetup.shieldCount * shieldWidth >= this.canvas.width ? Math.floor(this.canvas.width / shieldWidth) : gameSetup.shieldCount;
-    let invaderHeight = ShieldSprite.cols * this.pixelsPerPixel;
+    let invaderHeight = ShieldSprite.cols * this.scale;
     let remainder = this.canvas.width - shieldWidth * gameSetup.shieldCount;
     let spaceBetween = Math.floor(remainder / (gameSetup.shieldCount + 2));
 
     for (let i = 0; i < gameSetup.shieldCount; i++) {
-      this.shields[i] = new Shield(ShieldSprite, this.pixelsPerPixel, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * invaderHeight + 5, this.context!);
+      this.shields[i] = new Shield(ShieldSprite, this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * invaderHeight + 5 + Math.floor(this.canvas.height * 0.30), this.context!);
     }
   }
 
