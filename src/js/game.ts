@@ -30,11 +30,11 @@ class Defender {
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "rgb(204, 218, 209)");
     this.addShots = addShots;
-    window.addEventListener('keydown', (event) => this.HandleKeyDown(event));
-    window.addEventListener('keyup', (event) => this.HandleKeyUp(event));
+    window.addEventListener('keydown', (event) => this.handleKeyDown(event));
+    window.addEventListener('keyup', (event) => this.handleKeyUp(event));
   }
 
-  Update(timestamp): void {
+  update(timestamp): void {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
       if (
@@ -53,7 +53,7 @@ class Defender {
     }
   }
 
-  HandleKeyDown(event: KeyboardEvent): void {
+  handleKeyDown(event: KeyboardEvent): void {
     if (event.key == 'a') {
       this.deltaX = -this.pixelsPerPixel;
       return;
@@ -67,7 +67,7 @@ class Defender {
     }
   }
 
-  HandleKeyUp(event: KeyboardEvent): void {
+  handleKeyUp(event: KeyboardEvent): void {
     if (event.key == 'a') {
       this.deltaX = 0;
     }
@@ -103,22 +103,25 @@ class Shield {
     this.x0 = this.pixels[0].x;
     this.y0 = this.pixels[0].y;
   }
-  Clear(): void {
+
+  clear(): void {
     this.context.fillStyle = "black";
     this.context.fillRect(this.x0 - this.sprite.pixels[0] * this.pixelsPerPixel, this.y0, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
-  Hit(laser : Laser): boolean {        
-    for(let i = 0; i < this.pixels.length; i++){
-        for(let j = 0; j < laser.pixels.length - 1; j++){
-            if(Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y){
-              this.pixels.splice(i);
-                return true;
-            }
-        }   
+
+  hit(laser: Laser): boolean {
+    for (let i = 0; i < this.pixels.length; i++) {
+      for (let j = 0; j < laser.pixels.length - 1; j++) {
+        if (Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y) {
+          this.pixels.splice(i);
+          return true;
+        }
+      }
     }
     return false;
-}
-  Update(): void {
+  }
+
+  update(): void {
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y);
     });
@@ -148,15 +151,18 @@ class Spaceship {
     this.direction = 0;
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
   }
-  Clear(colour: string = "black"): void {
+
+  clear(colour: string = "black"): void {
     this.pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, colour));
   }
-  GetPosition() {
+
+  getPosition() {
     // left, right, top, bottom
     return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]
   }
-  Update(deltaX: number, deltaY: number, colour: string = this.colour): void {
-    this.Clear();
+
+  update(deltaX: number, deltaY: number, colour: string = this.colour): void {
+    this.clear();
     this.deltaX = deltaX;
     this.deltaY = deltaY;
     this.colour = colour;
@@ -191,13 +197,15 @@ class Laser {
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, "rgb(248, 102, 36)");
   }
-  Update(): void {
-    this.Clear();
+
+  update(): void {
+    this.clear();
     this.pixels.forEach((pixel, index) => {
       pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
     });
   }
-  Clear(): void {
+
+  clear(): void {
     this.context.fillStyle = "black";
     this.context.fillRect(this.pixels[0].x, this.pixels[0].y, this.sprite.cols * this.pixelsPerPixel, this.sprite.rows * this.pixelsPerPixel);
   }
@@ -258,7 +266,7 @@ class TitleScreen {
 
     this.lastUpdate = performance.now();
     this.stars = this.setStars();
-    window.addEventListener('keydown', (event) => this.HandleSpace(event));
+    window.addEventListener('keydown', (event) => this.handleSpace(event));
   }
 
   centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
@@ -270,34 +278,34 @@ class TitleScreen {
   }
 
   start(): void {
-    requestAnimationFrame(this.Update.bind(this));
+    requestAnimationFrame(this.update.bind(this));
   }
 
-  Update(timestamp: number): boolean {
-    this.UpdateStars();
+  update(timestamp: number): boolean {
+    this.updateStars();
     let begin = false;
     if (this.startGame > 0) {
-      this.UpdateSpaceship();
+      this.updateSpaceship();
     }
     if (this.startGame > 1) {
       begin = this.fadeOut();
-      window.removeEventListener('keydown', (event) => this.HandleSpace(event));
+      window.removeEventListener('keydown', (event) => this.handleSpace(event));
     } else {
-      this.UpdateTitle();
-      this.UpdatePressStart();
+      this.updateTitle();
+      this.updatePressStart();
     }
-    requestAnimationFrame(this.Update.bind(this));
+    requestAnimationFrame(this.update.bind(this));
     return begin;
   }
 
-  UpdateTitle() {
+  updateTitle() {
     if (this.titleYCurent < this.titleYEnd) {
       this.titleYCurent += 2;
       this.title.Update(0, 2);
     }
   }
 
-  UpdatePressStart() {
+  updatePressStart() {
     if (this.titleYCurent != this.titleYEnd) {
       return;
     }
@@ -310,8 +318,8 @@ class TitleScreen {
     }
   }
 
-  UpdateSpaceship() {
-    let position = this.spaceship.GetPosition();
+  updateSpaceship() {
+    let position = this.spaceship.getPosition();
     let deltaX = this.spaceship.deltaX;
     let deltaY = this.spaceship.deltaY;
     // || position[0].x < 0
@@ -321,7 +329,7 @@ class TitleScreen {
     if (position[2].y < 0 || position[3].y > this.canvas.height / 3) {
       deltaY = -1 * this.spaceship.deltaY;
     }
-    this.spaceship.Update(deltaX, deltaY, 'rgb(192,192,192, 0.7)');
+    this.spaceship.update(deltaX, deltaY, 'rgb(192,192,192, 0.7)');
   }
 
   setTextToFinal(): void {
@@ -357,13 +365,13 @@ class TitleScreen {
     return starPixels;
   }
 
-  UpdateStars() {
+  updateStars() {
     this.stars.forEach(star => {
       star.Update(this.context!, star.x, star.y);
     });
   }
 
-  HandleSpace(event: KeyboardEvent): void {
+  handleSpace(event: KeyboardEvent): void {
     if (event.key === " " && this.startGame === 0) {
       this.setTextToFinal();
     }
@@ -392,8 +400,8 @@ class Battlefield {
     this.scale = scale;
     this.canvas = canvas;
     this.pixelsPerPixel = this.scale * this.scale;
-    this.canvas.width = 128 * this.pixelsPerPixel;
-    this.canvas.height = 128 * this.pixelsPerPixel;
+    this.canvas.width = 196 * this.pixelsPerPixel;
+    this.canvas.height = 224 * this.pixelsPerPixel;
     this.context = canvas.getContext("2d");
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -408,7 +416,7 @@ class Battlefield {
     this.lastUpdate = performance.now();
   }
 
-  Clear(): void {
+  clear(): void {
     this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context!.fillStyle = "black";
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -471,7 +479,7 @@ class Battlefield {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
 
-      this.defender.Update(timestamp)
+      this.defender.update(timestamp)
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
@@ -487,12 +495,12 @@ class Battlefield {
 
       for (let i = this.shields.length - 1; i >= 0; i--) {
         if (this.shields[i].pixels.length === 0) {
-          this.shields[i].Clear();
+          this.shields[i].clear();
           this.shields.splice(i, 1);
         } else if (this.shields[i].hits.length > 0) {
-          this.shields[i].Update();
+          this.shields[i].update();
         } else {
-          this.shields[i].Update();
+          this.shields[i].update();
         }
       }
 
@@ -500,10 +508,10 @@ class Battlefield {
     }
     else if (deltaTime >= 20) {
 
-      this.defender.Update(timestamp);
+      this.defender.update(timestamp);
 
       this.laserShots.forEach(shot => {
-        shot.Update();
+        shot.update();
       });
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
@@ -511,7 +519,7 @@ class Battlefield {
           if (this.invaders[i].hit(this.laserShots[j])) {
             // this.invaders[i].health = 0;
             // this.invaders[i].Update(0);
-            this.laserShots[j].Clear();
+            this.laserShots[j].clear();
             this.laserShots.splice(j, 1);
           }
         }
@@ -521,8 +529,8 @@ class Battlefield {
     let index = 0;
     for (let i = this.shields.length - 1; i >= 0; i--) {
       for (let j = this.laserShots.length - 1; j >= 0; j--) {
-        if(this.shields[i].Hit(this.laserShots[j])){
-          this.laserShots[j].Clear();
+        if (this.shields[i].hit(this.laserShots[j])) {
+          this.laserShots[j].clear();
           this.laserShots.splice(j, 1);
         }
       }
@@ -530,7 +538,5 @@ class Battlefield {
     this.gameId = requestAnimationFrame(this.main.bind(this));
   }
 }
-
-
 
 export { Defender, Battlefield, Shield, Spaceship, Laser, TitleScreen };
