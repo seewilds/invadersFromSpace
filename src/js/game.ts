@@ -471,6 +471,21 @@ class Battlefield {
     }
   }
 
+  removeInvader(index: number){
+    this.invaders[index].clear();
+    this.invaders.splice(index, 1);
+  }
+  
+  removeShield(index: number){
+    this.shields[index].clear();
+    this.shields.splice(index, 1);
+  }
+
+  removeLaserShot(index: number){
+    this.laserShots[index].clear();
+    this.laserShots.splice(index, 1);
+  }
+
   main(timestamp): void {
     const deltaTime = timestamp - this.lastUpdate;
     if (deltaTime >= this.updateInterval) {
@@ -479,8 +494,7 @@ class Battlefield {
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
-          this.invaders[i].clear();
-          this.invaders.splice(i, 1);
+          this.removeInvader(i);
         } else {
           if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
             this.deltaX *= 0;
@@ -491,10 +505,7 @@ class Battlefield {
 
       for (let i = this.shields.length - 1; i >= 0; i--) {
         if (this.shields[i].pixels.length === 0) {
-          this.shields[i].clear();
-          this.shields.splice(i, 1);
-        } else if (this.shields[i].hits.length > 0) {
-          this.shields[i].update();
+          this.removeShield(i);
         } else {
           this.shields[i].update();
         }
@@ -513,10 +524,7 @@ class Battlefield {
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (this.invaders[i].hit(this.laserShots[j])) {
-            // this.invaders[i].health = 0;
-            // this.invaders[i].Update(0);
-            this.laserShots[j].clear();
-            this.laserShots.splice(j, 1);
+            this.removeLaserShot(j);
           }
         }
       }
@@ -526,8 +534,7 @@ class Battlefield {
     for (let i = this.shields.length - 1; i >= 0; i--) {
       for (let j = this.laserShots.length - 1; j >= 0; j--) {
         if (this.shields[i].hit(this.laserShots[j])) {
-          this.laserShots[j].clear();
-          this.laserShots.splice(j, 1);
+          this.removeLaserShot(j);
         }
       }
     }
