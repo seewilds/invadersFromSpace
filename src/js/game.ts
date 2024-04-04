@@ -299,7 +299,7 @@ class TitleScreen {
   updateTitle() {
     if (this.titleYCurent < this.titleYEnd) {
       this.titleYCurent += 2;
-      this.title.Update(0, 2);
+      this.title.updateTextPosition(0, 2);
     }
   }
 
@@ -309,7 +309,7 @@ class TitleScreen {
     }
     if (this.pressStartFadeCurrent < this.pressStartFadeEnd) {
       this.pressStartFadeCurrent += 0.02;
-      this.pressStart.Update(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
+      this.pressStart.updateTextPosition(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
     }
     else {
       this.startGame = 1;
@@ -338,17 +338,17 @@ class TitleScreen {
       remainder = this.titleYEnd - this.titleYCurent;
     }
     this.titleYCurent = this.titleYEnd;
-    this.title.Update(0, remainder);
+    this.title.updateTextPosition(0, remainder);
     this.pressStartFadeCurrent = this.pressStartFadeEnd;
-    this.pressStart.Update(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeEnd})`);
+    this.pressStart.updateTextPosition(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeEnd})`);
   }
 
   fadeOut(): boolean {
     if (this.titleOpacity > 0 || this.pressStartFadeCurrent > 0) {
       this.titleOpacity -= 0.01;
       this.pressStartFadeCurrent -= 0.01;
-      this.title.Update(0, 0, `rgba(0, 255, 0, ${this.titleOpacity})`);
-      this.pressStart.Update(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
+      this.title.updateTextPosition(0, 0, `rgba(0, 255, 0, ${this.titleOpacity})`);
+      this.pressStart.updateTextPosition(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
       return false;
     }
     return true;
@@ -479,13 +479,13 @@ class Battlefield {
 
       for (let i = this.invaders.length - 1; i >= 0; i--) {
         if (this.invaders[i].health === 0) {
-          this.invaders[i].Clear();
+          this.invaders[i].clear();
           this.invaders.splice(i, 1);
         } else {
           if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
             this.deltaX *= 0;
           }
-          this.invaders[i].Update(0);
+          this.invaders[i].switchSprite(0);
         }
       }
 

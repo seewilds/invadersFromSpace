@@ -34,7 +34,7 @@ class Invader {
         this.altActive = false;
     }
 
-    Clear() {
+    clear() {
         this.pixels.forEach(pixel => {
             pixel.Update(this.context, pixel.x, pixel.y, "black");
         });
@@ -45,7 +45,7 @@ class Invader {
             for(let j = 0; j < laser.pixels.length - 1; j++){
                 if(Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y){
                     this.health = 0;
-                    this.Update(0);
+                    this.switchSprite(0);
                     return true;
                 }
             }   
@@ -53,8 +53,13 @@ class Invader {
         return false;
     }
 
-    Update(deltaX: number) {
-        this.Clear();
+    update(){
+        this.pixels.forEach(pixel => {
+            pixel.Update(this.context, pixel.x, pixel.y);
+        });
+    }
+    switchSprite(deltaX: number) {
+        this.clear();
         deltaX *= this.direction;
         if (this.health === 0) {
             this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.pixels, "rgb(249, 200, 14)")
@@ -67,9 +72,7 @@ class Invader {
             this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x += deltaX, this.y, this.sprite.pixels, this.colour);
             this.altActive = true;
         }
-        this.pixels.forEach(pixel => {
-            pixel.Update(this.context, pixel.x, pixel.y);
-        });
+        this.update();
     }
 }
 

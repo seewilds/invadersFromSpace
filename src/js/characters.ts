@@ -67,14 +67,18 @@ class Text {
         this.pixels = textFactory(this.text, this.x, this.y, this.scale, this.colour, this.spaceOverride);
     }
 
-    Clear(colour: string = "black"): void {       
+    clear(colour: string = "black"): void {       
         this.pixels.forEach(pixels => {
             pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, colour));
         });
     }
 
-    Update(deltaX: number, deltaY: number, colour: string = this.colour): void {
-        this.Clear();
+    setText(text: string){
+        this.text = text;
+    }
+
+    updateTextPosition(deltaX: number, deltaY: number, colour: string = this.colour): void {
+        this.clear();
         this.colour = colour;
         this.x += deltaX;
         this.y += deltaY;
