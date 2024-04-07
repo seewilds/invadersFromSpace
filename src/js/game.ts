@@ -1,4 +1,4 @@
-import { Sprite, GameSetup, InvaderType } from "./types.ts"
+import { Sprite, GameSetup, InvaderType, CharacterSprite, InvaderRow } from "./types.ts"
 import { Invader } from "./invader.ts"
 import { Pixel } from "./pixel.ts";
 import { DefenderSprite, Saucer, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
@@ -386,6 +386,7 @@ class Battlefield {
   updateInterval: number;
   lastUpdate: number;
   invaders: Invader[];
+  invaderRow: Invader[][];
   defender: Defender;
   laserShots: Laser[];
   shields: Shield[];
@@ -426,48 +427,53 @@ class Battlefield {
     this.laserShots = [...this.laserShots, laser];
   };
 
+
+  getHorizontalSpace(sprite: Sprite, numberInRow: number):number{
+    let invaderWidth = sprite.cols * this.scale;
+    numberInRow = numberInRow * invaderWidth > this.canvas.width ? Math.floor(this.canvas.width / invaderWidth) : numberInRow;
+    let remainder = this.canvas.width - invaderWidth * numberInRow;
+    return Math.floor(remainder / (numberInRow + 1));
+  }
+
   setupInvaders(gameSetup: GameSetup): void {
     let arrayIndex = 0;
     let rowIndex = 0;
     gameSetup.setup.forEach(element => {
+      let spaceBetween = this.getHorizontalSpace(element.sprite, element.count);
       let invaderWidth = element.sprite.cols * this.scale;
-      element.count = element.count * invaderWidth >= this.canvas.width ? Math.floor(this.canvas.width / invaderWidth) : element.count;
-      let invaderHeight = element.sprite.cols * this.scale;
-      let remainder = this.canvas.width - invaderWidth * element.count;
-      let spaceBetween = Math.floor(remainder / (element.count + 2));
+      let invaderHeight = element.sprite.rows * this.scale + this.scale * this.scale;
+
       if (element.type == InvaderType.Squid) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 5 + 100, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight , element.directionStart, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
       if (element.type == InvaderType.Octopus) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 100, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, element.directionStart, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
       if (element.type == InvaderType.Crab) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + 100, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, element.directionStart, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
     });
   }
-
+  
   setupShields(gameSetup: GameSetup): void {
+    let spaceBetween = this.getHorizontalSpace(ShieldSprite, gameSetup.shieldCount);
     let shieldWidth = ShieldSprite.cols * this.scale;
-    gameSetup.shieldCount = gameSetup.shieldCount * shieldWidth >= this.canvas.width ? Math.floor(this.canvas.width / shieldWidth) : gameSetup.shieldCount;
-    let invaderHeight = ShieldSprite.cols * this.scale;
-    let remainder = this.canvas.width - shieldWidth * gameSetup.shieldCount;
-    let spaceBetween = Math.floor(remainder / (gameSetup.shieldCount + 2));
+    let shieldHeight = ShieldSprite.rows * this.scale + this.scale * this.scale;
 
     for (let i = 0; i < gameSetup.shieldCount; i++) {
-      this.shields[i] = new Shield(ShieldSprite, this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * invaderHeight + 5 + Math.floor(this.canvas.height * 0.30), this.context!);
+      this.shields[i] = new Shield(ShieldSprite, this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * shieldHeight + 5 + Math.floor(this.canvas.height * 0.30), this.context!);
     }
   }
 

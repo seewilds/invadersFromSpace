@@ -31,4 +31,4 @@ interface GameSetup {
     shieldCount : number
 }
 
-export { Character, CharacterSprite, Sprite,  GameSetup, InvaderType }
+export { Character, CharacterSprite, Sprite,  GameSetup, InvaderType, InvaderRow }
