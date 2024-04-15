@@ -428,20 +428,13 @@ class Battlefield {
     requestAnimationFrame(this.main.bind(this));
   }
 
-  addShots = (laser: Laser) => {
-    this.laserShots = [...this.laserShots, laser];
-  };
-
   setupLevel(index: number){
     this.invaderRow = new Array(this.game.levels[index].setup.length);
     for(let i = 0; i < this.invaderRow.length; i++){
-      this.invaderRow[i] = this.setupInvaderz(this.game.levels[index].setup[i], i);
-      console.log(i)
+      this.invaderRow[i] = this.setupInvaders(this.game.levels[index].setup[i], i);
     }
-    console.log(this.invaderRow)
     this.shields = this.setupShields(this.game.levels[index]);
   }
-
 
   getHorizontalSpace(sprite: Sprite, numberInRow: number):number{
     let invaderWidth = sprite.cols * this.scale;
@@ -450,7 +443,7 @@ class Battlefield {
     return Math.floor(remainder / (numberInRow + 1));
   }
 
-  setupInvaderz(invaderRow: InvaderRow, row: number): Invader[] {
+  setupInvaders(invaderRow: InvaderRow, row: number): Invader[] {
     let invaders = new Array<Invader>(invaderRow.count);
     let topOffset = Math.floor(this.canvas.height * this.headerFooterPercentage);
 
@@ -461,40 +454,6 @@ class Battlefield {
       invaders[i] = new Invader(invaderRow.sprite, invaderRow.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, row * invaderHeight  + topOffset, 0, this.addShots, this.context!);
     }
     return invaders;
-  }
-
-  setupInvaders(gameSetup: Level): void {
-    let arrayIndex = 0;
-    let rowIndex = 0;
-    let topOffset = Math.floor(this.canvas.height * this.headerFooterPercentage);
-
-    gameSetup.setup.forEach(element => {
-      let spaceBetween = this.getHorizontalSpace(element.sprite, element.count);
-      let invaderWidth = element.sprite.cols * this.scale;
-      let invaderHeight = element.sprite.rows * this.scale + this.scale * this.scale;
-
-      if (element.type == InvaderType.Squid) {
-        for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight  + topOffset, element.directionStart, this.addShots, this.context!);
-          arrayIndex++;
-        }
-        rowIndex++;
-      }
-      if (element.type == InvaderType.Octopus) {
-        for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + topOffset, element.directionStart, this.addShots, this.context!);
-          arrayIndex++;
-        }
-        rowIndex++;
-      }
-      if (element.type == InvaderType.Crab) {
-        for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + topOffset, element.directionStart, this.addShots, this.context!);
-          arrayIndex++;
-        }
-        rowIndex++;
-      }
-    });
   }
   
   setupShields(level: Level): Shield[] {
@@ -508,22 +467,6 @@ class Battlefield {
     }
     return shields;
   }
-
-  removeInvader(row: number, col: number){
-    this.invaderRow[row][col].clear();
-    this.invaderRow[row].splice(col, 1);
-  }
-  
-  removeShield(index: number){
-    this.shields[index].clear();
-    this.shields.splice(index, 1);
-  }
-
-  removeLaserShot(index: number){
-    this.laserShots[index].clear();
-    this.laserShots.splice(index, 1);
-  }
-
 
   updateInvaders(): void{
     for (let i = 0; i < this.invaderRow.length; i++) {
@@ -550,7 +493,11 @@ class Battlefield {
       }
     }
   }
-
+  
+  addShots = (laser: Laser) => {
+    this.laserShots = [...this.laserShots, laser];
+  };
+  
   updateLasers(): void{
     this.laserShots.forEach(shot => {
       shot.update();
@@ -567,6 +514,7 @@ class Battlefield {
         }
       }
     })
+
     for (let i = this.shields.length - 1; i >= 0; i--) {
       for (let j = this.laserShots.length - 1; j >= 0; j--) {
         if (this.shields[i].hit(this.laserShots[j])) {
@@ -574,6 +522,21 @@ class Battlefield {
         }
       }
     }
+  }
+
+  removeInvader(row: number, col: number){
+    this.invaderRow[row][col].clear();
+    this.invaderRow[row].splice(col, 1);
+  }
+  
+  removeShield(index: number){
+    this.shields[index].clear();
+    this.shields.splice(index, 1);
+  }
+
+  removeLaserShot(index: number){
+    this.laserShots[index].clear();
+    this.laserShots.splice(index, 1);
   }
 
   main(timestamp: number): void {
