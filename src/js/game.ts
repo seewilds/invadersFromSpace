@@ -391,6 +391,7 @@ class Battlefield {
   defender: Defender;
   laserShots: Laser[];
   shields: Shield[];
+  titleScreen: TitleScreen;
   headerFooterPercentage: number;
   gameId: number;
   levelNumber: number;
@@ -413,7 +414,7 @@ class Battlefield {
     this.headerFooterPercentage = 0.10;
     this.defender = new Defender(this.scale, this.canvas.width, this.canvas.height - Math.floor(this.canvas.height * this.headerFooterPercentage), this.addShots, this.context!);
     this.setupLevel(0);
-    
+//    this.titleScreen = new TitleScreen(this.canvas, this.scale);
     this.updateInterval = 200;
     this.lastUpdate = performance.now();
   }
@@ -424,7 +425,9 @@ class Battlefield {
     this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+
   start(): void {
+    //this.titleScreen.start();
     requestAnimationFrame(this.main.bind(this));
   }
 
