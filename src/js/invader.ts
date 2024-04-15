@@ -8,6 +8,8 @@ class Invader {
     context: CanvasRenderingContext2D;
     health: number;
     pixels: Pixel[];
+    canFire: Boolean;
+    addShot: Function;
     sprite: CharacterSprite;
     explosion: Sprite;
     colour: string;
@@ -18,10 +20,11 @@ class Invader {
     y: number;
     updateInterval: number;
     lastUpdate: number;
-    constructor(sprite: CharacterSprite, colour: string, pixelsPerPixel: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D) {
+    constructor(sprite: CharacterSprite, colour: string, pixelsPerPixel: number, x: number, y: number, direction: number, addShot: Function, context: CanvasRenderingContext2D) {
         this.health = 1;
         this.context = context;
         this.explosion = Explosion;
+        this.canFire = false;
         this.sprite = sprite;
         this.colour = colour;
         this.direction = direction;

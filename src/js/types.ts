@@ -26,9 +26,14 @@ interface InvaderRow {
     directionStart : number
 }
 
-interface GameSetup {
+interface Level {
     setup : InvaderRow[];
     shieldCount : number
 }
 
-export { Character, CharacterSprite, Sprite,  GameSetup, InvaderType, InvaderRow }
+interface Game {
+    levels: Level[]
+}
+
+
+export { Character, CharacterSprite, Sprite,  Level, Game, InvaderType, InvaderRow }

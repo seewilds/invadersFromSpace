@@ -1,4 +1,4 @@
-import { Sprite, GameSetup, InvaderType, CharacterSprite, InvaderRow } from "./types.ts"
+import { Sprite, Level, InvaderType, CharacterSprite, InvaderRow, Game } from "./types.ts"
 import { Invader } from "./invader.ts"
 import { Pixel } from "./pixel.ts";
 import { DefenderSprite, Saucer, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
@@ -382,6 +382,7 @@ class TitleScreen {
 class Battlefield {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
+  game: Game;
   scale: number;
   updateInterval: number;
   lastUpdate: number;
@@ -390,11 +391,15 @@ class Battlefield {
   defender: Defender;
   laserShots: Laser[];
   shields: Shield[];
-  deltaX: number;
+  headerFooterPercentage: number;
   gameId: number;
-  constructor(canvas: HTMLCanvasElement, scale: number, gameSetup: GameSetup) {
+  levelNumber: number;
+  constructor(canvas: HTMLCanvasElement, scale: number, game: Game) {
     this.gameId = 0;
+    this.levelNumber = 0;
+    this.game = game;
     this.invaders = new Array();
+
     this.scale = scale;
     this.canvas = canvas;
     this.canvas.width = 196 * this.scale;
@@ -405,10 +410,10 @@ class Battlefield {
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     this.laserShots = [];
     this.shields = [];
-    this.deltaX = 1;
-    this.defender = new Defender(this.scale, this.canvas.width, this.canvas.height - Math.floor(this.canvas.height * 0.10), this.addShots, this.context!);
-    this.setupInvaders(gameSetup);
-    this.setupShields(gameSetup);
+    this.headerFooterPercentage = 0.10;
+    this.defender = new Defender(this.scale, this.canvas.width, this.canvas.height - Math.floor(this.canvas.height * this.headerFooterPercentage), this.addShots, this.context!);
+    this.setupLevel(0);
+    
     this.updateInterval = 200;
     this.lastUpdate = performance.now();
   }
@@ -427,6 +432,16 @@ class Battlefield {
     this.laserShots = [...this.laserShots, laser];
   };
 
+  setupLevel(index: number){
+    this.invaderRow = new Array(this.game.levels[index].setup.length);
+    for(let i = 0; i < this.invaderRow.length; i++){
+      this.invaderRow[i] = this.setupInvaderz(this.game.levels[index].setup[i], i);
+      console.log(i)
+    }
+    console.log(this.invaderRow)
+    this.shields = this.setupShields(this.game.levels[index]);
+  }
+
 
   getHorizontalSpace(sprite: Sprite, numberInRow: number):number{
     let invaderWidth = sprite.cols * this.scale;
@@ -435,9 +450,24 @@ class Battlefield {
     return Math.floor(remainder / (numberInRow + 1));
   }
 
-  setupInvaders(gameSetup: GameSetup): void {
+  setupInvaderz(invaderRow: InvaderRow, row: number): Invader[] {
+    let invaders = new Array<Invader>(invaderRow.count);
+    let topOffset = Math.floor(this.canvas.height * this.headerFooterPercentage);
+
+    for(let i = 0; i < invaders.length; i++){
+      let spaceBetween = this.getHorizontalSpace(invaderRow.sprite, invaderRow.count);
+      let invaderWidth = invaderRow.sprite.cols * this.scale;
+      let invaderHeight = invaderRow.sprite.rows * this.scale + this.scale * this.scale;
+      invaders[i] = new Invader(invaderRow.sprite, invaderRow.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, row * invaderHeight  + topOffset, 0, this.addShots, this.context!);
+    }
+    return invaders;
+  }
+
+  setupInvaders(gameSetup: Level): void {
     let arrayIndex = 0;
     let rowIndex = 0;
+    let topOffset = Math.floor(this.canvas.height * this.headerFooterPercentage);
+
     gameSetup.setup.forEach(element => {
       let spaceBetween = this.getHorizontalSpace(element.sprite, element.count);
       let invaderWidth = element.sprite.cols * this.scale;
@@ -445,21 +475,21 @@ class Battlefield {
 
       if (element.type == InvaderType.Squid) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight , element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight  + topOffset, element.directionStart, this.addShots, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
       if (element.type == InvaderType.Octopus) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + topOffset, element.directionStart, this.addShots, this.context!);
           arrayIndex++;
         }
         rowIndex++;
       }
       if (element.type == InvaderType.Crab) {
         for (let i = 0; i < element.count; i++) {
-          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight, element.directionStart, this.context!);
+          this.invaders[arrayIndex] = new Invader(element.sprite, element.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, rowIndex * invaderHeight + topOffset, element.directionStart, this.addShots, this.context!);
           arrayIndex++;
         }
         rowIndex++;
@@ -467,19 +497,21 @@ class Battlefield {
     });
   }
   
-  setupShields(gameSetup: GameSetup): void {
-    let spaceBetween = this.getHorizontalSpace(ShieldSprite, gameSetup.shieldCount);
+  setupShields(level: Level): Shield[] {
+    let shields = new Array<Shield>(level.shieldCount);
+    let spaceBetween = this.getHorizontalSpace(ShieldSprite, level.shieldCount);
     let shieldWidth = ShieldSprite.cols * this.scale;
     let shieldHeight = ShieldSprite.rows * this.scale + this.scale * this.scale;
 
-    for (let i = 0; i < gameSetup.shieldCount; i++) {
-      this.shields[i] = new Shield(ShieldSprite, this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * shieldHeight + 5 + Math.floor(this.canvas.height * 0.30), this.context!);
+    for (let i = 0; i < level.shieldCount; i++) {
+      shields[i] = new Shield(ShieldSprite, this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * shieldHeight + 5 + Math.floor(this.canvas.height * 0.30), this.context!);
     }
+    return shields;
   }
 
-  removeInvader(index: number){
-    this.invaders[index].clear();
-    this.invaders.splice(index, 1);
+  removeInvader(row: number, col: number){
+    this.invaderRow[row][col].clear();
+    this.invaderRow[row].splice(col, 1);
   }
   
   removeShield(index: number){
@@ -492,57 +524,71 @@ class Battlefield {
     this.laserShots.splice(index, 1);
   }
 
-  main(timestamp): void {
-    const deltaTime = timestamp - this.lastUpdate;
-    if (deltaTime >= this.updateInterval) {
 
-      this.defender.update(timestamp)
-
-      for (let i = this.invaders.length - 1; i >= 0; i--) {
-        if (this.invaders[i].health === 0) {
-          this.removeInvader(i);
+  updateInvaders(): void{
+    for (let i = 0; i < this.invaderRow.length; i++) {
+      for(let j = this.invaderRow[i].length - 1; j >= 0; j--){
+        if (this.invaderRow[i][j].health === 0) {
+          console.log(j)
+          this.removeInvader(i, j);
         } else {
-          if (this.invaders[i].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaders[i].pixels.some(pixel => pixel.x <= 0)) {
-            this.deltaX *= 0;
+          if (this.invaderRow[i][j].pixels.some(pixel => pixel.x >= this.canvas.width) || this.invaderRow[i][j].pixels.some(pixel => pixel.x <= 0)) {
+            this.headerFooterPercentage *= 0;
           }
-          this.invaders[i].switchSprite(0);
+          this.invaderRow[i][j].switchSprite(0);
         }
       }
-
-      for (let i = this.shields.length - 1; i >= 0; i--) {
-        if (this.shields[i].pixels.length === 0) {
-          this.removeShield(i);
-        } else {
-          this.shields[i].update();
-        }
-      }
-
-      this.lastUpdate = timestamp;
     }
-    else if (deltaTime >= 20) {
+  }
 
-      this.defender.update(timestamp);
+  updateShields(): void{
+    for (let i = this.shields.length - 1; i >= 0; i--) {
+      if (this.shields[i].pixels.length === 0) {
+        this.removeShield(i);
+      } else {
+        this.shields[i].update();
+      }
+    }
+  }
 
-      this.laserShots.forEach(shot => {
-        shot.update();
-      });
+  updateLasers(): void{
+    this.laserShots.forEach(shot => {
+      shot.update();
+    });    
+  }
 
-      for (let i = this.invaders.length - 1; i >= 0; i--) {
+  updateHits(){
+    this.invaderRow.forEach( invaders =>{
+      for (let i = invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
-          if (this.invaders[i].hit(this.laserShots[j])) {
+          if (invaders[i].hit(this.laserShots[j])) {
             this.removeLaserShot(j);
           }
         }
       }
-    }
-
-    let index = 0;
+    })
     for (let i = this.shields.length - 1; i >= 0; i--) {
       for (let j = this.laserShots.length - 1; j >= 0; j--) {
         if (this.shields[i].hit(this.laserShots[j])) {
           this.removeLaserShot(j);
         }
       }
+    }
+  }
+
+  main(timestamp: number): void {
+    const deltaTime = timestamp - this.lastUpdate;
+    if (deltaTime >= this.updateInterval) {
+      this.defender.update(timestamp)
+      this.updateInvaders();
+      this.updateShields();
+
+      this.lastUpdate = timestamp;
+    }
+    else if (deltaTime >= 20) {
+      this.defender.update(timestamp);
+      this.updateLasers();
+      this.updateHits();
     }
     this.gameId = requestAnimationFrame(this.main.bind(this));
   }
