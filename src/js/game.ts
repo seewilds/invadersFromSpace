@@ -395,12 +395,17 @@ class Battlefield {
   headerFooterPercentage: number;
   gameId: number;
   levelNumber: number;
+  direction: number;
+  deltaX: number;
+  deltaY: number;
   constructor(canvas: HTMLCanvasElement, scale: number, game: Game) {
     this.gameId = 0;
     this.levelNumber = 0;
     this.game = game;
     this.invaders = new Array();
-
+    this.direction = 1;
+    this.deltaX = 5;
+    this.deltaY = 0;
     this.scale = scale;
     this.canvas = canvas;
     this.canvas.width = 196 * this.scale;
@@ -470,52 +475,50 @@ class Battlefield {
     return shields;
   }
 
-  movingRight(i: number):void{
-    if (this.invaderRow[i][this.invaderRow[i].length - 1].health === 0) {
-      this.removeInvader(i, this.invaderRow[i].length - 1);
-    }
 
-    let atBoundary: Boolean = this.invaderRow[i][this.invaderRow[i].length - 1].pixels.some(pixel => pixel.x >= this.canvas.width);
-    this.game.levels[0].setup[i].directionStart = atBoundary ? -1 : 1; 
-    let deltaX = 2 * this.game.levels[0].setup[i].directionStart;
-    let deltaY = atBoundary ? 2 : 0;
-
-    for(let j = this.invaderRow[i].length - 1; j >= 0; j--){
-      if (this.invaderRow[i][j].health === 0) {
-        this.removeInvader(i, j);
-      } else {
-        this.invaderRow[i][j].switchSprite(deltaX, deltaY);
+  anyAtRightEdge(): Boolean{
+    for(let i = 0; i < this.invaderRow.length; i++){
+      for(let j = 0; j < this.invaderRow[i].length; j++){
+        if(this.invaderRow[i][this.invaderRow[i].length - 1].pixels.some(pixel => pixel.x >= this.canvas.width)){
+          return true;
+        }
       }
     }
+    return false;
   }
 
-  movingLeft(i: number):void{
-    if (this.invaderRow[i][0].health === 0) {
-      this.removeInvader(i, 0);
-    }
-
-    let atBoundary: Boolean = this.invaderRow[i][0].pixels.some(pixel => pixel.x <= 0);
-    this.game.levels[0].setup[i].directionStart = atBoundary ? 1 : -1; 
-    let deltaX = 2 * this.game.levels[0].setup[i].directionStart;
-    let deltaY = atBoundary ? 2 : 0;
-
-    for(let j = 0; j < this.invaderRow[i].length; j++){
-      if (this.invaderRow[i][j].health === 0) {
-        this.removeInvader(i, j);
-      } else {
-        this.invaderRow[i][j].switchSprite(deltaX, deltaY);
+  anyAtLeftEdge(): Boolean{
+    for(let i = 0; i < this.invaderRow.length; i++){
+      for(let j = 0; j < this.invaderRow[i].length; j++){
+        if(this.invaderRow[i][0].pixels.some(pixel => pixel.x <= 0)){
+          return true;
+        }
       }
     }
+    return false;
   }
 
-  updateInvaders(): void{
-    for (let i = 0; i < this.invaderRow.length; i++) {
-      if(this.invaderRow[i][0].direction > 0){
-        this.movingLeft(i);
-      }else{
-        this.movingRight(i);
+  updateInvaders():void{
+    this.removeInvaders();
+
+    let atLeftBoundary = this.anyAtLeftEdge();
+    let atRightBoundary = this.anyAtRightEdge();
+
+    if(atRightBoundary){
+      this.deltaX = -5;
+    }
+
+    if(atLeftBoundary){
+      this.deltaX = 5;
+      this.deltaY = 8 * 3;
+    }
+
+    for(let i = 0; i < this.invaderRow.length; i++){
+      for(let j = 0; j < this.invaderRow[i].length; j++){
+        this.invaderRow[i][j].switchSprite(this.deltaX, this.deltaY);
       }
     }
+    this.deltaY = 0;
   }
 
   updateShields(): void{
@@ -561,6 +564,16 @@ class Battlefield {
   removeInvader(row: number, col: number){
     this.invaderRow[row][col].clear();
     this.invaderRow[row].splice(col, 1);
+  }
+
+  removeInvaders(): void{
+    for(let i = this.invaderRow.length - 1; i >= 0; i--){
+      for(let j = this.invaderRow[i].length - 1; j >= 0; j--){
+        if(this.invaderRow[i][j].health === 0){
+          this.removeInvader(i, j);
+        }
+      }
+    }
   }
   
   removeShield(index: number){

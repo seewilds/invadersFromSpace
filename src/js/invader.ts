@@ -63,10 +63,8 @@ class Invader {
     }
     switchSprite(deltaX: number, deltaY: number) {
         this.clear();
-        this.direction = deltaX;
         this.x += deltaX;
         this.y += deltaY;
-
 
         if (this.health === 0) {
             this.pixels = spriteFactory(this.explosion.rows, this.explosion.cols, this.pixelsPerPixel, this.x, this.y, this.explosion.pixels, "rgb(249, 200, 14)")
