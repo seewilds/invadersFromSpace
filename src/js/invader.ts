@@ -1,7 +1,7 @@
 import { spriteFactory } from "./factories";
 import { Laser } from "./game";
 import { Pixel } from "./pixel";
-import { Explosion } from "./sprites";
+import { Explosion, Shot } from "./sprites";
 import { CharacterSprite, Sprite } from "./types"
 
 class Invader {
@@ -22,6 +22,7 @@ class Invader {
     lastUpdate: number;
     constructor(sprite: CharacterSprite, colour: string, pixelsPerPixel: number, x: number, y: number, direction: number, addShot: Function, context: CanvasRenderingContext2D) {
         this.health = 1;
+        this.addShot = addShot;
         this.context = context;
         this.explosion = Explosion;
         this.canFire = false;
@@ -61,8 +62,16 @@ class Invader {
             pixel.Update(this.context, pixel.x, pixel.y);
         });
     }
+
+    fire(): void{
+        if(Math.random() >= 0.80){
+            this.addShot(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, 1, this.context));
+        }
+    }
+
     switchSprite(deltaX: number, deltaY: number) {
         this.clear();
+        this.fire();
         this.x += deltaX;
         this.y += deltaY;
 

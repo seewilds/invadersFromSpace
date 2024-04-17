@@ -63,7 +63,7 @@ class Defender {
       return;
     }
     if (event.key === ' ') {
-      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, this.context));
+      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, 1, this.context));
     }
   }
 
@@ -183,10 +183,10 @@ class Laser {
   direction: number;
   updateInterval: number;
   lastUpdate: number;
-  constructor(sprite: Sprite, scale: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number,  context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
-    this.deltaY = 5;
+    this.deltaY = 5 * direction;
     this.scale = scale;
     this.x = x;
     this.y = y;
@@ -441,6 +441,9 @@ class Battlefield {
     for(let i = 0; i < this.invaderRow.length; i++){
       this.invaderRow[i] = this.setupInvaders(this.game.levels[index].setup[i], i);
     }
+    for(let i = 0; i < this.invaderRow[this.invaderRow.length - 1].length; i++){
+      this.invaderRow[this.invaderRow.length - 1][i].canFire = true;
+    }
     this.shields = this.setupShields(this.game.levels[index]);
   }
 
@@ -573,6 +576,12 @@ class Battlefield {
           this.removeInvader(i, j);
         }
       }
+    }
+  }
+
+  enableCannon(index: number): void{
+    for(let i = this.invaderRow.length - 1; i >= 0; i--){
+      this.invaderRow[i][index].canFire = true;
     }
   }
   
