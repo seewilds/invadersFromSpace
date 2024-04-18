@@ -67,9 +67,18 @@ class Invader {
     }
 
     fire(): void{
-        if(Math.random() >= 0.80){
+        if(this.health > 0 && Math.random() >= 0.95){
             this.addShot(new Laser(Shot, this.pixelsPerPixel, this.pixels[this.sprite.laserPosition].x, this.pixels[this.sprite.laserPosition].y, 1, this.context));
         }
+    }
+
+    setCanFire(pixels: Pixel[]): boolean {
+        for(let i = 0; i < pixels.length; i++){
+            if(this.pixels.some(pixel => pixel.y == pixels[i].y)){
+                return true;
+            }
+        }
+        return false;
     }
 
     switchSprite(deltaX: number, deltaY: number) {
