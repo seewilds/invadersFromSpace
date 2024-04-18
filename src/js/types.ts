@@ -12,6 +12,7 @@ interface Sprite {
 
 interface CharacterSprite extends Sprite {
     alternatePixels: number[];
+    laserPosition: number
 }
 
 type Character = {
@@ -34,6 +35,5 @@ interface Level {
 interface Game {
     levels: Level[]
 }
-
 
 export { Character, CharacterSprite, Sprite,  Level, Game, InvaderType, InvaderRow }

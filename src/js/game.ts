@@ -63,7 +63,7 @@ class Defender {
       return;
     }
     if (event.key === ' ') {
-      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, 1, this.context));
+      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, -1, this.context));
     }
   }
 
@@ -199,7 +199,7 @@ class Laser {
   update(): void {
     this.clear();
     this.pixels.forEach((pixel, index) => {
-      pixel.Update(this.context, pixel.x, pixel.y -= this.deltaY);
+      pixel.Update(this.context, pixel.x, pixel.y += this.deltaY);
     });
   }
 

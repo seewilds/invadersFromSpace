@@ -61,17 +61,19 @@ class Invader {
         this.pixels.forEach(pixel => {
             pixel.Update(this.context, pixel.x, pixel.y);
         });
+        if(this.canFire){
+            this.fire();
+        }
     }
 
     fire(): void{
         if(Math.random() >= 0.80){
-            this.addShot(new Laser(Shot, this.pixelsPerPixel, this.pixels[0].x, this.pixels[0].y - 24, 1, this.context));
+            this.addShot(new Laser(Shot, this.pixelsPerPixel, this.pixels[this.sprite.laserPosition].x, this.pixels[this.sprite.laserPosition].y, 1, this.context));
         }
     }
 
     switchSprite(deltaX: number, deltaY: number) {
         this.clear();
-        this.fire();
         this.x += deltaX;
         this.y += deltaY;
 
