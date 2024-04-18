@@ -74,7 +74,8 @@ class Invader {
 
     setCanFire(pixels: Pixel[]): boolean {
         for(let i = 0; i < pixels.length; i++){
-            if(this.pixels.some(pixel => pixel.y == pixels[i].y)){
+            if(this.pixels.some(pixel => pixel.y === pixels[i].y)){
+                this.canFire = true;
                 return true;
             }
         }

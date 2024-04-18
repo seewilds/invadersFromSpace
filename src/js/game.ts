@@ -545,7 +545,7 @@ class Battlefield {
   }
 
   updateHits(){
-    this.invaderRow.forEach( invaders =>{
+    this.invaderRow.forEach( (invaders, index) =>{
       for (let i = invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (invaders[i].hit(this.laserShots[j])) {
@@ -573,15 +573,21 @@ class Battlefield {
     for(let i = this.invaderRow.length - 1; i >= 0; i--){
       for(let j = this.invaderRow[i].length - 1; j >= 0; j--){
         if(this.invaderRow[i][j].health === 0){
+          this.enableLasers(i, j);
           this.removeInvader(i, j);
         }
       }
     }
   }
 
-  enableCannon(index: number): void{
-    for(let i = this.invaderRow.length - 1; i >= 0; i--){
-      this.invaderRow[i][index].canFire = true;
+  enableLasers(row: number, index: number): void{
+    console.log(index, row)
+    for(let i = row - 1; i >= 0; i--){
+      if(this.invaderRow[i].length >= index
+        && this.invaderRow[i][index].setCanFire(this.invaderRow[i][index].pixels)){
+        return;
+      }
+      
     }
   }
   
