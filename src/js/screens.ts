@@ -189,7 +189,7 @@ class PlayerSection {
         this.scale = scale;
         this.level = level;
         this.lives = lives;
-        this.livesText = new Text(`${this.lives.toString()}`, "white", this.scale / 2, 10, 870, this.context!);
+        this.livesText = new Text(`${this.lives.toString()}`, "white", 3, 10, 850, this.context!);
         this.setupDefenderLives(this.lives);
         this.draw();
     }
@@ -198,7 +198,7 @@ class PlayerSection {
         this.defenderLives = new Array<Pixel[]>(lives);
         let startPixel = 400;
         for(let i = 0; i < lives; i++){
-            this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, this.scale, startPixel, 850, DefenderSprite.pixels, "blue");
+            this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, 3, startPixel, 850, DefenderSprite.pixels, "blue");
             startPixel += DefenderSprite.cols * this.scale + 50;
         }        
     }
@@ -218,7 +218,9 @@ class ScoreBoard {
     scale: number;
     level: number;    
     lives: number;
+    currentScoreText: Text;
     currentScore: Text;
+    hiScoreText: Text;
     hiScore: Text;
 
     constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
@@ -226,8 +228,10 @@ class ScoreBoard {
         this.scale = scale;
         this.level = level;
         this.lives = lives;
-        this.currentScore = new Text(`CURRENT SCORE 0`, "white", 2, 10, 10, this.context!);
-        this.hiScore = new Text(`HI SCORE 1000`, "white", 2, 10, 40, this.context!);
+        this.currentScoreText = new Text(`CURRENT SCORE`, "white", 2, 10, 10, this.context!);
+        this.currentScore = new Text(`0`, "white", 2, 10, 40, this.context!);
+        this.hiScoreText = new Text(`HI SCORE`, "white", 2, 250, 10, this.context!);
+        this.hiScore = new Text(`1000`, "white", 2, 250, 40, this.context!);
         this.draw();
     }
 
@@ -237,7 +241,9 @@ class ScoreBoard {
     }
 
     draw():void{
+        this.currentScoreText.updateTextPosition(0,0);
         this.currentScore.updateTextPosition(0,0);
+        this.hiScoreText.updateTextPosition(0,0);
         this.hiScore.updateTextPosition(0,0);
     }
 }
