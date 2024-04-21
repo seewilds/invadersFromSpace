@@ -35,7 +35,7 @@ class Game {
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.titleScreen = new TitleScreen(this.context!, this.scale);
         this.battlefield = new Battlefield(
-            this.canvas,
+            this.context!,
             4,
             {
                 levels: [{
