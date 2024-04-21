@@ -1,5 +1,5 @@
 import { Battlefield } from "./battlefield";
-import { TitleScreen } from "./screens";
+import { TitleScreen, PlayerSection } from "./screens";
 import { Crab, Octopus, Squid } from "./sprites";
 import { InvaderType } from "./types";
 
@@ -9,6 +9,7 @@ class Game {
     game: Game;
     titleScreen: TitleScreen;
     battlefield: Battlefield;
+    playerSection: PlayerSection;
     scale: number;
     updateInterval: number;
     gameId: number;
@@ -34,6 +35,7 @@ class Game {
         this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.titleScreen = new TitleScreen(this.context!, this.scale);
+        this.playerSection = new PlayerSection(1, 3, this.context!, this.scale);
         this.battlefield = new Battlefield(
             this.context!,
             4,
@@ -66,6 +68,7 @@ class Game {
                 this.waitingToStartGame = this.titleScreen.update(timestamp);
                 this.lastUpdate = performance.now();
             } else {
+                this.playerSection.draw();
                 this.battlefield.runLevel(timestamp);
                 this.lastUpdate = timestamp - (delta % this.interval);
             }

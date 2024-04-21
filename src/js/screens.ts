@@ -1,7 +1,8 @@
-import { Spaceship } from "./battlefield";
+import { Defender, Spaceship } from "./battlefield";
 import { Pixel } from "./pixel";
-import { characterConstants } from "./sprites";
+import { DefenderSprite, characterConstants } from "./sprites";
 import { Text } from "./characters";
+import { spriteFactory } from "./factories";
 
 class TitleScreen {
     context: CanvasRenderingContext2D;
@@ -175,4 +176,41 @@ class LevelTransition {
 
 }
 
-export { TitleScreen }
+class PlayerSection {
+    context: CanvasRenderingContext2D;
+    scale: number;
+    level: number;    
+    lives: number;
+    livesText: Text;
+    defenderLives: Pixel[][];
+
+    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
+        this.context = context;
+        this.scale = scale;
+        this.level = level;
+        this.lives = lives;
+        this.livesText = new Text(`LIVES`, "white", this.scale / 2, 10, 870, this.context!);
+        this.setupDefenderLives(this.lives);
+        this.draw();
+    }
+
+    setupDefenderLives(lives: number):void{
+        this.defenderLives = new Array<Pixel[]>(lives);
+        let startPixel = 400;
+        for(let i = 0; i < lives; i++){
+            this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, this.scale, startPixel, 850, DefenderSprite.pixels, "blue");
+            startPixel += DefenderSprite.cols * this.scale + 50;
+        }        
+    }
+
+    draw():void{
+        this.livesText.updateTextPosition(0,0);
+        this.defenderLives.forEach(life => {
+            life.forEach(life=>{
+                life.Update(this.context!, life.x, life.y);
+            })
+        });
+    }
+}
+
+export { TitleScreen, PlayerSection }
