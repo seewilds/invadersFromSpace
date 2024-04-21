@@ -33,31 +33,27 @@ class Defender {
     }
   
     update(timestamp): void {
-      const deltaTime = timestamp - this.lastUpdate;
-      if (deltaTime >= this.updateInterval) {
         if (
-          this.pixels.some(pixel => pixel.x <= 10) && this.deltaX < 0
-          || this.pixels.some(pixel => pixel.x >= this.context.canvas.width - 10) && this.deltaX > 0
-        ) {
-          this.deltaX = 0;
-        }
-        this.context.fillStyle = "black";
-        this.context.clearRect(this.pixels[0].x - 6 * this.scale, this.pixels[0].y, 13 * this.scale, 8 * this.scale);
-        this.context.fillRect(this.pixels[0].x - 6 * this.scale, this.pixels[0].y, 13 * this.scale, 8 * this.scale);
-        this.pixels.forEach(pixel => {
-          pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
-        });
-        this.lastUpdate = timestamp;
-      }
+            this.pixels.some(pixel => pixel.x <= 10) && this.deltaX < 0
+            || this.pixels.some(pixel => pixel.x >= this.context.canvas.width - 10) && this.deltaX > 0
+          ) {
+            this.deltaX = 0;
+          }
+          this.context.fillStyle = "black";
+          this.context.clearRect(this.pixels[0].x - 6 * this.scale, this.pixels[0].y, 13 * this.scale, 8 * this.scale);
+          this.context.fillRect(this.pixels[0].x - 6 * this.scale, this.pixels[0].y, 13 * this.scale, 8 * this.scale);
+          this.pixels.forEach(pixel => {
+            pixel.Update(this.context, pixel.x += this.deltaX, pixel.y);
+          });
     }
   
     handleKeyDown(event: KeyboardEvent): void {
       if (event.key == 'a') {
-        this.deltaX = -this.scale;
+        this.deltaX = -this.scale - 3;
         return;
       }
       if (event.key == 'd') {
-        this.deltaX = this.scale;
+        this.deltaX = this.scale + 3;
         return;
       }
       if (event.key === ' ') {

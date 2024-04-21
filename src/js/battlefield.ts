@@ -73,8 +73,8 @@ class Spaceship {
     this.scale = scale;
     this.x = x;
     this.y = y;
-    this.deltaX = 2;
-    this.deltaY = 2;
+    this.deltaX = 6;
+    this.deltaY = 6;
     this.direction = 0;
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
   }
@@ -110,17 +110,15 @@ class Laser {
   x: number;
   y: number;
   direction: number;
-  updateInterval: number;
   lastUpdate: number;
   constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number,  context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
-    this.deltaY = 5 * direction;
+    this.deltaY = 10 * direction;
     this.scale = scale;
     this.x = x;
     this.y = y;
     this.direction = 0;
-    this.updateInterval = 10;
     this.lastUpdate = performance.now();
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, "rgb(248, 102, 36)");
   }
@@ -179,8 +177,6 @@ class Battlefield {
     this.headerFooterPercentage = 0.10;
     this.defender = new Defender(this.scale, this.canvas.width, this.canvas.height - Math.floor(this.canvas.height * this.headerFooterPercentage), this.addShots, this.context!);
     this.setupLevel(0);
-//    this.titleScreen = new TitleScreen(this.canvas, this.scale);
-    this.updateInterval = 200;
     this.lastUpdate = performance.now();
   }
 
@@ -261,27 +257,32 @@ class Battlefield {
     return false;
   }
 
-  updateInvaders():void{
-    this.removeInvaders();
+  updateInvaders(timestamp: number):void{
+    let delta = timestamp - this.lastUpdate;
+    if(delta > 240){
+      this.removeInvaders();
 
-    let atLeftBoundary = this.anyAtLeftEdge();
-    let atRightBoundary = this.anyAtRightEdge();
-
-    if(atRightBoundary){
-      this.deltaX = -5;
-    }
-
-    if(atLeftBoundary){
-      this.deltaX = 5;
-      this.deltaY = 8 * 3;
-    }
-
-    for(let i = 0; i < this.invaderRow.length; i++){
-      for(let j = 0; j < this.invaderRow[i].length; j++){
-        this.invaderRow[i][j].switchSprite(this.deltaX, this.deltaY);
+      let atLeftBoundary = this.anyAtLeftEdge();
+      let atRightBoundary = this.anyAtRightEdge();
+  
+      if(atRightBoundary){
+        this.deltaX = -5;
       }
+  
+      if(atLeftBoundary){
+        this.deltaX = 5;
+        this.deltaY = 8 * 3;
+      }
+  
+      for(let i = 0; i < this.invaderRow.length; i++){
+        for(let j = 0; j < this.invaderRow[i].length; j++){
+          this.invaderRow[i][j].switchSprite(this.deltaX, this.deltaY);
+        }
+      }
+      this.deltaY = 0;
+      this.lastUpdate = performance.now();
     }
-    this.deltaY = 0;
+    
   }
 
   updateShields(): void{
@@ -362,19 +363,11 @@ class Battlefield {
   }
 
   runLevel(timestamp: number): void {
-    const deltaTime = timestamp - this.lastUpdate;
-    if (deltaTime >= this.updateInterval) {
-      this.defender.update(timestamp)
-      this.updateInvaders();
-      this.updateShields();
-
-      this.lastUpdate = timestamp;
-    }
-    else if (deltaTime >= 20) {
-      this.defender.update(timestamp);
-      this.updateLasers();
-      this.updateHits();
-    }
+    this.defender.update(timestamp)
+    this.updateInvaders(timestamp);
+    this.updateShields();
+    this.updateLasers();
+     this.updateHits();
   }
 }
 

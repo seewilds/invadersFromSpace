@@ -11,11 +11,14 @@ class Game {
     battlefield: Battlefield;
     scale: number;
     updateInterval: number;
-    lastUpdate: number;
     gameId: number;
     levelNumber: number;
     waitingToStartGame: boolean;
     levelTransition: boolean;
+    framesPerSecond: number = 30;
+    interval : number = 1000 / 30;
+    now: number;
+    lastUpdate: number;
     constructor(canvas: HTMLCanvasElement, scale: number, game: Game) {
         this.canvas = canvas;
         this.scale = scale;
@@ -45,6 +48,7 @@ class Game {
                     shieldCount: 4
                 }]
             });
+        this.lastUpdate = performance.now();
         requestAnimationFrame(this.main.bind(this));
     }
 
@@ -56,12 +60,16 @@ class Game {
 
     main(timestamp: number): void {
         this.gameId = requestAnimationFrame(this.main.bind(this));
-        if (this.waitingToStartGame) {
-            this.waitingToStartGame = this.titleScreen.update(timestamp);
-        } else {
-            this.battlefield.runLevel(timestamp);
-        }
-
+        let delta = timestamp - this.lastUpdate;
+        if(delta >= this.interval){
+            if (!this.waitingToStartGame) {
+                this.waitingToStartGame = this.titleScreen.update(timestamp);
+                this.lastUpdate = performance.now();
+            } else {
+                this.battlefield.runLevel(timestamp);
+                this.lastUpdate = timestamp - (delta % this.interval);
+            }
+        }       
     }
 
 }

@@ -7,28 +7,19 @@ class TitleScreen {
     context: CanvasRenderingContext2D;
     scale: number;
     startGame: number;
-
     title: Text;
     titleScale: number;
     titleYCurent: number;
     titleYStart: number;
     titleYEnd: number;
     titleOpacity: number;
-
-    subtitle: Text;
-    subTitleScale: number;
-
     pressStart: Text;
     pressStartScale: number;
     pressStartFadeCurrent: number;
     pressStartFadeStart: number;
     pressStartFadeEnd: number;
-
     spaceship: Spaceship;
-
     stars: Pixel[];
-
-    lastUpdate: number;
     constructor(context: CanvasRenderingContext2D, scale: number) {
         this.context = context;
         this.scale = scale;
@@ -57,7 +48,7 @@ class TitleScreen {
         this.context?.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
         this.context!.fillStyle = "black";
         this.context?.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-      }
+    }
 
     centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
         return (this.context.canvas.width - (spacingOverride * scale * text.length)) / 2;
@@ -68,10 +59,9 @@ class TitleScreen {
     }
 
     update(timestamp: number): boolean {
-        //requestAnimationFrame(this.update.bind(this));
         this.updateStars();
         let begin = true;
-        if (this.startGame > 0) {
+        if (this.startGame <= 1) {
             this.updateSpaceship();
         }
         if (this.startGame > 1) {
@@ -84,14 +74,14 @@ class TitleScreen {
         return begin;
     }
 
-    updateTitle():void {
+    updateTitle(): void {
         if (this.titleYCurent < this.titleYEnd) {
             this.titleYCurent += 2;
             this.title.updateTextPosition(0, 2);
         }
     }
 
-    updatePressStart():void {
+    updatePressStart(): void {
         if (this.titleYCurent != this.titleYEnd) {
             return;
         }
@@ -104,7 +94,7 @@ class TitleScreen {
         }
     }
 
-    updateSpaceship():void {
+    updateSpaceship(): void {
         let position = this.spaceship.getPosition();
         let deltaX = this.spaceship.deltaX;
         let deltaY = this.spaceship.deltaY;
@@ -114,7 +104,7 @@ class TitleScreen {
         if (position[2].y < 0 || position[3].y > this.context.canvas.height / 3) {
             deltaY = -1 * this.spaceship.deltaY;
         }
-        this.spaceship.update(deltaX, deltaY, 'rgb(192,192,192, 0.7)');
+        this.spaceship.update(deltaX, deltaY, `rgb(192,192,192, ${this.titleOpacity})`);
     }
 
     setTextToFinal(): void {
@@ -136,7 +126,7 @@ class TitleScreen {
             this.pressStartFadeCurrent -= 0.01;
             this.title.updateTextPosition(0, 0, `rgba(0, 255, 0, ${this.titleOpacity})`);
             this.pressStart.updateTextPosition(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
-            this.spaceship.update(0, 0, )
+            this.updateSpaceship();
             return true;
         }
         this.clear();
@@ -152,7 +142,7 @@ class TitleScreen {
         return starPixels;
     }
 
-    updateStars() :void{
+    updateStars(): void {
         this.stars.forEach(star => {
             star.Update(this.context!, star.x, star.y);
         });
@@ -163,6 +153,24 @@ class TitleScreen {
             this.setTextToFinal();
         }
         this.startGame += 1;
+    }
+
+}
+
+class LevelTransition {
+    context: CanvasRenderingContext2D;
+    scale: number;
+    level: number;    
+    lives: number;
+    levelText: Text;
+
+    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
+        this.context = context;
+        this.scale = scale;
+        this.level = level;
+        this.lives = lives;
+        //this.levelText = new Text(`LEVEL ${level}`, "rgba(0, 255, 0, 1)", this.scale, this.centreX("INVADERS FROM SPACE", this.scale, 6), -100, this.context!, 6);
+
     }
 
 }
