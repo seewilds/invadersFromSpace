@@ -9,29 +9,21 @@
 <body>
     <script type="module">
         import { Defender, Battlefield, Invader, Shield, Spaceship } from './js/characters.ts'
-        import { Battlefield, TitleScreen } from './js/game.ts'
+        import { Battlefield } from './js/battlefield.ts'
+        import { TitleScreen } from './js/screens.ts'
         import { Invader } from './js/invader.ts'
         import { Shield as Shieldy, Saucer, InvaderType, Explostion } from "./js/types.ts"
         import {Crab, Squid, Octopus} from "./js/sprites.ts"
         import {printText} from "./js/characters.ts"
+        import  { Game } from "./js/game.ts"
+
 
         var defender, crab, octopus, squid, shield, spaceship;
-        var battlefield = new Battlefield(
-            document.createElement("canvas"),
-            4,
-            {levels:[{
-                setup: [
-                { count: 11, colour: "rgb(186, 18, 0)", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
-                { count: 11, colour: "rgb(28, 93, 153)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                { count: 11, colour: "rgb(244, 91, 105)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
-                { count: 11, colour: "rgb(4, 240, 106)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 }
-            ],
-                shieldCount : 4
-            }]});
-        //let title = new TitleScreen(document.createElement("canvas"), 4 );
+
+        //let title = new TitleScreen(document.createElement("canvas"), 2 );
+        let game = new Game(document.createElement("canvas"), 4);
         document.addEventListener('DOMContentLoaded', (event) => {
-            battlefield.start();
-            //title.start();
+            
         });
     </script>
 </body>

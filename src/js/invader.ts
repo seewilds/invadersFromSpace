@@ -1,5 +1,5 @@
 import { spriteFactory } from "./factories";
-import { Laser } from "./game";
+import { Laser } from "./battlefield";
 import { Pixel } from "./pixel";
 import { Explosion, Shot } from "./sprites";
 import { CharacterSprite, Sprite } from "./types"
