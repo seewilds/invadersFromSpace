@@ -129,7 +129,7 @@ class Laser {
   update(): void {
     this.clear();
     this.pixels.forEach((pixel, index) => {
-      pixel.Update(this.context, pixel.x, pixel.y += this.deltaY);
+      pixel.Update(this.context, pixel.x, pixel.y += this.deltaY, "rgb(248, 102, 36)");
     });
   }
 
