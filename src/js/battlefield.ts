@@ -32,8 +32,9 @@ class Shield {
   }
 
   clear(): void {
-    this.context.fillStyle = "black";
-    this.context.fillRect(this.x0 - this.sprite.pixels[0] * this.scale, this.y0, this.sprite.cols * this.scale, this.sprite.rows * this.scale);
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x, pixel.y, "black");
+    });
   }
 
   hit(laser: Laser): boolean {
@@ -80,7 +81,9 @@ class Spaceship {
   }
 
   clear(colour: string = "black"): void {
-    this.pixels.forEach(pixel => pixel.Update(this.context, pixel.x, pixel.y, colour));
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x, pixel.y, "black");
+    });
   }
 
   getPosition() {
@@ -131,8 +134,9 @@ class Laser {
   }
 
   clear(): void {
-    this.context.fillStyle = "black";
-    this.context.fillRect(this.pixels[0].x, this.pixels[0].y, this.sprite.cols * this.scale, this.sprite.rows * this.scale);
+    this.pixels.forEach(pixel => {
+      pixel.Update(this.context, pixel.x, pixel.y, "black");
+    });
   }
 }
 
@@ -145,6 +149,7 @@ class Battlefield {
   lastUpdate: number;
   invaders: Invader[];
   invaderRow: Invader[][];
+  invaderUpdateDelta: number = 240;
   defender: Defender;
   laserShots: Laser[];
   shields: Shield[];
@@ -244,7 +249,7 @@ class Battlefield {
 
   updateInvaders(timestamp: number): void {
     let delta = timestamp - this.lastUpdate;
-    if (delta > 240) {
+    if (delta > this.invaderUpdateDelta) {
       this.removeInvaders();
 
       let atLeftBoundary = this.anyAtLeftEdge();
@@ -327,6 +332,8 @@ class Battlefield {
   removeInvader(row: number, col: number) {
     this.invaderRow[row][col].clear();
     this.invaderRow[row].splice(col, 1);
+    console.log(this.invaderUpdateDelta)
+    this.invaderUpdateDelta -= 5;
   }
 
   removeInvaders(): void {
@@ -341,7 +348,6 @@ class Battlefield {
   }
 
   enableLasers(row: number, index: number): void {
-    console.log(index, row)
     for (let i = row - 1; i >= 0; i--) {
       if (this.invaderRow[i].length >= index
         && this.invaderRow[i][index].setCanFire(this.invaderRow[i][index].pixels)) {
