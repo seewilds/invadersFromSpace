@@ -111,7 +111,7 @@ class Laser {
   y: number;
   direction: number;
   lastUpdate: number;
-  constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number,  context: CanvasRenderingContext2D) {
+  constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D) {
     this.context = context;
     this.sprite = sprite;
     this.deltaY = 10 * direction;
@@ -137,7 +137,6 @@ class Laser {
 }
 
 
-// space invaders is 128 x 128 pixels
 class Battlefield {
   context: CanvasRenderingContext2D | null;
   game: Game;
@@ -170,7 +169,7 @@ class Battlefield {
     this.headerFooterPercentage = 0.10;
     this.defender = new Defender(this.scale, this.context.canvas.width, this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage), this.addShots, this.context!);
     this.setupLevel(0);
-    this.lastUpdate = performance.now();
+    this.lastUpdate = 0;
   }
 
   clear(): void {
@@ -179,19 +178,18 @@ class Battlefield {
     this.context?.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
   }
 
-
-  setupLevel(index: number){
+  setupLevel(index: number) {
     this.invaderRow = new Array(this.game.levels[index].setup.length);
-    for(let i = 0; i < this.invaderRow.length; i++){
+    for (let i = 0; i < this.invaderRow.length; i++) {
       this.invaderRow[i] = this.setupInvaders(this.game.levels[index].setup[i], i);
     }
-    for(let i = 0; i < this.invaderRow[this.invaderRow.length - 1].length; i++){
+    for (let i = 0; i < this.invaderRow[this.invaderRow.length - 1].length; i++) {
       this.invaderRow[this.invaderRow.length - 1][i].canFire = true;
     }
     this.shields = this.setupShields(this.game.levels[index]);
   }
 
-  getHorizontalSpace(sprite: Sprite, numberInRow: number):number{
+  getHorizontalSpace(sprite: Sprite, numberInRow: number): number {
     let invaderWidth = sprite.cols * this.scale;
     numberInRow = numberInRow * invaderWidth > this.context!.canvas.width ? Math.floor(this.context!.canvas.width / invaderWidth) : numberInRow;
     let remainder = this.context!.canvas.width - invaderWidth * numberInRow;
@@ -204,12 +202,12 @@ class Battlefield {
     let spaceBetween = this.getHorizontalSpace(invaderRow.sprite, invaderRow.count);
     let invaderWidth = invaderRow.sprite.cols * this.scale;
     let invaderHeight = invaderRow.sprite.rows * this.scale + this.scale * this.scale;
-    for(let i = 0; i < invaders.length; i++){
-      invaders[i] = new Invader(invaderRow.sprite, invaderRow.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, row * invaderHeight  + topOffset, 0, this.addShots, this.context!);
+    for (let i = 0; i < invaders.length; i++) {
+      invaders[i] = new Invader(invaderRow.sprite, invaderRow.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, row * invaderHeight + topOffset, 0, this.addShots, this.context!);
     }
     return invaders;
   }
-  
+
   setupShields(level: Level): Shield[] {
     let shields = new Array<Shield>(level.shieldCount);
     let spaceBetween = this.getHorizontalSpace(ShieldSprite, level.shieldCount);
@@ -222,11 +220,10 @@ class Battlefield {
     return shields;
   }
 
-
-  anyAtRightEdge(): Boolean{
-    for(let i = 0; i < this.invaderRow.length; i++){
-      for(let j = 0; j < this.invaderRow[i].length; j++){
-        if(this.invaderRow[i][this.invaderRow[i].length - 1].pixels.some(pixel => pixel.x >= this.context!.canvas.width)){
+  anyAtRightEdge(): Boolean {
+    for (let i = 0; i < this.invaderRow.length; i++) {
+      for (let j = 0; j < this.invaderRow[i].length; j++) {
+        if (this.invaderRow[i][this.invaderRow[i].length - 1].pixels.some(pixel => pixel.x >= this.context!.canvas.width)) {
           return true;
         }
       }
@@ -234,10 +231,10 @@ class Battlefield {
     return false;
   }
 
-  anyAtLeftEdge(): Boolean{
-    for(let i = 0; i < this.invaderRow.length; i++){
-      for(let j = 0; j < this.invaderRow[i].length; j++){
-        if(this.invaderRow[i][0].pixels.some(pixel => pixel.x <= 0)){
+  anyAtLeftEdge(): Boolean {
+    for (let i = 0; i < this.invaderRow.length; i++) {
+      for (let j = 0; j < this.invaderRow[i].length; j++) {
+        if (this.invaderRow[i][0].pixels.some(pixel => pixel.x <= 0)) {
           return true;
         }
       }
@@ -245,35 +242,34 @@ class Battlefield {
     return false;
   }
 
-  updateInvaders(timestamp: number):void{
+  updateInvaders(timestamp: number): void {
     let delta = timestamp - this.lastUpdate;
-    if(delta > 240){
+    if (delta > 240) {
       this.removeInvaders();
 
       let atLeftBoundary = this.anyAtLeftEdge();
       let atRightBoundary = this.anyAtRightEdge();
-  
-      if(atRightBoundary){
+
+      if (atRightBoundary) {
         this.deltaX = -5;
       }
-  
-      if(atLeftBoundary){
+
+      if (atLeftBoundary) {
         this.deltaX = 5;
         this.deltaY = 8 * 3;
       }
-  
-      for(let i = 0; i < this.invaderRow.length; i++){
-        for(let j = 0; j < this.invaderRow[i].length; j++){
+
+      for (let i = 0; i < this.invaderRow.length; i++) {
+        for (let j = 0; j < this.invaderRow[i].length; j++) {
           this.invaderRow[i][j].switchSprite(this.deltaX, this.deltaY);
         }
       }
       this.deltaY = 0;
-      this.lastUpdate = performance.now();
+      this.lastUpdate = timestamp;
     }
-    
   }
 
-  updateShields(): void{
+  updateShields(): void {
     for (let i = this.shields.length - 1; i >= 0; i--) {
       if (this.shields[i].pixels.length === 0) {
         this.removeShield(i);
@@ -282,19 +278,27 @@ class Battlefield {
       }
     }
   }
-  
+
   addShots = (laser: Laser) => {
     this.laserShots = [...this.laserShots, laser];
   };
-  
-  updateLasers(): void{
+
+  updateLasers(): void {
     this.laserShots.forEach(shot => {
       shot.update();
-    });    
+    });
   }
 
-  updateHits(){
-    this.invaderRow.forEach( (invaders, index) =>{
+  reset(): void {
+    for (let i = this.laserShots.length - 1; i >= 0; i--) {
+      this.removeLaserShot(i);
+    }
+    this.defender.clear();
+    this.defender.reset();
+  }
+
+  updateHits() {
+    this.invaderRow.forEach((invaders, index) => {
       for (let i = invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (invaders[i].hit(this.laserShots[j])) {
@@ -311,24 +315,24 @@ class Battlefield {
         }
       }
     }
-    if(this.defender.health > 0){     
-      for(let i = 0; i < this.laserShots.length; i++){
-        if(this.defender.hit(this.laserShots[i])){
+    if (this.defender.health > 0) {
+      for (let i = 0; i < this.laserShots.length; i++) {
+        if (this.defender.hit(this.laserShots[i])) {
           this.defender.health = 0;
         }
       }
     }
   }
 
-  removeInvader(row: number, col: number){
+  removeInvader(row: number, col: number) {
     this.invaderRow[row][col].clear();
     this.invaderRow[row].splice(col, 1);
   }
 
-  removeInvaders(): void{
-    for(let i = this.invaderRow.length - 1; i >= 0; i--){
-      for(let j = this.invaderRow[i].length - 1; j >= 0; j--){
-        if(this.invaderRow[i][j].health === 0){
+  removeInvaders(): void {
+    for (let i = this.invaderRow.length - 1; i >= 0; i--) {
+      for (let j = this.invaderRow[i].length - 1; j >= 0; j--) {
+        if (this.invaderRow[i][j].health === 0) {
           this.enableLasers(i, j);
           this.removeInvader(i, j);
         }
@@ -336,33 +340,44 @@ class Battlefield {
     }
   }
 
-  enableLasers(row: number, index: number): void{
+  enableLasers(row: number, index: number): void {
     console.log(index, row)
-    for(let i = row - 1; i >= 0; i--){
-      if(this.invaderRow[i].length >= index
-        && this.invaderRow[i][index].setCanFire(this.invaderRow[i][index].pixels)){
+    for (let i = row - 1; i >= 0; i--) {
+      if (this.invaderRow[i].length >= index
+        && this.invaderRow[i][index].setCanFire(this.invaderRow[i][index].pixels)) {
         return;
       }
-      
+
     }
   }
-  
-  removeShield(index: number){
+
+  removeShield(index: number) {
     this.shields[index].clear();
     this.shields.splice(index, 1);
   }
 
-  removeLaserShot(index: number){
+  removeLaserShot(index: number) {
     this.laserShots[index].clear();
     this.laserShots.splice(index, 1);
   }
 
   runLevel(timestamp: number): void {
-    this.defender.update(timestamp)
-    this.updateInvaders(timestamp);
-    this.updateShields();
-    this.updateLasers();
-     this.updateHits();
+    let delta = timestamp - this.lastUpdate;
+    if(this.defender.health > 0){
+      this.defender.update(timestamp);
+      this.updateInvaders(timestamp);
+      this.updateShields();
+      this.updateLasers();
+      this.updateHits();
+    }else{
+     if(delta <= 300){
+      console.log(delta)
+      this.defender.update(timestamp);
+      }
+      else{
+        this.reset();
+      }
+    }    
   }
 }
 

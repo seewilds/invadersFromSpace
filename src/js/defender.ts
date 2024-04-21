@@ -62,11 +62,17 @@ class Defender {
     return false;
   }
 
+  reset(): void {
+    this.health = 1;
+    this.colour = "rgb(204, 218, 209)";
+    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
+  }
+
   switchSprite() {
-    if(this.explosionIndex === 1){
+    if (this.explosionIndex === 1) {
       this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.lastX - 6 * this.scale, this.lastY, this.explosion[0], this.colour)
       this.explosionIndex = 0;
-    }else{
+    } else {
       this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.lastX - 6 * this.scale, this.lastY, this.explosion[1], this.colour)
       this.explosionIndex = 1;
     }
@@ -79,12 +85,12 @@ class Defender {
     ) {
       this.deltaX = 0;
     }
-    this.clear(); 
+    this.clear();
     if (this.health === 0) {
       this.deltaX = 0;
-      this.switchSprite();      
+      this.switchSprite();
     }
-    
+
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x += this.deltaX, pixel.y, this.colour);
     });
@@ -97,7 +103,7 @@ class Defender {
   }
 
   handleKeyDown(event: KeyboardEvent): void {
-    if(this.health === 0){
+    if (this.health === 0) {
       return;
     }
     if (event.key == 'a') {
