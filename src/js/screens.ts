@@ -189,7 +189,7 @@ class PlayerSection {
         this.scale = scale;
         this.level = level;
         this.lives = lives;
-        this.livesText = new Text(`LIVES`, "white", this.scale / 2, 10, 870, this.context!);
+        this.livesText = new Text(`${this.lives.toString()}`, "white", this.scale / 2, 10, 870, this.context!);
         this.setupDefenderLives(this.lives);
         this.draw();
     }
@@ -213,4 +213,33 @@ class PlayerSection {
     }
 }
 
-export { TitleScreen, PlayerSection }
+class ScoreBoard {
+    context: CanvasRenderingContext2D;
+    scale: number;
+    level: number;    
+    lives: number;
+    currentScore: Text;
+    hiScore: Text;
+
+    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
+        this.context = context;
+        this.scale = scale;
+        this.level = level;
+        this.lives = lives;
+        this.currentScore = new Text(`CURRENT SCORE 0`, "white", 2, 10, 10, this.context!);
+        this.hiScore = new Text(`HI SCORE 1000`, "white", 2, 10, 40, this.context!);
+        this.draw();
+    }
+
+
+    updateScore(score: number):void {
+        this.currentScore.setText(score.toString());
+    }
+
+    draw():void{
+        this.currentScore.updateTextPosition(0,0);
+        this.hiScore.updateTextPosition(0,0);
+    }
+}
+
+export { TitleScreen, ScoreBoard, PlayerSection }
