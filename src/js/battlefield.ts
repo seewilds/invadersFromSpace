@@ -1,4 +1,4 @@
-import { Sprite, Level, InvaderType, CharacterSprite, InvaderRow, Game } from "./types.ts"
+import { Sprite, Level, InvaderType, CharacterSprite, InvaderRow, Game, LevelState } from "./types.ts"
 import { Invader } from "./invader.ts"
 import { Pixel } from "./pixel.ts";
 import { DefenderSprite, Saucer, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
@@ -156,12 +156,14 @@ class Battlefield {
   headerFooterPercentage: number;
   gameId: number;
   levelNumber: number;
+  levelState: LevelState;
   direction: number;
   deltaX: number;
   deltaY: number;
-  constructor(context: CanvasRenderingContext2D, scale: number, game: Game) {
+  constructor(context: CanvasRenderingContext2D, scale: number, game: Game, levelState: LevelState) {
     this.gameId = 0;
     this.levelNumber = 0;
+    this.levelState = levelState;
     this.game = game;
     this.invaders = new Array();
     this.direction = 1;
@@ -308,6 +310,7 @@ class Battlefield {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (invaders[i].hit(this.laserShots[j])) {
             this.removeLaserShot(j);
+            this.levelState.points += ((4 % i) * 10); 
           }
         }
       }
@@ -324,6 +327,7 @@ class Battlefield {
       for (let i = 0; i < this.laserShots.length; i++) {
         if (this.defender.hit(this.laserShots[i])) {
           this.defender.health = 0;
+          this.levelState.lives -= 1;
         }
       }
     }
@@ -367,7 +371,7 @@ class Battlefield {
     this.laserShots.splice(index, 1);
   }
 
-  runLevel(timestamp: number): void {
+  runLevel(timestamp: number): LevelState {
     let delta = timestamp - this.lastUpdate;
     if (this.defender.health > 0) {
       this.updateHits();
@@ -385,6 +389,7 @@ class Battlefield {
         this.reset();
       }
     }
+    return this.levelState;
   }
 }
 

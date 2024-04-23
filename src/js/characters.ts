@@ -75,6 +75,8 @@ class Text {
 
     setText(text: string){
         this.text = text;
+        this.clear();
+        this.pixels = textFactory(this.text, this.x, this.y, this.scale, this.colour, this.spaceOverride);
     }
 
     updateTextPosition(deltaX: number, deltaY: number, colour: string = this.colour): void {

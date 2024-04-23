@@ -32,8 +32,13 @@ interface Level {
     shieldCount : number
 }
 
+interface LevelState {
+    points: number;
+    lives: number;
+}
+
 interface Game {
     levels: Level[]
 }
 
-export { Character, CharacterSprite, Sprite,  Level, Game, InvaderType, InvaderRow }
+export { Character, CharacterSprite, Sprite,  Level, Game, InvaderType, InvaderRow, LevelState }

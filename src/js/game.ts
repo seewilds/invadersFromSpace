@@ -1,7 +1,7 @@
 import { Battlefield } from "./battlefield";
 import { TitleScreen, ScoreBoard, PlayerSection } from "./screens";
 import { Crab, Octopus, Squid } from "./sprites";
-import { InvaderType } from "./types";
+import { InvaderType, LevelState } from "./types";
 
 class Game {
     canvas: HTMLCanvasElement;
@@ -15,6 +15,7 @@ class Game {
     updateInterval: number;
     gameId: number;
     levelNumber: number;
+    levelState: LevelState;
     waitingToStartGame: boolean;
     levelTransition: boolean;
     framesPerSecond: number = 30;
@@ -27,6 +28,7 @@ class Game {
         this.game = game;
         this.gameId = 0;
         this.levelNumber = 0;
+        this.levelState = { points: 0, lives: 3 };
         this.waitingToStartGame = true;
         this.levelTransition = false;
         this.canvas.width = 196 * this.scale;
@@ -51,7 +53,7 @@ class Game {
                     ],
                     shieldCount: 4
                 }]
-            });
+            }, this.levelState);
         this.lastUpdate = performance.now();
         requestAnimationFrame(this.main.bind(this));
     }
@@ -70,9 +72,9 @@ class Game {
                 this.waitingToStartGame = this.titleScreen.update(timestamp);
                 this.lastUpdate = performance.now();
             } else {
-                this.playerSection.draw();
-                this.scoreBoard.draw();
-                this.battlefield.runLevel(timestamp);
+                this.levelState = this.battlefield.runLevel(timestamp);
+                this.playerSection.draw(this.levelState.lives);
+                this.scoreBoard.draw(this.levelState.points);                
                 this.lastUpdate = timestamp - (delta % this.interval);
             }
         }       

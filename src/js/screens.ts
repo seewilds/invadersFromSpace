@@ -191,7 +191,7 @@ class PlayerSection {
         this.lives = lives;
         this.livesText = new Text(`${this.lives.toString()}`, "white", 3, 10, 850, this.context!);
         this.setupDefenderLives(this.lives);
-        this.draw();
+        this.draw(0);
     }
 
     setupDefenderLives(lives: number):void{
@@ -203,13 +203,12 @@ class PlayerSection {
         }        
     }
 
-    draw():void{
+    draw(lives: number):void{
+        this.livesText.setText(lives.toString());
         this.livesText.updateTextPosition(0,0);
-        this.defenderLives.forEach(life => {
-            life.forEach(life=>{
-                life.Update(this.context!, life.x, life.y);
-            })
-        });
+        if(lives === this.lives){
+            this.setupDefenderLives(lives);
+        }
     }
 }
 
@@ -232,7 +231,7 @@ class ScoreBoard {
         this.currentScore = new Text(`0`, "white", 2, 10, 40, this.context!);
         this.hiScoreText = new Text(`HI SCORE`, "white", 2, 250, 10, this.context!);
         this.hiScore = new Text(`1000`, "white", 2, 250, 40, this.context!);
-        this.draw();
+        this.draw(0);
     }
 
 
@@ -240,8 +239,9 @@ class ScoreBoard {
         this.currentScore.setText(score.toString());
     }
 
-    draw():void{
+    draw(points: number):void{
         this.currentScoreText.updateTextPosition(0,0);
+        this.currentScore.setText(points.toString());
         this.currentScore.updateTextPosition(0,0);
         this.hiScoreText.updateTextPosition(0,0);
         this.hiScore.updateTextPosition(0,0);
