@@ -180,9 +180,8 @@ class Battlefield {
   }
 
   clear(): void {
-    this.context?.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
     this.context!.fillStyle = "black";
-    this.context?.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+    this.context!.fillRect(0, 0, this.context!.canvas.width, this.context!.canvas.height);
   }
 
   setupLevel(index: number) {
@@ -310,7 +309,7 @@ class Battlefield {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (invaders[i].hit(this.laserShots[j])) {
             this.removeLaserShot(j);
-            this.levelState.points += ((4 % i) * 10); 
+            this.levelState.points += 10 + (4 % (i + 1)) * 10; 
           }
         }
       }
@@ -326,8 +325,8 @@ class Battlefield {
     if (this.defender.health > 0) {
       for (let i = 0; i < this.laserShots.length; i++) {
         if (this.defender.hit(this.laserShots[i])) {
-          this.defender.health = 0;
           this.levelState.lives -= 1;
+          this.defender.health = 0;
         }
       }
     }
@@ -382,7 +381,6 @@ class Battlefield {
       
     } else {
       if (delta <= 300) {
-        console.log(delta)
         this.defender.update(timestamp);
       }
       else {

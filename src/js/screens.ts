@@ -203,11 +203,24 @@ class PlayerSection {
         }        
     }
 
+    clearDefenders() {
+        this.defenderLives.forEach(pixels => pixels.forEach(pixel => {
+            pixel.Update(this.context, pixel.x, pixel.y, "black");
+        }));
+    }
+
     draw(lives: number):void{
         this.livesText.setText(lives.toString());
         this.livesText.updateTextPosition(0,0);
-        if(lives === this.lives){
-            this.setupDefenderLives(lives);
+        if(lives !== this.lives){
+            this.lives = lives;
+            this.clearDefenders();
+            this.setupDefenderLives(this.lives);
+            this.defenderLives.forEach((defender, index) => {
+                defender.forEach(pixel => {
+                    pixel.Update(this.context!, pixel.x, pixel.y);
+                });
+            });
         }
     }
 }
