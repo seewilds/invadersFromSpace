@@ -1,5 +1,5 @@
 import { Battlefield } from "./battlefield";
-import { TitleScreen, ScoreBoard, PlayerSection } from "./screens";
+import { TitleScreen, ScoreBoard, PlayerSection, GameOver, Winner } from "./screens";
 import { Crab, Octopus, Squid } from "./sprites";
 import { InvaderType, LevelState } from "./types";
 
@@ -10,6 +10,8 @@ class Game {
     titleScreen: TitleScreen;
     battlefield: Battlefield;
     scoreBoard: ScoreBoard;
+    gameOver: GameOver;
+    winner: Winner;
     playerSection: PlayerSection;
     scale: number;
     updateInterval: number;
@@ -19,7 +21,7 @@ class Game {
     waitingToStartGame: boolean;
     levelTransition: boolean;
     framesPerSecond: number = 30;
-    interval : number = 1000 / 30;
+    interval: number = 1000 / 30;
     now: number;
     lastUpdate: number;
     constructor(canvas: HTMLCanvasElement, scale: number, game: Game) {
@@ -28,7 +30,7 @@ class Game {
         this.game = game;
         this.gameId = 0;
         this.levelNumber = 0;
-        this.levelState = { points: 0, lives: 3 };
+        this.levelState = { points: 0, lives: 3, numberOfInvaders: 0 };
         this.waitingToStartGame = true;
         this.levelTransition = false;
         this.canvas.width = 196 * this.scale;
@@ -40,6 +42,8 @@ class Game {
         this.titleScreen = new TitleScreen(this.context!, this.scale);
         this.playerSection = new PlayerSection(1, 3, this.context!, this.scale);
         this.scoreBoard = new ScoreBoard(1, 3, this.context!, this.scale);
+        this.gameOver = new GameOver(1, 0, this.context!, this.scale);
+        this.winner = new Winner(1, 0, this.context!, this.scale);
         this.battlefield = new Battlefield(
             this.context!,
             4,
@@ -68,17 +72,23 @@ class Game {
     main(timestamp: number): void {
         this.gameId = requestAnimationFrame(this.main.bind(this));
         let delta = timestamp - this.lastUpdate;
-        if(delta >= this.interval){
+        if (delta >= this.interval) {
             if (this.waitingToStartGame) {
                 this.waitingToStartGame = this.titleScreen.update(timestamp);
                 this.lastUpdate = performance.now();
-            } else {
+            } else if (this.levelState.lives > 0 && this.levelState.numberOfInvaders > 0) {
                 this.levelState = this.battlefield.runLevel(timestamp);
                 this.playerSection.draw(this.levelState.lives);
-                this.scoreBoard.draw(this.levelState.points);                
+                this.scoreBoard.draw(this.levelState.points);
                 this.lastUpdate = timestamp - (delta % this.interval);
+            } else if (this.levelState.lives === 0) {
+                this.clear();
+                this.gameOver.draw(timestamp);
+            } else {
+                this.clear();
+                this.winner.draw(timestamp);
             }
-        }       
+        }
     }
 
 }

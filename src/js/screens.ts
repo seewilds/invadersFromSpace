@@ -158,7 +158,7 @@ class TitleScreen {
 
 }
 
-class LevelTransition {
+class GameOver {
     context: CanvasRenderingContext2D;
     scale: number;
     level: number;    
@@ -170,10 +170,41 @@ class LevelTransition {
         this.scale = scale;
         this.level = level;
         this.lives = lives;
-        //this.levelText = new Text(`LEVEL ${level}`, "rgba(0, 255, 0, 1)", this.scale, this.centreX("INVADERS FROM SPACE", this.scale, 6), -100, this.context!, 6);
-
+        this.levelText = new Text("GAME OVER", "red", this.scale, this.centreX("GAME OVER", this.scale, 6), 200, this.context!, 6);
     }
 
+    draw(lives: number):void{
+        this.levelText.updateTextPosition(0,0);
+    }
+
+    centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
+        return (this.context.canvas.width - (spacingOverride * scale * text.length)) / 2;
+    }
+}
+
+
+class Winner {
+    context: CanvasRenderingContext2D;
+    scale: number;
+    level: number;    
+    lives: number;
+    levelText: Text;
+
+    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
+        this.context = context;
+        this.scale = scale;
+        this.level = level;
+        this.lives = lives;
+        this.levelText = new Text("WINNER", "rgba(0, 255, 0, 1)", this.scale, this.centreX("WINNER", this.scale, 6), 200, this.context!, 6);
+    }
+
+    draw(lives: number):void{
+        this.levelText.updateTextPosition(0,0);
+    }
+
+    centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
+        return (this.context.canvas.width - (spacingOverride * scale * text.length)) / 2;
+    }
 }
 
 class PlayerSection {
@@ -259,4 +290,4 @@ class ScoreBoard {
     }
 }
 
-export { TitleScreen, ScoreBoard, PlayerSection }
+export { TitleScreen, ScoreBoard, PlayerSection, GameOver, Winner }

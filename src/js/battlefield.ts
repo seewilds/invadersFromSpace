@@ -186,6 +186,8 @@ class Battlefield {
 
   setupLevel(index: number) {
     this.invaderRow = new Array(this.game.levels[index].setup.length);
+    this.levelState.numberOfInvaders = this.invaderRow.length * this.game.levels[0].setup[0].count;
+    console.log(this.levelState.numberOfInvaders)
     for (let i = 0; i < this.invaderRow.length; i++) {
       this.invaderRow[i] = this.setupInvaders(this.game.levels[index].setup[i], i);
     }
@@ -344,6 +346,7 @@ class Battlefield {
         if (this.invaderRow[i][j].health === 0) {
           this.enableLasers(i, j);
           this.removeInvader(i, j);
+          this.levelState.numberOfInvaders--;
         }
       }
     }
