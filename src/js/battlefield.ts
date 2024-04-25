@@ -374,12 +374,11 @@ class Battlefield {
   runLevel(timestamp: number): LevelState {
     let delta = timestamp - this.lastUpdate;
     if (this.defender.health > 0) {
-      this.updateHits();
       this.defender.update(timestamp);
       this.updateInvaders(timestamp);
       this.updateShields();
       this.updateLasers();
-      
+      this.updateHits();
     } else {
       if (delta <= 300) {
         this.defender.update(timestamp);
