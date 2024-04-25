@@ -40,8 +40,7 @@ class Defender {
     this.colour = "rgb(204, 218, 209)";
     this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
     this.addShots = addShots;
-    window.addEventListener('keydown', (event) => this.handleKeyDown(event));
-    window.addEventListener('keyup', (event) => this.handleKeyUp(event));
+    this.addEventListeners();
   }
 
   hit(laser: Laser): boolean {
@@ -101,6 +100,17 @@ class Defender {
       pixel.Update(this.context, pixel.x, pixel.y, "black");
     });
   }
+
+  addEventListeners():void{
+    window.addEventListener('keydown', (event) => this.handleKeyDown(event));
+    window.addEventListener('keyup', (event) => this.handleKeyUp(event));
+  }
+
+  removeEventListeners():void{
+    window.removeEventListener('keydown', (event) => this.handleKeyDown(event));
+    window.removeEventListener('keyup', (event) => this.handleKeyUp(event));
+  }
+
 
   handleKeyDown(event: KeyboardEvent): void {
     if (this.health === 0) {

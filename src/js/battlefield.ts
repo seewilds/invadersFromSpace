@@ -82,7 +82,7 @@ class Spaceship {
 
   clear(colour: string = "black"): void {
     this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y, "black");
+      pixel.Update(this.context, pixel.x, pixel.y, colour);
     });
   }
 
@@ -335,8 +335,7 @@ class Battlefield {
   removeInvader(row: number, col: number) {
     this.invaderRow[row][col].clear();
     this.invaderRow[row].splice(col, 1);
-    console.log(this.invaderUpdateDelta)
-    this.invaderUpdateDelta -= 5;
+    this.invaderUpdateDelta -= 2;
   }
 
   removeInvaders(): void {
@@ -352,11 +351,10 @@ class Battlefield {
 
   enableLasers(row: number, index: number): void {
     for (let i = row - 1; i >= 0; i--) {
-      if (this.invaderRow[i].length >= index
+      if (this.invaderRow[i].length - 1 >= index
         && this.invaderRow[i][index].setCanFire(this.invaderRow[i][index].pixels)) {
         return;
       }
-
     }
   }
 

@@ -62,7 +62,7 @@ class TitleScreen {
     update(timestamp: number): boolean {
         this.updateStars();
         let begin = true;
-        if (this.startGame <= 1) {
+        if (this.titleYCurent === this.titleYEnd) {
             this.updateSpaceship();
         }
         if (this.startGame > 1) {
@@ -87,7 +87,7 @@ class TitleScreen {
             return;
         }
         if (this.pressStartFadeCurrent < this.pressStartFadeEnd) {
-            this.pressStartFadeCurrent += 0.02;
+            this.pressStartFadeCurrent += 0.1;
             this.pressStart.updateTextPosition(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
         }
         else {
@@ -123,8 +123,8 @@ class TitleScreen {
 
     fadeOut(): boolean {
         if (this.titleOpacity > 0 || this.pressStartFadeCurrent > 0) {
-            this.titleOpacity -= 0.01;
-            this.pressStartFadeCurrent -= 0.01;
+            this.titleOpacity -= 0.1;
+            this.pressStartFadeCurrent -= 0.1;
             this.title.updateTextPosition(0, 0, `rgba(0, 255, 0, ${this.titleOpacity})`);
             this.pressStart.updateTextPosition(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
             this.updateSpaceship();
@@ -191,15 +191,14 @@ class PlayerSection {
         this.lives = lives;
         this.livesText = new Text(`${this.lives.toString()}`, "white", 3, 10, 850, this.context!);
         this.setupDefenderLives(this.lives);
-        this.draw(0);
     }
 
     setupDefenderLives(lives: number):void{
         this.defenderLives = new Array<Pixel[]>(lives);
-        let startPixel = 400;
+        let startPixel = 80;
         for(let i = 0; i < lives; i++){
-            this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, 3, startPixel, 850, DefenderSprite.pixels, "blue");
-            startPixel += DefenderSprite.cols * this.scale + 50;
+            this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, 3, startPixel, 850, DefenderSprite.pixels, "rgb(204, 218, 209)");
+            startPixel += DefenderSprite.cols * this.scale + 25;
         }        
     }
 
@@ -216,12 +215,12 @@ class PlayerSection {
             this.lives = lives;
             this.clearDefenders();
             this.setupDefenderLives(this.lives);
-            this.defenderLives.forEach((defender, index) => {
-                defender.forEach(pixel => {
-                    pixel.Update(this.context!, pixel.x, pixel.y);
-                });
-            });
         }
+        this.defenderLives.forEach((defender, index) => {
+            defender.forEach(pixel => {
+                pixel.Update(this.context!, pixel.x, pixel.y);
+            });
+        });
     }
 }
 
@@ -244,7 +243,6 @@ class ScoreBoard {
         this.currentScore = new Text(`0`, "white", 2, 10, 40, this.context!);
         this.hiScoreText = new Text(`HI SCORE`, "white", 2, 250, 10, this.context!);
         this.hiScore = new Text(`1000`, "white", 2, 250, 40, this.context!);
-        this.draw(0);
     }
 
 
