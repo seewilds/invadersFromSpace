@@ -114,7 +114,8 @@ class Laser {
   y: number;
   direction: number;
   lastUpdate: number;
-  constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D) {
+  colour: string;
+  constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D, colour: string = "rgb(248, 102, 36)") {
     this.context = context;
     this.sprite = sprite;
     this.deltaY = 10 * direction;
@@ -123,13 +124,14 @@ class Laser {
     this.y = y;
     this.direction = 0;
     this.lastUpdate = performance.now();
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, "rgb(248, 102, 36)");
+    this.colour = colour;
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
   }
 
   update(): void {
     this.clear();
     this.pixels.forEach((pixel, index) => {
-      pixel.Update(this.context, pixel.x, pixel.y += this.deltaY, "rgb(248, 102, 36)");
+      pixel.Update(this.context, pixel.x, pixel.y += this.deltaY, this.colour);
     });
   }
 
@@ -198,7 +200,6 @@ class Battlefield {
     }else{
       this.invaderAltSound.play();
     }
-
     this.soundIsPrimary = !this.soundIsPrimary;
   }
 
@@ -213,6 +214,7 @@ class Battlefield {
       this.invaderRow[this.invaderRow.length - 1][i].canFire = true;
     }
     this.shields = this.setupShields(this.game.levels[index]);
+    this.defender.addEventListeners();
   }
 
   getHorizontalSpace(sprite: Sprite, numberInRow: number): number {

@@ -47,7 +47,7 @@ class Defender {
     this.shotSound = new Audio(audioUrl.toString());
     const explosionSound = new URL('./../audio/explosion.wav', import.meta.url);
     this.defenderKilled = new Audio(explosionSound.toString());
-    this.addEventListeners();
+    //this.addEventListeners();
   }
 
   hit(laser: Laser): boolean {
@@ -132,7 +132,7 @@ class Defender {
       return;
     }
     if (event.key === ' ') {
-      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, -1, this.context));
+      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, -1, this.context, 'rgb(0,140,255)'));
       this.shotSound.currentTime = 0;
       this.shotSound.play();
     }
