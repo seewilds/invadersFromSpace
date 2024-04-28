@@ -149,6 +149,9 @@ class Battlefield {
   lastUpdate: number;
   invaders: Invader[];
   invaderRow: Invader[][];
+  invaderPrimarySound: HTMLAudioElement;
+  invaderAltSound: HTMLAudioElement;
+  soundIsPrimary: boolean;
   invaderUpdateDelta: number = 240;
   defender: Defender;
   laserShots: Laser[];
@@ -166,6 +169,11 @@ class Battlefield {
     this.levelState = levelState;
     this.game = game;
     this.invaders = new Array();
+    const audioPrimaryUrl = new URL('./../audio/fastinvader1.wav', import.meta.url);
+    this.invaderPrimarySound = new Audio(audioPrimaryUrl.toString());
+    const audioAltUrl = new URL('./../audio/fastinvader2.wav', import.meta.url);
+    this.invaderAltSound = new Audio(audioAltUrl.toString());
+    this.soundIsPrimary = true;
     this.direction = 1;
     this.deltaX = 5;
     this.deltaY = 0;
@@ -182,6 +190,16 @@ class Battlefield {
   clear(): void {
     this.context!.fillStyle = "black";
     this.context!.fillRect(0, 0, this.context!.canvas.width, this.context!.canvas.height);
+  }
+
+  playInvaderMoveSound():void{
+    if(this.soundIsPrimary){
+      this.invaderPrimarySound.play();
+    }else{
+      this.invaderAltSound.play();
+    }
+
+    this.soundIsPrimary = !this.soundIsPrimary;
   }
 
   setupLevel(index: number) {
@@ -270,6 +288,7 @@ class Battlefield {
       for (let i = 0; i < this.invaderRow.length; i++) {
         for (let j = 0; j < this.invaderRow[i].length; j++) {
           this.invaderRow[i][j].switchSprite(this.deltaX, this.deltaY);
+          this.playInvaderMoveSound();
         }
       }
       this.deltaY = 0;
