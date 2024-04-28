@@ -12,6 +12,7 @@ class Invader {
     addShot: Function;
     sprite: CharacterSprite;
     explosion: Sprite;
+    explosionSound: HTMLAudioElement;
     colour: string;
     altActive: boolean;
     direction: number;
@@ -35,6 +36,8 @@ class Invader {
         this.updateInterval = 200;
         this.lastUpdate = performance.now();
         this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, this.colour);
+        const audioUrl = new URL('./../audio/invaderkilled.wav', import.meta.url);
+        this.explosionSound = new Audio(audioUrl.toString());
         this.altActive = false;
     }
 
@@ -50,6 +53,7 @@ class Invader {
                 if(Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y){
                     this.health = 0;
                     this.switchSprite(0, 0);
+                    this.explosionSound.play();
                     return true;
                 }
             }   

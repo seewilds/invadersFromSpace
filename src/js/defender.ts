@@ -4,6 +4,7 @@ import { Pixel } from "./pixel";
 import { DefenderSprite, Shot } from "./sprites";
 import { Sprite } from "./types";
 
+
 class Defender {
   context: CanvasRenderingContext2D;
   health: number;
@@ -24,6 +25,8 @@ class Defender {
   colour: string;
   updateInterval: number;
   lastUpdate: number;
+  shotSound: HTMLAudioElement;
+  defenderKilled: HTMLAudioElement;
   addShots: Function;
   constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
     this.context = context;
@@ -40,6 +43,10 @@ class Defender {
     this.colour = "rgb(204, 218, 209)";
     this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
     this.addShots = addShots;
+    const audioUrl = new URL('./../audio/shoot.wav', import.meta.url);
+    this.shotSound = new Audio(audioUrl.toString());
+    const explosionSound = new URL('./../audio/explosion.wav', import.meta.url);
+    this.defenderKilled = new Audio(explosionSound.toString());
     this.addEventListeners();
   }
 
@@ -54,6 +61,7 @@ class Defender {
           this.colour = "rgb(255,255,102)";
           this.clear();
           this.switchSprite();
+          this.defenderKilled.play();
           return true;
         }
       }
@@ -111,7 +119,6 @@ class Defender {
     window.removeEventListener('keyup', (event) => this.handleKeyUp(event));
   }
 
-
   handleKeyDown(event: KeyboardEvent): void {
     if (this.health === 0) {
       return;
@@ -126,6 +133,8 @@ class Defender {
     }
     if (event.key === ' ') {
       this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, -1, this.context));
+      this.shotSound.currentTime = 0;
+      this.shotSound.play();
     }
   }
 

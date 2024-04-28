@@ -60,7 +60,8 @@ class Game {
                 }]
             }, this.levelState);
         this.lastUpdate = performance.now();
-        requestAnimationFrame(this.main.bind(this));
+        this.main = this.main.bind(this);
+        requestAnimationFrame(this.main);
     }
 
     clear(): void {
@@ -70,7 +71,7 @@ class Game {
     }
 
     main(timestamp: number): void {
-        this.gameId = requestAnimationFrame(this.main.bind(this));
+        this.gameId = requestAnimationFrame(this.main);
         let delta = timestamp - this.lastUpdate;
         if (delta >= this.interval) {
             if (this.waitingToStartGame) {
