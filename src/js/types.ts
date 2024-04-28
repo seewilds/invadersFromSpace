@@ -36,6 +36,7 @@ interface LevelState {
     points: number;
     lives: number;
     numberOfInvaders: number;
+    initialized: boolean;
 }
 
 interface Game {

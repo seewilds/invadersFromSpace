@@ -24,13 +24,14 @@ class Game {
     interval: number = 1000 / 30;
     now: number;
     lastUpdate: number;
+    secondsPaused: number;
     constructor(canvas: HTMLCanvasElement, scale: number, game: Game) {
         this.canvas = canvas;
         this.scale = scale;
         this.game = game;
         this.gameId = 0;
         this.levelNumber = 0;
-        this.levelState = { points: 0, lives: 3, numberOfInvaders: 0 };
+        this.levelState = { points: 0, lives: 3, numberOfInvaders: 0, initialized: false, running: false };
         this.waitingToStartGame = true;
         this.levelTransition = false;
         this.canvas.width = 196 * this.scale;
@@ -60,14 +61,21 @@ class Game {
                 }]
             }, this.levelState);
         this.lastUpdate = performance.now();
+        this.secondsPaused = 0;
         this.main = this.main.bind(this);
         requestAnimationFrame(this.main);
     }
 
     clear(): void {
-        this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context!.fillStyle = "black";
         this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    threeSecondPause():void {
+        let time = 0;
+        while(time < 4000){
+            time = performance.now() - time;
+        }
     }
 
     main(timestamp: number): void {
@@ -77,18 +85,32 @@ class Game {
             if (this.waitingToStartGame) {
                 this.waitingToStartGame = this.titleScreen.update(timestamp);
                 this.lastUpdate = performance.now();
-            } else if (this.levelState.lives > 0 && this.levelState.numberOfInvaders > 0) {
+            } else if(!this.levelState.initialized){
+                this.secondsPaused += delta;
+                if(this.secondsPaused / 1000 >= 1){
+                    this.battlefield.setupLevel(0);
+                    this.levelState.running = true;
+                    this.secondsPaused = 0;
+                }                 
+            }
+            else if (this.levelState.lives > 0 && this.levelState.numberOfInvaders > 0) {
                 this.levelState = this.battlefield.runLevel(timestamp);
                 this.playerSection.draw(this.levelState.lives);
                 this.scoreBoard.draw(this.levelState.points);
-                this.lastUpdate = timestamp - (delta % this.interval);
             } else if (this.levelState.lives === 0) {
-                this.clear();
-                this.gameOver.draw(timestamp);
+                this.secondsPaused += delta;
+                if(this.secondsPaused / 1000 >= 2){
+                    this.clear();
+                    this.gameOver.draw(timestamp);
+                }
             } else {
-                this.clear();
-                this.winner.draw(timestamp);
+                this.secondsPaused += delta;
+                if(this.secondsPaused / 1000 >= 2){                
+                    this.clear();
+                    this.winner.draw(timestamp);
+                }
             }
+            this.lastUpdate = timestamp - (delta % this.interval);
         }
     }
 

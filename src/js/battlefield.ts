@@ -185,7 +185,6 @@ class Battlefield {
     this.shields = [];
     this.headerFooterPercentage = 0.10;
     this.defender = new Defender(this.scale, this.context.canvas.width, this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage), this.addShots, this.context!);
-    this.setupLevel(0);
     this.lastUpdate = 0;
   }
 
@@ -215,7 +214,10 @@ class Battlefield {
     }
     this.shields = this.setupShields(this.game.levels[index]);
     this.defender.addEventListeners();
+    this.levelState.initialized = true;
   }
+
+  
 
   getHorizontalSpace(sprite: Sprite, numberInRow: number): number {
     let invaderWidth = sprite.cols * this.scale;

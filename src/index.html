@@ -8,19 +8,8 @@
 
 <body>
     <script type="module">
-        import { Defender, Battlefield, Invader, Shield, Spaceship } from './js/characters.ts'
-        import { Battlefield } from './js/battlefield.ts'
-        import { TitleScreen } from './js/screens.ts'
-        import { Invader } from './js/invader.ts'
-        import { Shield as Shieldy, Saucer, InvaderType, Explostion } from "./js/types.ts"
-        import {Crab, Squid, Octopus} from "./js/sprites.ts"
-        import {printText} from "./js/characters.ts"
         import  { Game } from "./js/game.ts"
 
-
-        var defender, crab, octopus, squid, shield, spaceship;
-
-        //let title = new TitleScreen(document.createElement("canvas"), 2 );
         let game = new Game(document.createElement("canvas"), 4);
         document.addEventListener('DOMContentLoaded', (event) => {
             
