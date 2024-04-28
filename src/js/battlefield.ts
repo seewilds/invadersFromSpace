@@ -40,8 +40,8 @@ class Shield {
   hit(laser: Laser): boolean {
     for (let i = 0; i < this.pixels.length; i++) {
       for (let j = 0; j < laser.pixels.length - 1; j++) {
-        if (Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && laser.pixels[j].y == this.pixels[i].y) {
-          this.pixels.splice(i);
+        if (Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && Math.abs(laser.pixels[j].y - this.pixels[i].y) <= 2) {
+          this.pixels.splice(i, 1);
           return true;
         }
       }

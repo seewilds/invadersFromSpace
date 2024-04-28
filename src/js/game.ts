@@ -99,13 +99,13 @@ class Game {
                 this.scoreBoard.draw(this.levelState.points);
             } else if (this.levelState.lives === 0) {
                 this.secondsPaused += delta;
-                if(this.secondsPaused / 1000 >= 2){
+                if(this.secondsPaused / 1000 >= 1){
                     this.clear();
                     this.gameOver.draw(timestamp);
                 }
             } else {
                 this.secondsPaused += delta;
-                if(this.secondsPaused / 1000 >= 2){                
+                if(this.secondsPaused / 1000 >= 1){                
                     this.clear();
                     this.winner.draw(timestamp);
                 }
