@@ -19,11 +19,11 @@ Must have Node and Npm installed.
    ```sh
    git clone https://github.com/seewilds/invadersFromSpace.git
    ```
-3. Install NPM packages
+2. Install NPM packages
    ```sh
    npm install
    ```
-4. Run Start
+3. Run Start
    ```sh
    npm start
    ```
