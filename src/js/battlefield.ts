@@ -358,9 +358,10 @@ class Battlefield {
 
     for (let j = this.laserShots.length - 1; j >= 0; j--) {
       if (this.laserShots[j].pixels.some(pixel => {
-        pixel.x < this.context!.canvas.height * this.headerFooterPercentage
-          || pixel.x > this.context!.canvas.height * (1 - this.headerFooterPercentage)
+        return pixel.y < (this.context!.canvas.height * this.headerFooterPercentage)
+          || pixel.y > (this.context!.canvas.height * (1 - this.headerFooterPercentage))
       })) {
+        console.log("should remove")
         this.removeLaserShot(j);
       }
     }
