@@ -207,6 +207,29 @@ class Winner {
     }
 }
 
+class TransitionScreen {
+    context: CanvasRenderingContext2D;
+    scale: number;
+    mainText: Text;
+    subText: Text;
+
+    constructor(mainText :string, subText: string, mainColour :string, subColour: string, context: CanvasRenderingContext2D, scale: number) {
+        this.context = context;
+        this.scale = scale;
+        this.mainText = new Text(mainText, mainColour, this.scale, this.centreX(mainText, this.scale, 6), 200, this.context!, 6);
+        this.subText = new Text(subText, mainColour, this.scale, this.centreX(subText, this.scale, 6), 200, this.context!, 6);
+    }
+
+    draw():void{
+        this.mainText.updateTextPosition(0,0);
+        this.subText.updateTextPosition(0,0);
+    }
+
+    centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
+        return (this.context.canvas.width - (spacingOverride * scale * text.length)) / 2;
+    }
+}
+
 class PlayerSection {
     context: CanvasRenderingContext2D;
     scale: number;

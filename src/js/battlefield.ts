@@ -193,10 +193,10 @@ class Battlefield {
     this.context!.fillRect(0, 0, this.context!.canvas.width, this.context!.canvas.height);
   }
 
-  playInvaderMoveSound():void{
-    if(this.soundIsPrimary){
+  playInvaderMoveSound(): void {
+    if (this.soundIsPrimary) {
       this.invaderPrimarySound.play();
-    }else{
+    } else {
       this.invaderAltSound.play();
     }
     this.soundIsPrimary = !this.soundIsPrimary;
@@ -217,7 +217,7 @@ class Battlefield {
     this.levelState.initialized = true;
   }
 
-  
+
 
   getHorizontalSpace(sprite: Sprite, numberInRow: number): number {
     let invaderWidth = sprite.cols * this.scale;
@@ -334,7 +334,7 @@ class Battlefield {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (invaders[i].hit(this.laserShots[j])) {
             this.removeLaserShot(j);
-            this.levelState.points += 10 + (4 % (i + 1)) * 10; 
+            this.levelState.points += 10 + (4 % (i + 1)) * 10;
           }
         }
       }
@@ -355,6 +355,16 @@ class Battlefield {
         }
       }
     }
+
+    for (let j = this.laserShots.length - 1; j >= 0; j--) {
+      if (this.laserShots[j].pixels.some(pixel => {
+        pixel.x < this.context!.canvas.height * this.headerFooterPercentage
+          || pixel.x > this.context!.canvas.height * (1 - this.headerFooterPercentage)
+      })) {
+        this.removeLaserShot(j);
+      }
+    }
+
   }
 
   removeInvader(row: number, col: number) {
