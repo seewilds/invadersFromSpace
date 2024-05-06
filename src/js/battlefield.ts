@@ -1,9 +1,8 @@
-import { Sprite, Level, InvaderType, CharacterSprite, InvaderRow, Game, LevelState } from "./types.ts"
+import { Sprite, Level, InvaderRow, Game, LevelState } from "./types.ts"
 import { Invader } from "./invader.ts"
 import { Pixel } from "./pixel.ts";
 import { DefenderSprite, Saucer, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
 import { spriteFactory } from "./factories.ts";
-import { Text } from "./characters.ts"
 import { Defender } from "./defender.ts";
 
 class Shield {
@@ -217,8 +216,6 @@ class Battlefield {
     this.levelState.initialized = true;
   }
 
-
-
   getHorizontalSpace(sprite: Sprite, numberInRow: number): number {
     let invaderWidth = sprite.cols * this.scale;
     numberInRow = numberInRow * invaderWidth > this.context!.canvas.width ? Math.floor(this.context!.canvas.width / invaderWidth) : numberInRow;
@@ -338,7 +335,7 @@ class Battlefield {
           }
         }
       }
-    })
+    });
 
     for (let i = this.shields.length - 1; i >= 0; i--) {
       for (let j = this.laserShots.length - 1; j >= 0; j--) {
@@ -347,6 +344,7 @@ class Battlefield {
         }
       }
     }
+
     if (this.defender.health > 0) {
       for (let i = 0; i < this.laserShots.length; i++) {
         if (this.defender.hit(this.laserShots[i])) {
@@ -421,6 +419,7 @@ class Battlefield {
         this.reset();
       }
     }
+    this.levelState.running = this.levelState.numberOfInvaders !== 0 && this.levelState.lives !== 0;
     return this.levelState;
   }
 }

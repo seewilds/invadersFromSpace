@@ -217,7 +217,12 @@ class TransitionScreen {
         this.context = context;
         this.scale = scale;
         this.mainText = new Text(mainText, mainColour, this.scale, this.centreX(mainText, this.scale, 6), 200, this.context!, 6);
-        this.subText = new Text(subText, mainColour, this.scale, this.centreX(subText, this.scale, 6), 200, this.context!, 6);
+        this.subText = new Text(subText, subColour, this.scale, this.centreX(subText, this.scale, 6), 250, this.context!, 6);
+    }
+
+    clear(): void{
+        this.mainText.updateTextPosition(0,0, 'black');
+        this.subText.updateTextPosition(0,0, 'black');
     }
 
     draw():void{
@@ -313,4 +318,4 @@ class ScoreBoard {
     }
 }
 
-export { TitleScreen, ScoreBoard, PlayerSection, GameOver, Winner }
+export { TitleScreen, ScoreBoard, PlayerSection,  TransitionScreen, GameOver, Winner }

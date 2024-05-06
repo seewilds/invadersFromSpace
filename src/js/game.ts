@@ -1,5 +1,6 @@
+import { runInThisContext } from "vm";
 import { Battlefield } from "./battlefield";
-import { TitleScreen, ScoreBoard, PlayerSection, GameOver, Winner } from "./screens";
+import { TitleScreen, ScoreBoard, PlayerSection, GameOver, Winner, TransitionScreen } from "./screens";
 import { Crab, Octopus, Squid } from "./sprites";
 import { InvaderType, LevelState } from "./types";
 
@@ -10,6 +11,7 @@ class Game {
     titleScreen: TitleScreen;
     battlefield: Battlefield;
     scoreBoard: ScoreBoard;
+    transitionScreens : TransitionScreen;
     gameOver: GameOver;
     winner: Winner;
     playerSection: PlayerSection;
@@ -45,6 +47,7 @@ class Game {
         this.scoreBoard = new ScoreBoard(1, 3, this.context!, this.scale);
         this.gameOver = new GameOver(1, 0, this.context!, this.scale);
         this.winner = new Winner(1, 0, this.context!, this.scale);
+        this.transitionScreens = new TransitionScreen('GET READY', 'LEVEL 1', 'rgba(0, 255, 0, 1)', 'rgba(0, 255, 0, 1)', this.context!, this.scale);
         this.battlefield = new Battlefield(
             this.context!,
             4,
@@ -71,9 +74,9 @@ class Game {
         this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    threeSecondPause():void {
+    threeSecondPause(): void {
         let time = 0;
-        while(time < 4000){
+        while (time < 4000) {
             time = performance.now() - time;
         }
     }
@@ -89,27 +92,29 @@ class Game {
         if (this.waitingToStartGame) {
             this.waitingToStartGame = this.titleScreen.update(timestamp);
             this.lastUpdate = performance.now();
-        } else if(!this.levelState.initialized){
+        } else if (!this.levelState.initialized) {
             this.secondsPaused += delta;
-            if(this.secondsPaused / 1000 >= 1){
+            if (this.secondsPaused / 1000 <= 2) {
+                this.transitionScreens.draw();
+            }else{
+                this.transitionScreens.clear();
                 this.battlefield.setupLevel(0);
                 this.levelState.running = true;
                 this.secondsPaused = 0;
-            }                 
-        }
-        else if (this.levelState.lives > 0 && this.levelState.numberOfInvaders > 0) {
+            }
+        } else if (this.levelState.running) {
             this.levelState = this.battlefield.runLevel(timestamp);
             this.playerSection.draw(this.levelState.lives);
             this.scoreBoard.draw(this.levelState.points);
         } else if (this.levelState.lives === 0) {
             this.secondsPaused += delta;
-            if(this.secondsPaused / 1000 >= 1){
+            if (this.secondsPaused / 1000 >= 1) {
                 this.clear();
                 this.gameOver.draw(timestamp);
             }
         } else {
             this.secondsPaused += delta;
-            if(this.secondsPaused / 1000 >= 1){                
+            if (this.secondsPaused / 1000 >= 1) {
                 this.clear();
                 this.winner.draw(timestamp);
             }
