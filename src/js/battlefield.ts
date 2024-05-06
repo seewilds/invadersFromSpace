@@ -359,7 +359,6 @@ class Battlefield {
         return pixel.y < (this.context!.canvas.height * this.headerFooterPercentage)
           || pixel.y > (this.context!.canvas.height * (1 - this.headerFooterPercentage))
       })) {
-        console.log("should remove")
         this.removeLaserShot(j);
       }
     }

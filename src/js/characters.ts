@@ -73,8 +73,9 @@ class Text {
         });
     }
 
-    setText(text: string){
+    setText(text: string, colour: string = this.colour){
         this.text = text;
+        this.colour = colour;
         this.clear();
         this.pixels = textFactory(this.text, this.x, this.y, this.scale, this.colour, this.spaceOverride);
     }

@@ -106,17 +106,20 @@ class Game {
             this.levelState = this.battlefield.runLevel(timestamp);
             this.playerSection.draw(this.levelState.lives);
             this.scoreBoard.draw(this.levelState.points);
-        } else if (this.levelState.lives === 0) {
+        } else if (this.secondsPaused === 0) {
             this.secondsPaused += delta;
-            if (this.secondsPaused / 1000 >= 1) {
-                this.clear();
-                this.gameOver.draw(timestamp);
+            if(this.levelState.lives <= 0){
+                this.transitionScreens.updateMainText("GAME OVER", 'red');
+                this.transitionScreens.updateSubText(`POINTS ${this.levelState.points}`, 'red');
+            }else{
+                this.transitionScreens.updateMainText('WINNER', 'rgba(0, 255, 0, 1)');
+                this.transitionScreens.updateSubText(`POINTS ${this.levelState.points}`, 'rgba(0, 255, 0, 1)');
             }
         } else {
             this.secondsPaused += delta;
             if (this.secondsPaused / 1000 >= 1) {
                 this.clear();
-                this.winner.draw(timestamp);
+                this.transitionScreens.draw();
             }
         }
         this.lastUpdate = timestamp - (delta % this.interval);

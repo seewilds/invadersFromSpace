@@ -220,6 +220,16 @@ class TransitionScreen {
         this.subText = new Text(subText, subColour, this.scale, this.centreX(subText, this.scale, 6), 250, this.context!, 6);
     }
 
+    updateMainText(text: string, colour: string):void{
+        this.mainText.x = this.centreX(text, this.scale);
+        this.mainText.setText(text, colour);
+    }
+
+    updateSubText(text: string, colour: string):void{
+        this.subText.x = this.centreX(text, this.scale);
+        this.subText.setText(text, colour);
+    }
+
     clear(): void{
         this.mainText.updateTextPosition(0,0, 'black');
         this.subText.updateTextPosition(0,0, 'black');
