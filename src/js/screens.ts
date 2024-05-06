@@ -158,55 +158,6 @@ class TitleScreen {
 
 }
 
-class GameOver {
-    context: CanvasRenderingContext2D;
-    scale: number;
-    level: number;    
-    lives: number;
-    levelText: Text;
-
-    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
-        this.context = context;
-        this.scale = scale;
-        this.level = level;
-        this.lives = lives;
-        this.levelText = new Text("GAME OVER", "red", this.scale, this.centreX("GAME OVER", this.scale, 6), 200, this.context!, 6);
-    }
-
-    draw(lives: number):void{
-        this.levelText.updateTextPosition(0,0);
-    }
-
-    centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
-        return (this.context.canvas.width - (spacingOverride * scale * text.length)) / 2;
-    }
-}
-
-
-class Winner {
-    context: CanvasRenderingContext2D;
-    scale: number;
-    level: number;    
-    lives: number;
-    levelText: Text;
-
-    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
-        this.context = context;
-        this.scale = scale;
-        this.level = level;
-        this.lives = lives;
-        this.levelText = new Text("WINNER", "rgba(0, 255, 0, 1)", this.scale, this.centreX("WINNER", this.scale, 6), 200, this.context!, 6);
-    }
-
-    draw(lives: number):void{
-        this.levelText.updateTextPosition(0,0);
-    }
-
-    centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
-        return (this.context.canvas.width - (spacingOverride * scale * text.length)) / 2;
-    }
-}
-
 class TransitionScreen {
     context: CanvasRenderingContext2D;
     scale: number;
@@ -298,20 +249,23 @@ class ScoreBoard {
     scale: number;
     level: number;    
     lives: number;
+    currentPoints: number; 
     currentScoreText: Text;
     currentScore: Text;
+    hiPoints: number;
     hiScoreText: Text;
     hiScore: Text;
-
     constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
         this.context = context;
         this.scale = scale;
         this.level = level;
         this.lives = lives;
-        this.currentScoreText = new Text(`CURRENT SCORE`, "white", 2, 10, 10, this.context!);
-        this.currentScore = new Text(`0`, "white", 2, 10, 40, this.context!);
-        this.hiScoreText = new Text(`HI SCORE`, "white", 2, 250, 10, this.context!);
-        this.hiScore = new Text(`1000`, "white", 2, 250, 40, this.context!);
+        this.hiPoints = 0;
+        this.currentPoints = 0;
+        this.currentScoreText = new Text(`CURRENT SCORE`, 'white', 2, 10, 10, this.context!);
+        this.currentScore = new Text(`${this.currentPoints.toString()}`, 'white', 2, 10, 40, this.context!);
+        this.hiScoreText = new Text(`HIGH SCORE`, 'white', 2, 250, 10, this.context!);
+        this.hiScore = new Text(`${this.hiPoints.toString()}`, 'white', 2, 250, 40, this.context!);
     }
 
 
@@ -320,12 +274,17 @@ class ScoreBoard {
     }
 
     draw(points: number):void{
+        this.currentPoints = points;
         this.currentScoreText.updateTextPosition(0,0);
-        this.currentScore.setText(points.toString());
+        this.currentScore.setText(this.currentPoints.toString());
         this.currentScore.updateTextPosition(0,0);
         this.hiScoreText.updateTextPosition(0,0);
+        if(this.currentPoints >= this.hiPoints){
+            this.hiPoints = this.currentPoints;
+            this.hiScoreText.setText(this.hiPoints.toString());
+        }
         this.hiScore.updateTextPosition(0,0);
     }
 }
 
-export { TitleScreen, ScoreBoard, PlayerSection,  TransitionScreen, GameOver, Winner }
+export { TitleScreen, ScoreBoard, PlayerSection,  TransitionScreen }

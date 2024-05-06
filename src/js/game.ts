@@ -1,6 +1,5 @@
-import { runInThisContext } from "vm";
 import { Battlefield } from "./battlefield";
-import { TitleScreen, ScoreBoard, PlayerSection, GameOver, Winner, TransitionScreen } from "./screens";
+import { TitleScreen, ScoreBoard, PlayerSection, TransitionScreen } from "./screens";
 import { Crab, Octopus, Squid } from "./sprites";
 import { InvaderType, LevelState } from "./types";
 
@@ -12,8 +11,6 @@ class Game {
     battlefield: Battlefield;
     scoreBoard: ScoreBoard;
     transitionScreens : TransitionScreen;
-    gameOver: GameOver;
-    winner: Winner;
     playerSection: PlayerSection;
     scale: number;
     updateInterval: number;
@@ -45,8 +42,6 @@ class Game {
         this.titleScreen = new TitleScreen(this.context!, this.scale);
         this.playerSection = new PlayerSection(1, 3, this.context!, this.scale);
         this.scoreBoard = new ScoreBoard(1, 3, this.context!, this.scale);
-        this.gameOver = new GameOver(1, 0, this.context!, this.scale);
-        this.winner = new Winner(1, 0, this.context!, this.scale);
         this.transitionScreens = new TransitionScreen('GET READY', 'LEVEL 1', 'rgba(0, 255, 0, 1)', 'rgba(0, 255, 0, 1)', this.context!, this.scale);
         this.battlefield = new Battlefield(
             this.context!,
