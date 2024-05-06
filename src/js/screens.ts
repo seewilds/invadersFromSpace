@@ -281,7 +281,7 @@ class ScoreBoard {
         this.hiScoreText.updateTextPosition(0,0);
         if(this.currentPoints >= this.hiPoints){
             this.hiPoints = this.currentPoints;
-            this.hiScoreText.setText(this.hiPoints.toString());
+            this.hiScore.setText(this.hiPoints.toString());
         }
         this.hiScore.updateTextPosition(0,0);
     }
