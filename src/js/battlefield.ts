@@ -144,7 +144,7 @@ class Laser {
 
 class Battlefield {
   context: CanvasRenderingContext2D | null;
-  game: Game;
+  level: Level;
   scale: number;
   updateInterval: number;
   lastUpdate: number;
@@ -164,11 +164,11 @@ class Battlefield {
   direction: number;
   deltaX: number;
   deltaY: number;
-  constructor(context: CanvasRenderingContext2D, scale: number, game: Game, levelState: LevelState) {
+  constructor(context: CanvasRenderingContext2D, scale: number, level: Level, levelState: LevelState) {
     this.gameId = 0;
     this.levelNumber = 0;
     this.levelState = levelState;
-    this.game = game;
+    this.level = level;
     this.invaders = new Array();
     const audioPrimaryUrl = new URL('./../audio/fastinvader1.wav', import.meta.url);
     this.invaderPrimarySound = new Audio(audioPrimaryUrl.toString());
@@ -202,16 +202,15 @@ class Battlefield {
   }
 
   setupLevel(index: number) {
-    this.invaderRow = new Array(this.game.levels[index].setup.length);
-    this.levelState.numberOfInvaders = this.invaderRow.length * this.game.levels[0].setup[0].count;
-    console.log(this.levelState.numberOfInvaders)
+    this.invaderRow = new Array(this.level.setup.length);
+    this.levelState.numberOfInvaders = this.invaderRow.length * this.level.setup[0].count;
     for (let i = 0; i < this.invaderRow.length; i++) {
-      this.invaderRow[i] = this.setupInvaders(this.game.levels[index].setup[i], i);
+      this.invaderRow[i] = this.setupInvaders(this.level.setup[i], i);
     }
     for (let i = 0; i < this.invaderRow[this.invaderRow.length - 1].length; i++) {
       this.invaderRow[this.invaderRow.length - 1][i].canFire = true;
     }
-    this.shields = this.setupShields(this.game.levels[index]);
+    this.shields = this.setupShields(this.level);
     this.defender.addEventListeners();
     this.levelState.initialized = true;
   }

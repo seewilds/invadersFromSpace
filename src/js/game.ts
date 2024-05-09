@@ -46,8 +46,8 @@ class Game {
         this.battlefield = new Battlefield(
             this.context!,
             4,
-            {
-                levels: [{
+            
+                {
                     setup: [
                         { count: 11, colour: "rgb(186, 18, 0)", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
                         { count: 11, colour: "rgb(28, 93, 153)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
@@ -56,8 +56,8 @@ class Game {
                         { count: 11, colour: "rgb(244, 91, 222)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
                     ],
                     shieldCount: 4
-                }]
-            }, this.levelState);
+                }
+            , this.levelState);
         this.lastUpdate = performance.now();
         this.secondsPaused = 0;
         this.main = this.main.bind(this);
