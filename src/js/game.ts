@@ -27,27 +27,29 @@ class Game {
         this.canvas = canvas;
         this.scale = scale;
         this.game = game;
-        console.log(this.game);
-        this.gameId = 0;
-        this.levelNumber = 0;
-        this.levelState = { points: 0, lives: 3, numberOfInvaders: 0, initialized: false, running: false };
-        this.waitingToStartGame = true;
-        this.levelTransition = false;
         this.canvas.width = 196 * this.scale;
         this.canvas.height = 224 * this.scale;
         this.context = canvas.getContext("2d");
         this.context!.fillStyle = "black";
         this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.titleScreen = new TitleScreen(this.context!, this.scale);
-        this.playerSection = new PlayerSection(1, 3, this.context!, this.scale);
-        this.scoreBoard = new ScoreBoard(1, 3, this.context!, this.scale);
-        this.transitionScreens = new TransitionScreen('GET READY', 'LEVEL 1', `LEVEL ${(this.levelNumber + 1).toString()}`, 'rgba(0, 255, 0, 1)', this.context!, this.scale);
-        this.battlefield = new Battlefield(this.context!, 4, this.game.levels[this.levelNumber], this.levelState);
+        this.initializeGame();
         this.lastUpdate = performance.now();
         this.secondsPaused = 0;
         this.main = this.main.bind(this);
         requestAnimationFrame(this.main);
+    }
+
+    initializeGame():void{
+        this.levelState = { points: 0, lives: 3, numberOfInvaders: 0, initialized: false, running: false };
+        this.gameId = 0;
+        this.levelNumber = -1;
+        this.waitingToStartGame = true;
+        this.levelTransition = false;
+        this.initializeLevel();
+        this.titleScreen = new TitleScreen(this.context!, this.scale);
+        this.playerSection = new PlayerSection(1, 3, this.context!, this.scale);
+        this.scoreBoard = new ScoreBoard(1, 3, this.context!, this.scale);
     }
 
     clear(): void {
@@ -55,7 +57,7 @@ class Game {
         this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    resetLevel(): void {
+    initializeLevel(): void {
         this.secondsPaused = 0;
         this.levelNumber++;
         this.battlefield = new Battlefield(this.context!, 4, this.game.levels[this.levelNumber], this.levelState);
@@ -100,10 +102,15 @@ class Game {
         } else {
             this.secondsPaused += delta;
             if(this.secondsPaused / 1000 >= 4){
-                if(this.levelState.lives >= 0 && this.levelNumber < this.game.levels.length){
+                if(this.levelState.lives >= 0 && this.levelNumber < this.game.levels.length - 1){
                     this.transitionScreens.clear();
-                    this.resetLevel();
-                }                    
+                    this.initializeLevel();
+                }else{
+                    this.transitionScreens.clear();
+                    this.levelState = { points: 0, lives: 3, numberOfInvaders: 0, initialized: false, running: false };
+                    this.levelNumber = -1;
+                    this.initializeGame();
+                }         
             } else if (this.secondsPaused / 1000 >= 1) {
                 this.clear();
                 this.transitionScreens.draw();
