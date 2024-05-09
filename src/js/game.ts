@@ -1,12 +1,11 @@
 import { Battlefield } from "./battlefield";
 import { TitleScreen, ScoreBoard, PlayerSection, TransitionScreen } from "./screens";
-import { Crab, Octopus, Squid } from "./sprites";
-import { InvaderType, LevelState } from "./types";
+import { InvaderType, LevelState, Game as GameType } from "./types";
 
 class Game {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D | null;
-    game: Game;
+    game: GameType;
     titleScreen: TitleScreen;
     battlefield: Battlefield;
     scoreBoard: ScoreBoard;
@@ -24,10 +23,11 @@ class Game {
     now: number;
     lastUpdate: number;
     secondsPaused: number;
-    constructor(canvas: HTMLCanvasElement, scale: number, game: Game) {
+    constructor(canvas: HTMLCanvasElement, scale: number, game: GameType) {
         this.canvas = canvas;
         this.scale = scale;
         this.game = game;
+        console.log(this.game);
         this.gameId = 0;
         this.levelNumber = 0;
         this.levelState = { points: 0, lives: 3, numberOfInvaders: 0, initialized: false, running: false };
@@ -42,22 +42,8 @@ class Game {
         this.titleScreen = new TitleScreen(this.context!, this.scale);
         this.playerSection = new PlayerSection(1, 3, this.context!, this.scale);
         this.scoreBoard = new ScoreBoard(1, 3, this.context!, this.scale);
-        this.transitionScreens = new TransitionScreen('GET READY', 'LEVEL 1', 'rgba(0, 255, 0, 1)', 'rgba(0, 255, 0, 1)', this.context!, this.scale);
-        this.battlefield = new Battlefield(
-            this.context!,
-            4,
-            
-                {
-                    setup: [
-                        { count: 11, colour: "rgb(186, 18, 0)", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
-                        { count: 11, colour: "rgb(28, 93, 153)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                        { count: 11, colour: "rgb(244, 91, 105)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
-                        { count: 11, colour: "rgb(4, 240, 106)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                        { count: 11, colour: "rgb(244, 91, 222)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
-                    ],
-                    shieldCount: 4
-                }
-            , this.levelState);
+        this.transitionScreens = new TransitionScreen('GET READY', 'LEVEL 1', `LEVEL ${(this.levelNumber + 1).toString()}`, 'rgba(0, 255, 0, 1)', this.context!, this.scale);
+        this.battlefield = new Battlefield(this.context!, 4, this.game.levels[this.levelNumber], this.levelState);
         this.lastUpdate = performance.now();
         this.secondsPaused = 0;
         this.main = this.main.bind(this);
@@ -69,11 +55,12 @@ class Game {
         this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    threeSecondPause(): void {
-        let time = 0;
-        while (time < 4000) {
-            time = performance.now() - time;
-        }
+    resetLevel(): void {
+        this.secondsPaused = 0;
+        this.levelNumber++;
+        this.battlefield = new Battlefield(this.context!, 4, this.game.levels[this.levelNumber], this.levelState);
+        this.transitionScreens = new TransitionScreen('GET READY', `LEVEL ${(this.levelNumber + 1).toString()}`, 'rgba(0, 255, 0, 1)', 'rgba(0, 255, 0, 1)', this.context!, this.scale);
+        this.levelState.initialized = false;
     }
 
     main(timestamp: number): void {
@@ -93,7 +80,7 @@ class Game {
                 this.transitionScreens.draw();
             }else{
                 this.transitionScreens.clear();
-                this.battlefield.setupLevel(0);
+                this.battlefield.setupLevel();
                 this.levelState.running = true;
                 this.secondsPaused = 0;
             }
@@ -112,7 +99,12 @@ class Game {
             }
         } else {
             this.secondsPaused += delta;
-            if (this.secondsPaused / 1000 >= 1) {
+            if(this.secondsPaused / 1000 >= 4){
+                if(this.levelState.lives >= 0 && this.levelNumber < this.game.levels.length){
+                    this.transitionScreens.clear();
+                    this.resetLevel();
+                }                    
+            } else if (this.secondsPaused / 1000 >= 1) {
                 this.clear();
                 this.transitionScreens.draw();
             }

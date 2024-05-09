@@ -8,8 +8,36 @@
 
 <body>
     <script type="module">
-        import  { Game } from "./js/game.ts"
-        let game = new Game(document.createElement("canvas"), 4);
+        import { Game } from './js/game.ts'
+        import { Crab, Octopus, Squid } from './js/sprites';
+        import { InvaderType } from './js/types';
+
+
+        let game = new Game(document.createElement("canvas"),
+            4,
+            {
+                levels: [
+                    {
+                        setup: [
+                            { count: 1, colour: "white", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
+                            { count: 1, colour: "white", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
+                            // { count: 11, colour: "white", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
+                        ],
+                        shieldCount: 4
+                    },
+                    {
+                        setup: [
+                            { count: 1, colour: "rgb(186, 18, 0)", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
+                            // { count: 11, colour: "rgb(28, 93, 153)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
+                            // { count: 11, colour: "rgb(244, 91, 105)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
+                            // { count: 11, colour: "rgb(4, 240, 106)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
+                            // { count: 11, colour: "rgb(244, 91, 222)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
+                        ],
+                        shieldCount: 2
+                    }
+                ]
+            }
+        );
     </script>
 </body>
 

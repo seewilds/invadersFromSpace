@@ -201,7 +201,7 @@ class Battlefield {
     this.soundIsPrimary = !this.soundIsPrimary;
   }
 
-  setupLevel(index: number) {
+  setupLevel(): void {
     this.invaderRow = new Array(this.level.setup.length);
     this.levelState.numberOfInvaders = this.invaderRow.length * this.level.setup[0].count;
     for (let i = 0; i < this.invaderRow.length; i++) {
