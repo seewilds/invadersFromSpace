@@ -27,8 +27,6 @@ class Defender {
   lastUpdate: number;
   shotSound: HTMLAudioElement;
   defenderKilled: HTMLAudioElement;
-  handleKeydown: Function;
-  handleKeyup: Function;
   addShots: Function;
   constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
     this.context = context;
