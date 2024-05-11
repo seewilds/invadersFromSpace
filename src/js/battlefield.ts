@@ -215,6 +215,10 @@ class Battlefield {
     this.levelState.initialized = true;
   }
 
+  teardownLevel(): void{
+    this.defender.removeEventListeners();
+  }
+
   getHorizontalSpace(sprite: Sprite, numberInRow: number): number {
     let invaderWidth = sprite.cols * this.scale;
     numberInRow = numberInRow * invaderWidth > this.context!.canvas.width ? Math.floor(this.context!.canvas.width / invaderWidth) : numberInRow;
@@ -418,6 +422,9 @@ class Battlefield {
       }
     }
     this.levelState.running = this.levelState.numberOfInvaders !== 0 && this.levelState.lives !== 0;
+    if(!this.levelState.running){
+      this.teardownLevel();
+    }
     return this.levelState;
   }
 }

@@ -27,6 +27,8 @@ class Defender {
   lastUpdate: number;
   shotSound: HTMLAudioElement;
   defenderKilled: HTMLAudioElement;
+  handleKeydown: Function;
+  handleKeyup: Function;
   addShots: Function;
   constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
     this.context = context;
@@ -40,6 +42,8 @@ class Defender {
     this.lastY = this.y;
     this.updateInterval = 10;
     this.lastUpdate = performance.now();
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
     this.colour = "rgb(204, 218, 209)";
     this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
     this.addShots = addShots;
@@ -47,7 +51,6 @@ class Defender {
     this.shotSound = new Audio(audioUrl.toString());
     const explosionSound = new URL('./../audio/explosion.wav', import.meta.url);
     this.defenderKilled = new Audio(explosionSound.toString());
-    //this.addEventListeners();
   }
 
   hit(laser: Laser): boolean {
@@ -110,13 +113,13 @@ class Defender {
   }
 
   addEventListeners():void{
-    window.addEventListener('keydown', (event) => this.handleKeyDown(event));
-    window.addEventListener('keyup', (event) => this.handleKeyUp(event));
+    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keyup', this.handleKeyUp);
   }
 
   removeEventListeners():void{
-    window.removeEventListener('keydown', (event) => this.handleKeyDown(event));
-    window.removeEventListener('keyup', (event) => this.handleKeyUp(event));
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
   }
 
   handleKeyDown(event: KeyboardEvent): void {
