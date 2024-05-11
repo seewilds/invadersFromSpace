@@ -18,15 +18,17 @@ class Game {
     levelState: LevelState;
     waitingToStartGame: boolean;
     levelTransition: boolean;
-    framesPerSecond: number = 60;
-    interval: number = 1000 / 60;
+    framesPerSecond: number;
+    interval: number;
     now: number;
     lastUpdate: number;
     secondsPaused: number;
-    constructor(canvas: HTMLCanvasElement, scale: number, game: GameType) {
+    constructor(canvas: HTMLCanvasElement, scale: number, game: GameType, targetFramePerSecond: number = 60) {
         this.canvas = canvas;
         this.scale = scale;
         this.game = game;
+        this.framesPerSecond = targetFramePerSecond;
+        this.interval = 1000 / this.framesPerSecond;
         this.canvas.width = 196 * this.scale;
         this.canvas.height = 224 * this.scale;
         this.context = canvas.getContext("2d");

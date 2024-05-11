@@ -1,7 +1,7 @@
 import { spriteFactory } from "./factories";
 import { Laser } from "./laser";
 import { Pixel } from "./pixel";
-import { Explosion, Shot } from "./sprites";
+import { Explosion } from "./sprites";
 import { CharacterSprite, Sprite } from "./types"
 
 class Invader {
@@ -19,7 +19,6 @@ class Invader {
     pixelsPerPixel: number;
     x: number;
     y: number;
-    updateInterval: number;
     lastUpdate: number;
     constructor(sprite: CharacterSprite, colour: string, pixelsPerPixel: number, x: number, y: number, direction: number, addShot: Function, context: CanvasRenderingContext2D) {
         this.health = 1;
@@ -33,7 +32,6 @@ class Invader {
         this.pixelsPerPixel = pixelsPerPixel;
         this.x = x;
         this.y = y;
-        this.updateInterval = 200;
         this.lastUpdate = performance.now();
         this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.pixelsPerPixel, this.x, this.y, this.sprite.pixels, this.colour);
         const audioUrl = new URL('./../audio/invaderkilled.wav', import.meta.url);
@@ -72,7 +70,7 @@ class Invader {
 
     fire(): void{
         if(Math.random() >= 0.90){
-            this.addShot(new Laser(Shot, this.pixelsPerPixel, this.pixels[this.sprite.laserPosition].x, this.pixels[this.sprite.laserPosition].y, 1, this.context, 'rgb(255,15,0)'));
+            this.addShot(new Laser(this.pixelsPerPixel, this.pixels[this.sprite.laserPosition].x, this.pixels[this.sprite.laserPosition].y, 1, this.context, 'rgb(255,15,0)'));
         }
     }
 

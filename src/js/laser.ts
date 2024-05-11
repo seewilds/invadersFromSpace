@@ -1,6 +1,7 @@
 import { Sprite } from "./types.ts"
 import { Pixel } from "./pixel.ts";
 import { spriteFactory } from "./factories.ts";
+import { Shot } from "./sprites.ts";
 
 class Laser {
   context: CanvasRenderingContext2D;
@@ -14,9 +15,9 @@ class Laser {
   direction: number;
   lastUpdate: number;
   colour: string;
-  constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D, colour: string = "rgb(248, 102, 36)") {
+  constructor(scale: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D, colour: string = "rgb(248, 102, 36)") {
     this.context = context;
-    this.sprite = sprite;
+    this.sprite = Shot;
     this.deltaY = 10 * direction;
     this.scale = scale;
     this.x = x;

@@ -1,7 +1,7 @@
 import { spriteFactory } from "./factories";
 import { Laser } from "./laser";
 import { Pixel } from "./pixel";
-import { DefenderSprite, Shot } from "./sprites";
+import { DefenderSprite } from "./sprites";
 import { Sprite } from "./types";
 
 
@@ -23,7 +23,6 @@ class Defender {
   deltaX: number;
   scale: number;
   colour: string;
-  updateInterval: number;
   lastUpdate: number;
   shotSound: HTMLAudioElement;
   defenderKilled: HTMLAudioElement;
@@ -40,7 +39,6 @@ class Defender {
     this.y = height - this.sprite.cols * this.scale - 2 * this.scale;
     this.lastX = this.x;
     this.lastY = this.y;
-    this.updateInterval = 10;
     this.lastUpdate = performance.now();
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -88,7 +86,7 @@ class Defender {
     }
   }
 
-  update(timestamp): void {
+  update(): void {
     if (
       this.pixels.some(pixel => pixel.x <= 10) && this.deltaX < 0
       || this.pixels.some(pixel => pixel.x >= this.context.canvas.width - 10) && this.deltaX > 0
@@ -135,7 +133,7 @@ class Defender {
       return;
     }
     if (event.key === ' ') {
-      this.addShots(new Laser(Shot, this.scale, this.pixels[0].x, this.pixels[0].y - 24, -1, this.context, 'rgb(0,140,255)'));
+      this.addShots(new Laser(this.scale, this.pixels[0].x, this.pixels[0].y - 24, -1, this.context, 'rgb(0,140,255)'));
       this.shotSound.currentTime = 0;
       this.shotSound.play();
     }
