@@ -1,8 +1,8 @@
-import { Defender, Spaceship } from "./battlefield";
 import { Pixel } from "./pixel";
 import { DefenderSprite, characterConstants } from "./sprites";
 import { Text } from "./characters";
 import { spriteFactory } from "./factories";
+import { Spaceship } from "./saucer";
 
 class TitleScreen {
     context: CanvasRenderingContext2D;

@@ -1,145 +1,9 @@
-import { Sprite, Level, InvaderRow, Game, LevelState } from "./types.ts"
+import { Sprite, Level, InvaderRow, LevelState } from "./types.ts"
 import { Invader } from "./invader.ts"
-import { Pixel } from "./pixel.ts";
-import { DefenderSprite, Saucer, ShieldSprite, Shot, characterConstants } from "./sprites.ts";
-import { spriteFactory } from "./factories.ts";
+import { ShieldSprite } from "./sprites.ts";
 import { Defender } from "./defender.ts";
-
-class Shield {
-  context: CanvasRenderingContext2D;
-  hits: number[];
-  pixels: Pixel[];
-  sprite: Sprite;
-  key: boolean;
-  deltaX: number;
-  scale: number;
-  x: number;
-  y: number;
-  x0: number;
-  y0: number;
-  constructor(sprite: Sprite, scale: number, x: number, y: number, context: CanvasRenderingContext2D) {
-    this.context = context;
-    this.hits = [];
-    this.sprite = sprite;
-    this.deltaX = 0;
-    this.scale = scale;
-    this.x = x;
-    this.y = y;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, "#1FFE1F");
-    this.x0 = this.pixels[0].x;
-    this.y0 = this.pixels[0].y;
-  }
-
-  clear(): void {
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y, "black");
-    });
-  }
-
-  hit(laser: Laser): boolean {
-    for (let i = 0; i < this.pixels.length; i++) {
-      for (let j = 0; j < laser.pixels.length - 1; j++) {
-        if (Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && Math.abs(laser.pixels[j].y - this.pixels[i].y) <= 2) {
-          this.pixels.splice(i, 1);
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  update(): void {
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y);
-    });
-  }
-}
-
-class Spaceship {
-  context: CanvasRenderingContext2D;
-  pixels: Pixel[];
-  sprite: Sprite;
-  scale: number;
-  colour: string;
-  x: number;
-  y: number;
-  deltaX: number;
-  deltaY: number;
-  direction: number;
-  constructor(scale: number, x: number, y: number, colour: string, context: CanvasRenderingContext2D) {
-    this.context = context;
-    this.sprite = Saucer;
-    this.colour = colour;
-    this.scale = scale;
-    this.x = x;
-    this.y = y;
-    this.deltaX = 6;
-    this.deltaY = 6;
-    this.direction = 0;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
-  }
-
-  clear(colour: string = "black"): void {
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y, colour);
-    });
-  }
-
-  getPosition() {
-    // left, right, top, bottom
-    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]
-  }
-
-  update(deltaX: number, deltaY: number, colour: string = this.colour): void {
-    this.clear();
-    this.deltaX = deltaX;
-    this.deltaY = deltaY;
-    this.colour = colour;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x += this.deltaX, this.y += this.deltaY, this.sprite.pixels, this.colour);
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y, this.colour);
-    });
-  }
-}
-
-class Laser {
-  context: CanvasRenderingContext2D;
-  pixels: Pixel[];
-  sprite: Sprite;
-  key: boolean;
-  deltaY: number;
-  scale: number;
-  x: number;
-  y: number;
-  direction: number;
-  lastUpdate: number;
-  colour: string;
-  constructor(sprite: Sprite, scale: number, x: number, y: number, direction: number, context: CanvasRenderingContext2D, colour: string = "rgb(248, 102, 36)") {
-    this.context = context;
-    this.sprite = sprite;
-    this.deltaY = 10 * direction;
-    this.scale = scale;
-    this.x = x;
-    this.y = y;
-    this.direction = 0;
-    this.lastUpdate = performance.now();
-    this.colour = colour;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
-  }
-
-  update(): void {
-    this.clear();
-    this.pixels.forEach((pixel, index) => {
-      pixel.Update(this.context, pixel.x, pixel.y += this.deltaY, this.colour);
-    });
-  }
-
-  clear(): void {
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x, pixel.y, "black");
-    });
-  }
-}
+import { Laser } from "./laser.ts";
+import { Shield } from "./shield.ts";
 
 
 class Battlefield {
@@ -245,7 +109,7 @@ class Battlefield {
     let shieldHeight = ShieldSprite.rows * this.scale + this.scale * this.scale;
 
     for (let i = 0; i < level.shieldCount; i++) {
-      shields[i] = new Shield(ShieldSprite, this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * shieldHeight + 5 + Math.floor(this.context!.canvas.height * 0.30), this.context!);
+      shields[i] = new Shield(this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * shieldHeight + 5 + Math.floor(this.context!.canvas.height * 0.30), this.context!);
     }
     return shields;
   }
@@ -429,4 +293,4 @@ class Battlefield {
   }
 }
 
-export { Defender, Battlefield, Shield, Spaceship, Laser };
+export { Battlefield };

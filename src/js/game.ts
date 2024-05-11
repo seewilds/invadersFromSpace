@@ -18,8 +18,8 @@ class Game {
     levelState: LevelState;
     waitingToStartGame: boolean;
     levelTransition: boolean;
-    framesPerSecond: number = 30;
-    interval: number = 1000 / 30;
+    framesPerSecond: number = 60;
+    interval: number = 1000 / 60;
     now: number;
     lastUpdate: number;
     secondsPaused: number;

@@ -1,5 +1,5 @@
 import { spriteFactory } from "./factories";
-import { Laser } from "./battlefield";
+import { Laser } from "./laser";
 import { Pixel } from "./pixel";
 import { DefenderSprite, Shot } from "./sprites";
 import { Sprite } from "./types";
@@ -27,6 +27,8 @@ class Defender {
   lastUpdate: number;
   shotSound: HTMLAudioElement;
   defenderKilled: HTMLAudioElement;
+  handleKeydown: Function;
+  handleKeyup: Function;
   addShots: Function;
   constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
     this.context = context;
