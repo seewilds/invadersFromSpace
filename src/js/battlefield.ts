@@ -28,7 +28,7 @@ class Battlefield {
   direction: number;
   deltaX: number;
   deltaY: number;
-  constructor(context: CanvasRenderingContext2D, scale: number, level: Level, levelState: LevelState) {
+  constructor(context: CanvasRenderingContext2D, scale: number, level: Level, levelState: LevelState, targetFramePerSecond: number = 30) {
     this.gameId = 0;
     this.levelNumber = 0;
     this.levelState = levelState;
@@ -40,14 +40,14 @@ class Battlefield {
     this.invaderAltSound = new Audio(audioAltUrl.toString());
     this.soundIsPrimary = true;
     this.direction = 1;
-    this.deltaX = 5;
+    this.deltaX = 6 / (targetFramePerSecond / 30);
     this.deltaY = 0;
     this.scale = scale;
     this.context = context;
     this.laserShots = [];
     this.shields = [];
     this.headerFooterPercentage = 0.10;
-    this.defender = new Defender(this.scale, this.context.canvas.width, this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage), this.addShots, this.context!);
+    this.defender = new Defender(this.scale, this.context.canvas.width, this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage), this.addShots, this.context!, targetFramePerSecond);
     this.lastUpdate = 0;
   }
 

@@ -23,7 +23,7 @@ class Game {
     now: number;
     lastUpdate: number;
     secondsPaused: number;
-    constructor(canvas: HTMLCanvasElement, scale: number, game: GameType, targetFramePerSecond: number = 60) {
+    constructor(canvas: HTMLCanvasElement, scale: number, game: GameType, elementToInsertInto: HTMLElement, targetFramePerSecond: number = 30) {
         this.canvas = canvas;
         this.scale = scale;
         this.game = game;
@@ -34,7 +34,7 @@ class Game {
         this.context = canvas.getContext("2d");
         this.context!.fillStyle = "black";
         this.context?.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        elementToInsertInto.appendChild(this.canvas);
         this.initializeGame();
         this.lastUpdate = performance.now();
         this.secondsPaused = 0;
@@ -104,7 +104,7 @@ class Game {
         } else {
             this.secondsPaused += delta;
             if(this.secondsPaused / 1000 >= 4){
-                if(this.levelState.lives >= 0 && this.levelNumber < this.game.levels.length - 1){
+                if(this.levelState.lives > 0 && this.levelNumber < this.game.levels.length - 1){
                     this.transitionScreens.clear();
                     this.initializeLevel();
                 }else{

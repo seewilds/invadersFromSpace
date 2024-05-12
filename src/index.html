@@ -7,6 +7,9 @@
 </head>
 
 <body>
+    <div id="divvy">
+
+    </div>
     <script type="module">
         import { Game } from './js/game.ts'
         import { Crab, Octopus, Squid } from './js/sprites';
@@ -19,9 +22,9 @@
                 levels: [
                     {
                         setup: [
-                            { count: 1, colour: "white", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
-                            { count: 1, colour: "white", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                            // { count: 11, colour: "white", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
+                            { count: 11, colour: "white", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
+                            { count: 11, colour: "white", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
+                            { count: 11, colour: "white", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
                         ],
                         shieldCount: 4
                     },
@@ -46,7 +49,9 @@
                         shieldCount: 1
                     }
                 ]
-            }
+            },
+            document.getElementById("divvy"),
+            60
         );
     </script>
 </body>

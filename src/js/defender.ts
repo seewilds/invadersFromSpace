@@ -22,6 +22,7 @@ class Defender {
   lastY: number;
   deltaX: number;
   scale: number;
+  pixelsChange: number;
   colour: string;
   lastUpdate: number;
   shotSound: HTMLAudioElement;
@@ -29,7 +30,7 @@ class Defender {
   handleKeydown: Function;
   handleKeyup: Function;
   addShots: Function;
-  constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D) {
+  constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D, targetFramesPerSecond: number = 30) {
     this.context = context;
     this.sprite = DefenderSprite;
     this.health = 1;
@@ -39,6 +40,7 @@ class Defender {
     this.y = height - this.sprite.cols * this.scale - 2 * this.scale;
     this.lastX = this.x;
     this.lastY = this.y;
+    this.pixelsChange = 2;
     this.lastUpdate = performance.now();
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -125,11 +127,11 @@ class Defender {
       return;
     }
     if (event.key == 'a') {
-      this.deltaX = -this.scale - 3;
+      this.deltaX = -this.scale - this.pixelsChange;
       return;
     }
     if (event.key == 'd') {
-      this.deltaX = this.scale + 3;
+      this.deltaX = this.scale + this.pixelsChange;
       return;
     }
     if (event.key === ' ') {

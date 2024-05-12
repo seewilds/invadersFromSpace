@@ -60,12 +60,13 @@ class Invader {
     }
 
     update(){
-        this.pixels.forEach(pixel => {
-            pixel.Update(this.context, pixel.x, pixel.y);
-        });
         if(this.health > 0 && this.canFire){
             this.fire();
         }
+        this.pixels.forEach(pixel => {
+            pixel.Update(this.context, pixel.x, pixel.y);
+        });
+
     }
 
     fire(): void{
