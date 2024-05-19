@@ -59,8 +59,6 @@ class Shield {
           let y0 = this.pixels[0].y - this.scale * Math.floor(firstPixelPosition / this.sprite.cols);     
           this.clear();     
           this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, x0, y0, this.pix, "#1FFE1F");
-          //this.pixels.splice(i, 1);
-          console.log(this.pix)
           return true;
         }
       }
