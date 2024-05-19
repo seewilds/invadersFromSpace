@@ -10,6 +10,7 @@ class Shield {
   pixels: Pixel[];
   sprite: Sprite;
   pix: number[];
+  dam: number[][];
   key: boolean;
   deltaX: number;
   scale: number;
@@ -28,7 +29,18 @@ class Shield {
       [113, 134, 135, 136, 155, 156, 157, 158, 159, 176, 177, 178, 179, 180, 181, 182, 198, 199, 200, 201, 202, 203, 204, 205, 220, 221, 222, 223, 224, 225, 226, 227, 242, 243, 244, 245, 246, 247, 248, 264, 265, 266, 267, 268, 269, 270, 286, 287, 288, 289, 290, 291, 308, 309, 310, 311, 312, 330, 331, 332, 333, 334],
       [128, 149, 150, 151, 170, 171, 172, 173, 174, 191, 192, 193, 194, 195, 196, 197, 212, 213, 214, 215, 216, 217, 218, 219, 234, 235, 236, 237, 238, 239, 240, 241, 257, 258, 259, 260, 261, 262, 263, 279, 280, 281, 282, 283, 284, 285, 302, 303, 304, 305, 306, 307, 325, 326, 327, 328, 329, 347, 348, 349, 350, 351],
       [98, 99, 119, 120, 121, 122, 140, 141, 142, 143, 144, 145, 161, 162, 163, 164, 165, 166, 167, 168, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 249, 250, 251, 252, 253, 254, 255, 256]
-    ]
+    ];
+    this.dam = [
+    [0, 0],
+    [-1, 1],[0, 1],
+    [-2,2],[0, 2],
+    [-1,3],[0, 3],[2,3],
+    [-2,4],[-1,4],[0,4],[1,4],[3,4],
+    [-2,5],[-1,5],[0,5],[1,5],[2, 5],
+    [-1,6],[0,6],[1,6],[2,6],[3, 6],         
+    [-2,7],[0,7],[1,7],[2,7],
+    [-1,8],[1,8]
+  ];
     this.sprite = ShieldSprite;
     this.pix = [...ShieldSprite.pixels];
     this.deltaX = 0;
@@ -53,12 +65,13 @@ class Shield {
           
 
 
-          this.explosion(i, laser);
+          this.shrapnel(i);
           let firstPixelPosition = this.pix[0];
           let x0 = this.pixels[0].x - this.scale * firstPixelPosition;
           let y0 = this.pixels[0].y - this.scale * Math.floor(firstPixelPosition / this.sprite.cols);     
           this.clear();     
           this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, x0, y0, this.pix, "#1FFE1F");
+          this.update();
           return true;
         }
       }
@@ -66,33 +79,21 @@ class Shield {
     return false;
   }
 
-  explosion(index: number, laser: Laser):void{
-    if(laser.direction < 0){
-      for(let i = 0; i < this.damage.length; i++){
-        if(this.damage[i].some(element => element == this.pix[index])){
-          this.removedPixels(i);
-          return;
-        }
+  shrapnel(index: number): void{
+    let hitIndex = this.pix[index];
+    let pixelsToRemove = this.dam.map(d => this.explosionPositions(hitIndex, d));
+    for(let i = this.pix.length - 1; i >= 0; i--){
+      if(pixelsToRemove.some(pixel => pixel === this.pix[i]) ){
+        this.pix.splice(i, 1);
       }
-    }else{
-      for(let i = this.damage.length - 1; i >= 0; i--){
-        if(this.damage[i].some(element => element == this.pix[index])){
-          this.removedPixels(i);
-          return;
-        }
-      }
+    }
+    if(this.pix.length <= 20){
+      this.pix = [];
     }
   }
 
-  removedPixels(index: number): void{
-    for(let i = this.pix.length - 1; i >= 0; i--){
-      for(let j = 0; j < this.damage[index].length; j++){
-        if(this.damage[index][j] === this.pix[i]){
-          this.pix.splice(i, 1);
-        }
-      }
-    }
-    this.damage.splice(index, 1);
+  explosionPositions(position: number, explosionPoition: number[]): number{
+    return position + explosionPoition[0] + this.sprite.cols * explosionPoition[1];
   }
 
   update(): void {
