@@ -30,7 +30,7 @@ class Shield {
       [98, 99, 119, 120, 121, 122, 140, 141, 142, 143, 144, 145, 161, 162, 163, 164, 165, 166, 167, 168, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 249, 250, 251, 252, 253, 254, 255, 256]
     ]
     this.sprite = ShieldSprite;
-    this.pix = ShieldSprite.pixels;
+    this.pix = [...ShieldSprite.pixels];
     this.deltaX = 0;
     this.scale = scale;
     this.x = x;
@@ -54,9 +54,10 @@ class Shield {
 
 
           this.explosion(i, laser);
-          let firstPixelPosition = this.sprite.pixels[0];
+          let firstPixelPosition = this.pix[0];
           let x0 = this.pixels[0].x - this.scale * firstPixelPosition;
-          let y0 = this.pixels[0].y - this.scale * Math.floor(firstPixelPosition / this.sprite.rows);          
+          let y0 = this.pixels[0].y - this.scale * Math.floor(firstPixelPosition / this.sprite.cols);     
+          this.clear();     
           this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, x0, y0, this.pix, "#1FFE1F");
           //this.pixels.splice(i, 1);
           console.log(this.pix)
@@ -68,16 +69,16 @@ class Shield {
   }
 
   explosion(index: number, laser: Laser):void{
-    if(laser.direction > 0){
+    if(laser.direction < 0){
       for(let i = 0; i < this.damage.length; i++){
-        if(this.damage[i].some(element => element == index)){
+        if(this.damage[i].some(element => element == this.pix[index])){
           this.removedPixels(i);
           return;
         }
       }
     }else{
       for(let i = this.damage.length - 1; i >= 0; i--){
-        if(this.damage[i].some(element => element == index)){
+        if(this.damage[i].some(element => element == this.pix[index])){
           this.removedPixels(i);
           return;
         }
@@ -87,12 +88,11 @@ class Shield {
 
   removedPixels(index: number): void{
     for(let i = this.pix.length - 1; i >= 0; i--){
-      this.damage[index].forEach(element => {
-        if(this.pix.some(pixel => pixel === element)){
+      for(let j = 0; j < this.damage[index].length; j++){
+        if(this.damage[index][j] === this.pix[i]){
           this.pix.splice(i, 1);
-          console.log('ching')
         }
-      });
+      }
     }
     this.damage.splice(index, 1);
   }
