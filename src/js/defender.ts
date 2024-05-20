@@ -2,7 +2,7 @@ import { spriteFactory } from "./factories";
 import { Laser } from "./laser";
 import { Pixel } from "./pixel";
 import { DefenderSprite } from "./sprites";
-import { Sprite } from "./types";
+import { Position, RenderOptions, Sprite } from "./types";
 
 
 class Defender {
@@ -11,17 +11,14 @@ class Defender {
   pixels: Pixel[];
   key: boolean;
   sprite: Sprite;
-  explosion: number[][] = [
-    [4, 11, 22, 27, 29, 32, 34, 37, 42, 50, 54, 56, 57, 58, 60, 61, 62, 65, 70, 71, 73, 77, 79, 80, 81, 82, 83, 84, 85, 86, 87, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 103],
-    [13, 16, 21, 31, 33, 42, 52, 55, 57, 58, 61, 62, 66, 71, 72, 73, 76, 80, 81, 82, 83, 84, 85, 86, 87, 91, 92, 94, 95, 96, 97, 98, 99, 101, 103]
-  ];
+  explosion: number[][];
   explosionIndex: number = 0;
   x: number;
   y: number;
   lastX: number;
   lastY: number;
   deltaX: number;
-  scale: number;
+  renderOptions: RenderOptions;
   pixelsChange: number;
   colour: string;
   lastUpdate: number;
@@ -30,14 +27,18 @@ class Defender {
   handleKeydown: Function;
   handleKeyup: Function;
   addShots: Function;
-  constructor(scale: number, width: number, height: number, addShots: Function, context: CanvasRenderingContext2D, targetFramesPerSecond: number = 30) {
+  constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, position: Position, addShots: Function) {
     this.context = context;
     this.sprite = DefenderSprite;
+    this.explosion = [
+      [4, 11, 22, 27, 29, 32, 34, 37, 42, 50, 54, 56, 57, 58, 60, 61, 62, 65, 70, 71, 73, 77, 79, 80, 81, 82, 83, 84, 85, 86, 87, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 103],
+      [13, 16, 21, 31, 33, 42, 52, 55, 57, 58, 61, 62, 66, 71, 72, 73, 76, 80, 81, 82, 83, 84, 85, 86, 87, 91, 92, 94, 95, 96, 97, 98, 99, 101, 103]
+    ];
     this.health = 1;
     this.deltaX = 0;
-    this.scale = scale;
-    this.x = width / 2;
-    this.y = height - this.sprite.cols * this.scale - 2 * this.scale;
+    this.renderOptions = renderOptions;
+    this.x = position.x / 2;
+    this.y = position.y - this.sprite.cols * this.renderOptions.scale - 2 * this.renderOptions.scale;
     this.lastX = this.x;
     this.lastY = this.y;
     this.pixelsChange = 2;
@@ -45,7 +46,7 @@ class Defender {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.colour = "rgb(204, 218, 209)";
-    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
+    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.renderOptions.scale, this.x, this.y, this.sprite.pixels, this.colour);
     this.addShots = addShots;
     const audioUrl = new URL('./../audio/shoot.wav', import.meta.url);
     this.shotSound = new Audio(audioUrl.toString());
@@ -75,15 +76,15 @@ class Defender {
   reset(): void {
     this.health = 1;
     this.colour = "rgb(204, 218, 209)";
-    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.x, this.y, this.sprite.pixels, this.colour);
+    this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.renderOptions.scale, this.x, this.y, this.sprite.pixels, this.colour);
   }
 
   switchSprite() {
     if (this.explosionIndex === 1) {
-      this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.lastX - 6 * this.scale, this.lastY, this.explosion[0], this.colour)
+      this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.renderOptions.scale, this.lastX - 6 * this.renderOptions.scale, this.lastY, this.explosion[0], this.colour)
       this.explosionIndex = 0;
     } else {
-      this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.scale, this.lastX - 6 * this.scale, this.lastY, this.explosion[1], this.colour)
+      this.pixels = spriteFactory(this.sprite.cols, this.sprite.rows, this.renderOptions.scale, this.lastX - 6 * this.renderOptions.scale, this.lastY, this.explosion[1], this.colour)
       this.explosionIndex = 1;
     }
   }
@@ -112,12 +113,12 @@ class Defender {
     });
   }
 
-  addEventListeners():void{
+  addEventListeners(): void {
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
   }
 
-  removeEventListeners():void{
+  removeEventListeners(): void {
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
   }
@@ -127,15 +128,15 @@ class Defender {
       return;
     }
     if (event.key == 'a') {
-      this.deltaX = -this.scale - this.pixelsChange;
+      this.deltaX = -this.renderOptions.scale - this.pixelsChange;
       return;
     }
     if (event.key == 'd') {
-      this.deltaX = this.scale + this.pixelsChange;
+      this.deltaX = this.renderOptions.scale + this.pixelsChange;
       return;
     }
     if (event.key === ' ') {
-      this.addShots(new Laser(this.scale, this.pixels[0].x, this.pixels[0].y - 24, -1, this.context, 'rgb(0,140,255)'));
+      this.addShots(new Laser(this.context, this.renderOptions, { x: this.pixels[0].x, y: this.pixels[0].y - 24 }, -1, 'rgb(0,140,255)'));
       this.shotSound.currentTime = 0;
       this.shotSound.play();
     }

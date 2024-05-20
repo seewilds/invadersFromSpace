@@ -3,10 +3,11 @@ import { DefenderSprite, characterConstants } from "./sprites";
 import { Text } from "./characters";
 import { spriteFactory } from "./factories";
 import { Spaceship } from "./saucer";
+import { RenderOptions } from "./types";
 
 class TitleScreen {
     context: CanvasRenderingContext2D;
-    scale: number;
+    renderOptions: RenderOptions;
     startGame: number;
     title: Text;
     titleScale: number;
@@ -21,24 +22,25 @@ class TitleScreen {
     pressStartFadeEnd: number;
     spaceship: Spaceship;
     stars: Pixel[];
-    constructor(context: CanvasRenderingContext2D, scale: number) {
+
+    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions) {
         this.context = context;
-        this.scale = scale;
+        this.renderOptions = renderOptions;
         this.startGame = 0;
-        this.titleScale = this.scale;
-        this.pressStartScale = this.scale / 2;
-        this.spaceship = new Spaceship(this.scale, 5, 5, "silver", this.context!);
+        this.titleScale = this.renderOptions.scale;
+        this.pressStartScale = this.renderOptions.scale / 2;
+        this.spaceship = new Spaceship(this.context!, this.renderOptions, {x: 5, y:5}, "silver");
 
         this.titleYStart = -100;
         this.titleYEnd = this.centreY("INVADERS FROM SPACE", this.titleScale) - characterConstants.rows * this.titleScale;
         this.titleYCurent = -100;
         this.titleOpacity = 1;
-        this.title = new Text("INVADERS FROM SPACE", "rgba(0, 255, 0, 1)", this.scale, this.centreX("INVADERS FROM SPACE", this.titleScale, 6), -100, this.context!, 6);
+        this.title = new Text(this.context!, this.renderOptions.scale, {x: this.centreX("INVADERS FROM SPACE", this.titleScale, 6), y: -100}, "INVADERS FROM SPACE", "rgba(0, 255, 0, 1)", 6);
 
         this.pressStartFadeCurrent = 0;
         this.pressStartFadeStart = 0;
         this.pressStartFadeEnd = 0.8;
-        this.pressStart = new Text("PRESS SPACE TO START", `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`, this.pressStartScale, this.centreX("PRESS SPACE TO START", this.pressStartScale), this.centreY("PRESS SPACE TO START", this.pressStartScale), this.context!);
+        this.pressStart = new Text(this.context!, this.pressStartScale, {x: this.centreX("PRESS SPACE TO START", this.pressStartScale), y: this.centreY("PRESS SPACE TO START", this.pressStartScale)}, "PRESS SPACE TO START", `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
 
         this.stars = this.setStars();
         window.addEventListener('keydown', (event) => this.handleSpace(event));
@@ -137,7 +139,7 @@ class TitleScreen {
     setStars(): Pixel[] {
         let starPixels: Pixel[] = [];
         for (let i = 0; i < 75; i++) {
-            let pixel = new Pixel(this.scale, this.scale, Math.floor(Math.random() * (this.context.canvas.width)), Math.floor(Math.random() * (this.context.canvas.height)), "white");
+            let pixel = new Pixel(this.renderOptions.scale, this.renderOptions.scale, Math.floor(Math.random() * (this.context.canvas.width)), Math.floor(Math.random() * (this.context.canvas.height)), "white");
             starPixels.push(pixel)
         }
         return starPixels;
@@ -160,24 +162,25 @@ class TitleScreen {
 
 class TransitionScreen {
     context: CanvasRenderingContext2D;
+    renderOptions: RenderOptions;
     scale: number;
     mainText: Text;
     subText: Text;
 
-    constructor(mainText :string, subText: string, mainColour :string, subColour: string, context: CanvasRenderingContext2D, scale: number) {
+    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, mainText :string, subText: string, mainColour :string, subColour: string) {
         this.context = context;
-        this.scale = scale;
-        this.mainText = new Text(mainText, mainColour, this.scale, this.centreX(mainText, this.scale, 6), 200, this.context!, 6);
-        this.subText = new Text(subText, subColour, this.scale, this.centreX(subText, this.scale, 6), 250, this.context!, 6);
+        this.renderOptions = renderOptions;
+        this.mainText = new Text(this.context!, this.renderOptions.scale, {x:this.centreX(mainText, this.renderOptions.scale, 6), y:200}, mainText, mainColour, 6);
+        this.subText = new Text(this.context!, this.renderOptions.scale, {x: this.centreX(subText, this.renderOptions.scale, 6), y: 250}, subText, subColour, 6);
     }
 
     updateMainText(text: string, colour: string):void{
-        this.mainText.x = this.centreX(text, this.scale);
+        this.mainText.x = this.centreX(text, this.renderOptions.scale);
         this.mainText.setText(text, colour);
     }
 
     updateSubText(text: string, colour: string):void{
-        this.subText.x = this.centreX(text, this.scale);
+        this.subText.x = this.centreX(text, this.renderOptions.scale);
         this.subText.setText(text, colour);
     }
 
@@ -198,18 +201,18 @@ class TransitionScreen {
 
 class PlayerSection {
     context: CanvasRenderingContext2D;
-    scale: number;
+    renderOptions: RenderOptions;
     level: number;    
     lives: number;
     livesText: Text;
     defenderLives: Pixel[][];
 
-    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
+    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level :number, lives: number) {
         this.context = context;
-        this.scale = scale;
+        this.renderOptions = renderOptions;
         this.level = level;
         this.lives = lives;
-        this.livesText = new Text(`${this.lives.toString()}`, "white", 3, 10, 850, this.context!);
+        this.livesText = new Text(this.context, 3, {x:10, y:850}, `${this.lives.toString()}`, "white");
         this.setupDefenderLives(this.lives);
     }
 
@@ -218,7 +221,7 @@ class PlayerSection {
         let startPixel = 80;
         for(let i = 0; i < lives; i++){
             this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, 3, startPixel, 850, DefenderSprite.pixels, "rgb(204, 218, 209)");
-            startPixel += DefenderSprite.cols * this.scale + 25;
+            startPixel += DefenderSprite.cols * this.renderOptions.scale + 25;
         }        
     }
 
@@ -246,7 +249,7 @@ class PlayerSection {
 
 class ScoreBoard {
     context: CanvasRenderingContext2D;
-    scale: number;
+    renderOptions: RenderOptions;
     level: number;    
     lives: number;
     currentPoints: number; 
@@ -255,19 +258,18 @@ class ScoreBoard {
     hiPoints: number;
     hiScoreText: Text;
     hiScore: Text;
-    constructor(level :number, lives: number, context: CanvasRenderingContext2D, scale: number) {
+    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level :number, lives: number) {
         this.context = context;
-        this.scale = scale;
+        this.renderOptions = renderOptions;
         this.level = level;
         this.lives = lives;
         this.hiPoints = 0;
         this.currentPoints = 0;
-        this.currentScoreText = new Text(`CURRENT SCORE`, 'white', 2, 10, 10, this.context!);
-        this.currentScore = new Text(`${this.currentPoints.toString()}`, 'white', 2, 10, 40, this.context!);
-        this.hiScoreText = new Text(`HIGH SCORE`, 'white', 2, 250, 10, this.context!);
-        this.hiScore = new Text(`${this.hiPoints.toString()}`, 'white', 2, 250, 40, this.context!);
+        this.currentScoreText = new Text(this.context!, 2, {x:10, y:10}, `CURRENT SCORE`, 'white');
+        this.currentScore = new Text(this.context!, 2, {x:10, y:40},`${this.currentPoints.toString()}`, 'white');
+        this.hiScoreText = new Text(this.context!, 2,  {x:250, y:10},`HIGH SCORE`, 'white');
+        this.hiScore = new Text(this.context!, 2, {x:250, y:40},`${this.hiPoints.toString()}`, 'white');
     }
-
 
     updateScore(score: number):void {
         this.currentScore.setText(score.toString());

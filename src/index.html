@@ -16,8 +16,8 @@
         import { InvaderType } from './js/types';
 
 
-        let game = new Game(document.createElement("canvas"),
-            4,
+        let game = new Game(
+        document.getElementById("divvy"),
             {
                 levels: [
                     {
@@ -50,8 +50,10 @@
                     }
                 ]
             },
-            document.getElementById("divvy"),
-            30
+            {
+                scale: 4,
+                targetFramesPerSecond: 30
+            }
         );
     </script>
 </body>

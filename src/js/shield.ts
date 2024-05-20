@@ -1,4 +1,4 @@
-import { Sprite } from "./types.ts"
+import { Position, RenderOptions, Sprite } from "./types.ts"
 import { Pixel } from "./pixel.ts";
 import { spriteFactory } from "./factories.ts";
 import { Laser } from "./laser.ts";
@@ -6,50 +6,29 @@ import { ShieldSprite } from "./sprites.ts";
 
 class Shield {
   context: CanvasRenderingContext2D;
-  hits: number[];
   pixels: Pixel[];
   sprite: Sprite;
   pix: number[];
-  dam: number[][];
-  key: boolean;
-  deltaX: number;
-  scale: number;
-  x: number;
-  y: number;
-  x0: number;
-  y0: number;
   damage: number[][];
-  constructor(scale: number, x: number, y: number, context: CanvasRenderingContext2D) {
+  scale: number;
+
+  constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, position: Position) {
     this.context = context;
-    this.hits = [];
     this.damage = [
-      [4, 5, 6, 25, 26, 27, 28, 46, 47, 48, 49, 50, 51, 67, 68, 69, 70, 71, 72, 73, 88, 89, 90, 91, 92, 93, 94, 95, 110, 111, 112, 113, 114, 115, 116, 117, 132, 133, 134, 135, 136, 137, 138, 139, 154, 155, 156, 157, 158, 159, 160, 177, 178, 179, 180, 181, 200, 201, 202, 223],
-      [15, 16, 17, 37, 38, 39, 40, 58, 59, 60, 61, 62, 63, 80, 81, 82, 83, 84, 85, 86, 102, 103, 104, 105, 106, 107, 108, 109, 124, 125, 126, 127, 128, 129, 130, 131, 146, 147, 148, 149, 150, 151, 152, 153, 169, 170, 171, 172, 173, 174, 175, 192, 193, 194, 195, 196, 215, 216, 217, 238],
-      [7, 8, 9, 10, 11, 12, 13, 14, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 160, 161, 162, 163, 164, 165, 166, 167, 168, 183, 184, 185, 186, 187, 188, 189, 206, 207, 208, 209, 210],
-      [113, 134, 135, 136, 155, 156, 157, 158, 159, 176, 177, 178, 179, 180, 181, 182, 198, 199, 200, 201, 202, 203, 204, 205, 220, 221, 222, 223, 224, 225, 226, 227, 242, 243, 244, 245, 246, 247, 248, 264, 265, 266, 267, 268, 269, 270, 286, 287, 288, 289, 290, 291, 308, 309, 310, 311, 312, 330, 331, 332, 333, 334],
-      [128, 149, 150, 151, 170, 171, 172, 173, 174, 191, 192, 193, 194, 195, 196, 197, 212, 213, 214, 215, 216, 217, 218, 219, 234, 235, 236, 237, 238, 239, 240, 241, 257, 258, 259, 260, 261, 262, 263, 279, 280, 281, 282, 283, 284, 285, 302, 303, 304, 305, 306, 307, 325, 326, 327, 328, 329, 347, 348, 349, 350, 351],
-      [98, 99, 119, 120, 121, 122, 140, 141, 142, 143, 144, 145, 161, 162, 163, 164, 165, 166, 167, 168, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 249, 250, 251, 252, 253, 254, 255, 256]
+      [0, 0],
+      [-1, 1], [0, 1],
+      [-2, 2], [0, 2],
+      [-1, 3], [0, 3], [2, 3],
+      [-2, 4], [-1, 4], [0, 4], [1, 4], [3, 4],
+      [-2, 5], [-1, 5], [0, 5], [1, 5], [2, 5],
+      [-1, 6], [0, 6], [1, 6], [2, 6], [3, 6],
+      [-2, 7], [0, 7], [1, 7], [2, 7],
+      [-1, 8], [1, 8]
     ];
-    this.dam = [
-    [0, 0],
-    [-1, 1],[0, 1],
-    [-2,2],[0, 2],
-    [-1,3],[0, 3],[2,3],
-    [-2,4],[-1,4],[0,4],[1,4],[3,4],
-    [-2,5],[-1,5],[0,5],[1,5],[2, 5],
-    [-1,6],[0,6],[1,6],[2,6],[3, 6],         
-    [-2,7],[0,7],[1,7],[2,7],
-    [-1,8],[1,8]
-  ];
     this.sprite = ShieldSprite;
     this.pix = [...ShieldSprite.pixels];
-    this.deltaX = 0;
-    this.scale = scale;
-    this.x = x;
-    this.y = y;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x, this.y, this.pix, "#1FFE1F");
-    this.x0 = this.pixels[0].x;
-    this.y0 = this.pixels[0].y;
+    this.scale = renderOptions.scale;
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, position.x, position.y, this.pix, "#1FFE1F");
   }
 
   clear(): void {
@@ -62,14 +41,11 @@ class Shield {
     for (let i = 0; i < this.pixels.length; i++) {
       for (let j = 0; j < laser.pixels.length - 1; j++) {
         if (Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && Math.abs(laser.pixels[j].y - this.pixels[i].y) <= 2) {
-          
-
-
-          this.shrapnel(i);
+          this.explosion(i);
           let firstPixelPosition = this.pix[0];
           let x0 = this.pixels[0].x - this.scale * firstPixelPosition;
-          let y0 = this.pixels[0].y - this.scale * Math.floor(firstPixelPosition / this.sprite.cols);     
-          this.clear();     
+          let y0 = this.pixels[0].y - this.scale * Math.floor(firstPixelPosition / this.sprite.cols);
+          this.clear();
           this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, x0, y0, this.pix, "#1FFE1F");
           this.update();
           return true;
@@ -79,20 +55,20 @@ class Shield {
     return false;
   }
 
-  shrapnel(index: number): void{
+  explosion(index: number): void {
     let hitIndex = this.pix[index];
-    let pixelsToRemove = this.dam.map(d => this.explosionPositions(hitIndex, d));
-    for(let i = this.pix.length - 1; i >= 0; i--){
-      if(pixelsToRemove.some(pixel => pixel === this.pix[i]) ){
+    let pixelsToRemove = this.damage.map(d => this.damagedPixels(hitIndex, d));
+    for (let i = this.pix.length - 1; i >= 0; i--) {
+      if (pixelsToRemove.some(pixel => pixel === this.pix[i])) {
         this.pix.splice(i, 1);
       }
     }
-    if(this.pix.length <= 20){
+    if (this.pix.length <= 40) {
       this.pix = [];
     }
   }
 
-  explosionPositions(position: number, explosionPoition: number[]): number{
+  damagedPixels(position: number, explosionPoition: number[]): number {
     return position + explosionPoition[0] + this.sprite.cols * explosionPoition[1];
   }
 

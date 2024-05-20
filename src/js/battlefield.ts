@@ -1,15 +1,14 @@
-import { Sprite, Level, InvaderRow, LevelState } from "./types.ts"
+import { Sprite, Level, InvaderRow, LevelState, RenderOptions } from "./types.ts"
 import { Invader } from "./invader.ts"
 import { ShieldSprite } from "./sprites.ts";
 import { Defender } from "./defender.ts";
 import { Laser } from "./laser.ts";
 import { Shield } from "./shield.ts";
 
-
 class Battlefield {
   context: CanvasRenderingContext2D | null;
+  renderOptions : RenderOptions;
   level: Level;
-  scale: number;
   updateInterval: number;
   lastUpdate: number;
   invaders: Invader[];
@@ -28,7 +27,8 @@ class Battlefield {
   direction: number;
   deltaX: number;
   deltaY: number;
-  constructor(context: CanvasRenderingContext2D, scale: number, level: Level, levelState: LevelState, targetFramePerSecond: number = 30) {
+  constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level: Level, levelState: LevelState) {
+    this.renderOptions = renderOptions;
     this.gameId = 0;
     this.levelNumber = 0;
     this.levelState = levelState;
@@ -40,14 +40,13 @@ class Battlefield {
     this.invaderAltSound = new Audio(audioAltUrl.toString());
     this.soundIsPrimary = true;
     this.direction = 1;
-    this.deltaX = 6 / (targetFramePerSecond / 30);
+    this.deltaX = 6 / (this.renderOptions.targetFramesPerSecond / 30);
     this.deltaY = 0;
-    this.scale = scale;
     this.context = context;
     this.laserShots = [];
     this.shields = [];
     this.headerFooterPercentage = 0.10;
-    this.defender = new Defender(this.scale, this.context.canvas.width, this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage), this.addShots, this.context!, targetFramePerSecond);
+    this.defender = new Defender(this.context, this.renderOptions, { x: this.context.canvas.width, y:  this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage)}, this.addShots);
     this.lastUpdate = 0;
   }
 
@@ -84,7 +83,7 @@ class Battlefield {
   }
 
   getHorizontalSpace(sprite: Sprite, numberInRow: number): number {
-    let invaderWidth = sprite.cols * this.scale;
+    let invaderWidth = sprite.cols * this.renderOptions.scale;
     numberInRow = numberInRow * invaderWidth > this.context!.canvas.width ? Math.floor(this.context!.canvas.width / invaderWidth) : numberInRow;
     let remainder = this.context!.canvas.width - invaderWidth * numberInRow;
     return Math.floor(remainder / (numberInRow + 1));
@@ -94,10 +93,10 @@ class Battlefield {
     let invaders = new Array<Invader>(invaderRow.count);
     let topOffset = Math.floor(this.context!.canvas.height * this.headerFooterPercentage);
     let spaceBetween = this.getHorizontalSpace(invaderRow.sprite, invaderRow.count);
-    let invaderWidth = invaderRow.sprite.cols * this.scale;
-    let invaderHeight = invaderRow.sprite.rows * this.scale + this.scale * this.scale;
+    let invaderWidth = invaderRow.sprite.cols * this.renderOptions.scale;
+    let invaderHeight = invaderRow.sprite.rows * this.renderOptions.scale + this.renderOptions.scale * this.renderOptions.scale;
     for (let i = 0; i < invaders.length; i++) {
-      invaders[i] = new Invader(invaderRow.sprite, invaderRow.colour, this.scale, i * (invaderWidth + spaceBetween) + spaceBetween, row * invaderHeight + topOffset, 0, this.addShots, this.context!);
+      invaders[i] = new Invader(this.context!, this.renderOptions, invaderRow.sprite, { x: i * (invaderWidth + spaceBetween) + spaceBetween, y: row * invaderHeight + topOffset}, 0, invaderRow.colour, this.addShots);
     }
     return invaders;
   }
@@ -105,11 +104,11 @@ class Battlefield {
   setupShields(level: Level): Shield[] {
     let shields = new Array<Shield>(level.shieldCount);
     let spaceBetween = this.getHorizontalSpace(ShieldSprite, level.shieldCount);
-    let shieldWidth = ShieldSprite.cols * this.scale;
-    let shieldHeight = ShieldSprite.rows * this.scale + this.scale * this.scale;
+    let shieldWidth = ShieldSprite.cols * this.renderOptions.scale;
+    let shieldHeight = ShieldSprite.rows * this.renderOptions.scale + this.renderOptions.scale * this.renderOptions.scale;
 
     for (let i = 0; i < level.shieldCount; i++) {
-      shields[i] = new Shield(this.scale, i * (shieldWidth + spaceBetween) + spaceBetween, 4.5 * shieldHeight + 5 + Math.floor(this.context!.canvas.height * 0.30), this.context!);
+      shields[i] = new Shield(this.context!, this.renderOptions, {x: i * (shieldWidth + spaceBetween) + spaceBetween, y: 4.5 * shieldHeight + 5 + Math.floor(this.context!.canvas.height * 0.30)});
     }
     return shields;
   }

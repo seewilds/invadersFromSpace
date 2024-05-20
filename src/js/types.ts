@@ -4,6 +4,11 @@ enum InvaderType{
     Octopus 
 }
 
+interface Position{
+    x: number;
+    y: number
+}
+
 interface Sprite {
     rows: number;
     cols: number;
@@ -44,4 +49,9 @@ interface Game {
     levels: Level[]
 }
 
-export { Character, CharacterSprite, Sprite,  Level, Game, InvaderType, InvaderRow, LevelState }
+interface RenderOptions{
+    scale: number;
+    targetFramesPerSecond: number
+}
+
+export { Character, CharacterSprite, Sprite,  Level, Game, InvaderType, InvaderRow, LevelState, RenderOptions, Position }

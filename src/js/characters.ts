@@ -1,5 +1,5 @@
 import { characterConstants, Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE } from "./sprites";
-import { Character } from "./types"
+import { Character, Position, RenderOptions } from "./types"
 import { Pixel } from "./pixel";
 import { textFactory } from "./factories";
 
@@ -45,25 +45,21 @@ const ascii: Character = {
 
 class Text {
     context: CanvasRenderingContext2D;
+    scale: number;
     text: string;
     pixels: Pixel[][];
-    colour: string;
-    scale: number;
+    colour: string;    
     spaceOverride : number;
     x: number;
     y: number;
-    updateInterval: number;
-    lastUpdate: number;
-    constructor(text: string, colour: string, scale: number, x: number, y: number, context: CanvasRenderingContext2D, spaceOverride: number = characterConstants.cols) {
+    constructor(context: CanvasRenderingContext2D, scale: number, position: Position, text: string, colour: string, spaceOverride: number = characterConstants.cols) {
         this.context = context;
         this.text = text;
         this.colour = colour;
         this.scale = scale;
         this.spaceOverride = spaceOverride;
-        this.x = x;
-        this.y = y;
-        this.updateInterval = 200;
-        this.lastUpdate = performance.now();
+        this.x = position.x;
+        this.y = position.y;
         this.pixels = textFactory(this.text, this.x, this.y, this.scale, this.colour, this.spaceOverride);
     }
 
