@@ -19,7 +19,6 @@ class Invader {
     direction: number;
     x: number;
     y: number;
-    lastUpdate: number;
     constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, sprite: CharacterSprite, position: Position, direction: number, colour: string, addShot: Function) {
         this.health = 1;
         this.addShot = addShot;
@@ -32,7 +31,6 @@ class Invader {
         this.renderOptions = renderOptions;
         this.x = position.x;
         this.y = position.y;
-        this.lastUpdate = performance.now();
         this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.renderOptions.scale, this.x, this.y, this.sprite.pixels, this.colour);
         const audioUrl = new URL('./../audio/invaderkilled.wav', import.meta.url);
         this.explosionSound = new Audio(audioUrl.toString());

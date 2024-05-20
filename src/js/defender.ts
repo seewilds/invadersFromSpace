@@ -41,7 +41,7 @@ class Defender {
     this.y = position.y - this.sprite.cols * this.renderOptions.scale - 2 * this.renderOptions.scale;
     this.lastX = this.x;
     this.lastY = this.y;
-    this.pixelsChange = 2;
+    this.pixelsChange = 8 / (this.renderOptions.targetFramesPerSecond / 30) ;
     this.lastUpdate = performance.now();
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -128,11 +128,11 @@ class Defender {
       return;
     }
     if (event.key == 'a') {
-      this.deltaX = -this.renderOptions.scale - this.pixelsChange;
+      this.deltaX = -1 * this.pixelsChange;
       return;
     }
     if (event.key == 'd') {
-      this.deltaX = this.renderOptions.scale + this.pixelsChange;
+      this.deltaX = this.pixelsChange;
       return;
     }
     if (event.key === ' ') {

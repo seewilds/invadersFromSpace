@@ -29,18 +29,18 @@ class TitleScreen {
         this.startGame = 0;
         this.titleScale = this.renderOptions.scale;
         this.pressStartScale = this.renderOptions.scale / 2;
-        this.spaceship = new Spaceship(this.context!, this.renderOptions, {x: 5, y:5}, "silver");
+        this.spaceship = new Spaceship(this.context!, this.renderOptions, { x: 5, y: 5 }, "silver");
 
         this.titleYStart = -100;
         this.titleYEnd = this.centreY("INVADERS FROM SPACE", this.titleScale) - characterConstants.rows * this.titleScale;
         this.titleYCurent = -100;
         this.titleOpacity = 1;
-        this.title = new Text(this.context!, this.renderOptions.scale, {x: this.centreX("INVADERS FROM SPACE", this.titleScale, 6), y: -100}, "INVADERS FROM SPACE", "rgba(0, 255, 0, 1)", 6);
+        this.title = new Text(this.context!, this.renderOptions.scale, { x: this.centreX("INVADERS FROM SPACE", this.titleScale, 6), y: -100 }, "INVADERS FROM SPACE", "rgba(0, 255, 0, 1)", 6);
 
         this.pressStartFadeCurrent = 0;
         this.pressStartFadeStart = 0;
         this.pressStartFadeEnd = 0.8;
-        this.pressStart = new Text(this.context!, this.pressStartScale, {x: this.centreX("PRESS SPACE TO START", this.pressStartScale), y: this.centreY("PRESS SPACE TO START", this.pressStartScale)}, "PRESS SPACE TO START", `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
+        this.pressStart = new Text(this.context!, this.pressStartScale, { x: this.centreX("PRESS SPACE TO START", this.pressStartScale), y: this.centreY("PRESS SPACE TO START", this.pressStartScale) }, "PRESS SPACE TO START", `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
 
         this.stars = this.setStars();
         window.addEventListener('keydown', (event) => this.handleSpace(event));
@@ -167,31 +167,31 @@ class TransitionScreen {
     mainText: Text;
     subText: Text;
 
-    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, mainText :string, subText: string, mainColour :string, subColour: string) {
+    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, mainText: string, subText: string, mainColour: string, subColour: string) {
         this.context = context;
         this.renderOptions = renderOptions;
-        this.mainText = new Text(this.context!, this.renderOptions.scale, {x:this.centreX(mainText, this.renderOptions.scale, 6), y:200}, mainText, mainColour, 6);
-        this.subText = new Text(this.context!, this.renderOptions.scale, {x: this.centreX(subText, this.renderOptions.scale, 6), y: 250}, subText, subColour, 6);
+        this.mainText = new Text(this.context!, this.renderOptions.scale, { x: this.centreX(mainText, this.renderOptions.scale, 6), y: 200 }, mainText, mainColour, 6);
+        this.subText = new Text(this.context!, this.renderOptions.scale, { x: this.centreX(subText, this.renderOptions.scale, 6), y: 250 }, subText, subColour, 6);
     }
 
-    updateMainText(text: string, colour: string):void{
+    updateMainText(text: string, colour: string): void {
         this.mainText.x = this.centreX(text, this.renderOptions.scale);
         this.mainText.setText(text, colour);
     }
 
-    updateSubText(text: string, colour: string):void{
+    updateSubText(text: string, colour: string): void {
         this.subText.x = this.centreX(text, this.renderOptions.scale);
         this.subText.setText(text, colour);
     }
 
-    clear(): void{
-        this.mainText.updateTextPosition(0,0, 'black');
-        this.subText.updateTextPosition(0,0, 'black');
+    clear(): void {
+        this.mainText.updateTextPosition(0, 0, 'black');
+        this.subText.updateTextPosition(0, 0, 'black');
     }
 
-    draw():void{
-        this.mainText.updateTextPosition(0,0);
-        this.subText.updateTextPosition(0,0);
+    draw(): void {
+        this.mainText.updateTextPosition(0, 0);
+        this.subText.updateTextPosition(0, 0);
     }
 
     centreX(text: string, scale: number, spacingOverride: number = characterConstants.cols): number {
@@ -202,27 +202,27 @@ class TransitionScreen {
 class PlayerSection {
     context: CanvasRenderingContext2D;
     renderOptions: RenderOptions;
-    level: number;    
+    level: number;
     lives: number;
     livesText: Text;
     defenderLives: Pixel[][];
 
-    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level :number, lives: number) {
+    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level: number, lives: number) {
         this.context = context;
         this.renderOptions = renderOptions;
         this.level = level;
         this.lives = lives;
-        this.livesText = new Text(this.context, 3, {x:10, y:850}, `${this.lives.toString()}`, "white");
+        this.livesText = new Text(this.context, 3, { x: 10, y: 850 }, `${this.lives.toString()}`, "white");
         this.setupDefenderLives(this.lives);
     }
 
-    setupDefenderLives(lives: number):void{
+    setupDefenderLives(lives: number): void {
         this.defenderLives = new Array<Pixel[]>(lives);
         let startPixel = 80;
-        for(let i = 0; i < lives; i++){
+        for (let i = 0; i < lives; i++) {
             this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, 3, startPixel, 850, DefenderSprite.pixels, "rgb(204, 218, 209)");
             startPixel += DefenderSprite.cols * this.renderOptions.scale + 25;
-        }        
+        }
     }
 
     clearDefenders() {
@@ -231,10 +231,10 @@ class PlayerSection {
         }));
     }
 
-    draw(lives: number):void{
+    draw(lives: number): void {
         this.livesText.setText(lives.toString());
-        this.livesText.updateTextPosition(0,0);
-        if(lives !== this.lives){
+        this.livesText.updateTextPosition(0, 0);
+        if (lives !== this.lives) {
             this.lives = lives;
             this.clearDefenders();
             this.setupDefenderLives(this.lives);
@@ -250,43 +250,43 @@ class PlayerSection {
 class ScoreBoard {
     context: CanvasRenderingContext2D;
     renderOptions: RenderOptions;
-    level: number;    
+    level: number;
     lives: number;
-    currentPoints: number; 
+    currentPoints: number;
     currentScoreText: Text;
     currentScore: Text;
     hiPoints: number;
     hiScoreText: Text;
     hiScore: Text;
-    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level :number, lives: number) {
+    constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level: number, lives: number) {
         this.context = context;
         this.renderOptions = renderOptions;
         this.level = level;
         this.lives = lives;
         this.hiPoints = 0;
         this.currentPoints = 0;
-        this.currentScoreText = new Text(this.context!, 2, {x:10, y:10}, `CURRENT SCORE`, 'white');
-        this.currentScore = new Text(this.context!, 2, {x:10, y:40},`${this.currentPoints.toString()}`, 'white');
-        this.hiScoreText = new Text(this.context!, 2,  {x:250, y:10},`HIGH SCORE`, 'white');
-        this.hiScore = new Text(this.context!, 2, {x:250, y:40},`${this.hiPoints.toString()}`, 'white');
+        this.currentScoreText = new Text(this.context!, 2, { x: 10, y: 10 }, `CURRENT SCORE`, 'white');
+        this.currentScore = new Text(this.context!, 2, { x: 10, y: 40 }, `${this.currentPoints.toString()}`, 'white');
+        this.hiScoreText = new Text(this.context!, 2, { x: 250, y: 10 }, `HIGH SCORE`, 'white');
+        this.hiScore = new Text(this.context!, 2, { x: 250, y: 40 }, `${this.hiPoints.toString()}`, 'white');
     }
 
-    updateScore(score: number):void {
+    updateScore(score: number): void {
         this.currentScore.setText(score.toString());
     }
 
-    draw(points: number):void{
+    draw(points: number): void {
         this.currentPoints = points;
-        this.currentScoreText.updateTextPosition(0,0);
+        this.currentScoreText.updateTextPosition(0, 0);
         this.currentScore.setText(this.currentPoints.toString());
-        this.currentScore.updateTextPosition(0,0);
-        this.hiScoreText.updateTextPosition(0,0);
-        if(this.currentPoints >= this.hiPoints){
+        this.currentScore.updateTextPosition(0, 0);
+        this.hiScoreText.updateTextPosition(0, 0);
+        if (this.currentPoints >= this.hiPoints) {
             this.hiPoints = this.currentPoints;
             this.hiScore.setText(this.hiPoints.toString());
         }
-        this.hiScore.updateTextPosition(0,0);
+        this.hiScore.updateTextPosition(0, 0);
     }
 }
 
-export { TitleScreen, ScoreBoard, PlayerSection,  TransitionScreen }
+export { TitleScreen, ScoreBoard, PlayerSection, TransitionScreen }

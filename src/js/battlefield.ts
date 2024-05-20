@@ -1,6 +1,6 @@
 import { Sprite, Level, InvaderRow, LevelState, RenderOptions } from "./types.ts"
 import { Invader } from "./invader.ts"
-import { ShieldSprite } from "./sprites.ts";
+import { ShieldSprite, characterConstants } from "./sprites.ts";
 import { Defender } from "./defender.ts";
 import { Laser } from "./laser.ts";
 import { Shield } from "./shield.ts";
@@ -16,7 +16,7 @@ class Battlefield {
   invaderPrimarySound: HTMLAudioElement;
   invaderAltSound: HTMLAudioElement;
   soundIsPrimary: boolean;
-  invaderUpdateDelta: number = 240;
+  invaderUpdateDelta: number;
   defender: Defender;
   laserShots: Laser[];
   shields: Shield[];
@@ -25,6 +25,7 @@ class Battlefield {
   levelNumber: number;
   levelState: LevelState;
   direction: number;
+  invaderDeltaX: number;
   deltaX: number;
   deltaY: number;
   constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, level: Level, levelState: LevelState) {
@@ -40,8 +41,10 @@ class Battlefield {
     this.invaderAltSound = new Audio(audioAltUrl.toString());
     this.soundIsPrimary = true;
     this.direction = 1;
-    this.deltaX = 6 / (this.renderOptions.targetFramesPerSecond / 30);
+    this.invaderDeltaX = 6 / (this.renderOptions.targetFramesPerSecond / 30);
+    this.deltaX = this.invaderDeltaX;
     this.deltaY = 0;
+    this.invaderUpdateDelta = 240 / (this.renderOptions.targetFramesPerSecond / 30);
     this.context = context;
     this.laserShots = [];
     this.shields = [];
@@ -66,7 +69,7 @@ class Battlefield {
 
   setupLevel(): void {
     this.invaderRow = new Array(this.level.setup.length);
-    this.levelState.numberOfInvaders = this.invaderRow.length * this.level.setup[0].count;
+    this.levelState.numberOfInvaders = this.level.setup.reduce((accum, row)=>  row.count + accum, 0);
     for (let i = 0; i < this.invaderRow.length; i++) {
       this.invaderRow[i] = this.setupInvaders(this.level.setup[i], i);
     }
@@ -144,12 +147,12 @@ class Battlefield {
       let atRightBoundary = this.anyAtRightEdge();
 
       if (atRightBoundary) {
-        this.deltaX = -5;
+        this.deltaX = - 1 * this.invaderDeltaX;
       }
 
       if (atLeftBoundary) {
-        this.deltaX = 5;
-        this.deltaY = 8 * 3;
+        this.deltaX = this.invaderDeltaX;
+        this.deltaY = characterConstants.cols * 3;
       }
 
       for (let i = 0; i < this.invaderRow.length; i++) {
@@ -234,7 +237,7 @@ class Battlefield {
   removeInvader(row: number, col: number) {
     this.invaderRow[row][col].clear();
     this.invaderRow[row].splice(col, 1);
-    this.invaderUpdateDelta -= 2;
+    this.invaderUpdateDelta -= 2 * (this.renderOptions.targetFramesPerSecond / 30);
   }
 
   removeInvaders(): void {
@@ -284,7 +287,7 @@ class Battlefield {
         this.reset();
       }
     }
-    this.levelState.running = this.levelState.numberOfInvaders !== 0 && this.levelState.lives !== 0;
+    this.levelState.running = this.levelState.numberOfInvaders > 0 && this.levelState.lives > 0;
     if(!this.levelState.running){
       this.teardownLevel();
     }
