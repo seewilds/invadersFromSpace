@@ -91,7 +91,7 @@ class Game {
                 this.secondsPaused = 0;
             }
         } else if (this.levelState.running) {
-            this.levelState = this.battlefield.runLevel(timestamp);
+            this.levelState = this.battlefield.runLevel(delta);
             this.playerSection.draw(this.levelState.lives);
             this.scoreBoard.draw(this.levelState.points);
         } else if (this.secondsPaused === 0) {

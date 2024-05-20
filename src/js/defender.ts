@@ -18,8 +18,9 @@ class Defender {
   lastX: number;
   lastY: number;
   deltaX: number;
+  direction: number;
   renderOptions: RenderOptions;
-  pixelsChange: number;
+  pixelMovementPerSecond: number;
   colour: string;
   lastUpdate: number;
   shotSound: HTMLAudioElement;
@@ -41,7 +42,7 @@ class Defender {
     this.y = position.y - this.sprite.cols * this.renderOptions.scale - 2 * this.renderOptions.scale;
     this.lastX = this.x;
     this.lastY = this.y;
-    this.pixelsChange = 8 / (this.renderOptions.targetFramesPerSecond / 30) ;
+    this.pixelMovementPerSecond = 160;
     this.lastUpdate = performance.now();
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -89,24 +90,22 @@ class Defender {
     }
   }
 
-  update(): void {
+  update(secondsElapsed: number): void {
     if (
-      this.pixels.some(pixel => pixel.x <= 10) && this.deltaX < 0
-      || this.pixels.some(pixel => pixel.x >= this.context.canvas.width - 10) && this.deltaX > 0
+      (this.deltaX < 0 && this.pixels.some(pixel => pixel.x <= 10) )
+      || (this.deltaX > 0 && this.pixels.some(pixel => pixel.x >= this.context.canvas.width - 10))
     ) {
       this.deltaX = 0;
     }
+    
     this.clear();
-    if (this.health === 0) {
-      this.deltaX = 0;
-      this.switchSprite();
-    }
 
+    let change = this.deltaX * Math.floor(this.pixelMovementPerSecond * secondsElapsed);
     this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x += this.deltaX, pixel.y, this.colour);
+      pixel.Update(this.context, pixel.x += change, pixel.y, this.colour);
     });
   }
-
+  
   clear() {
     this.pixels.forEach(pixel => {
       pixel.Update(this.context, pixel.x, pixel.y, "black");
@@ -128,11 +127,11 @@ class Defender {
       return;
     }
     if (event.key == 'a') {
-      this.deltaX = -1 * this.pixelsChange;
+      this.deltaX = -1;
       return;
     }
     if (event.key == 'd') {
-      this.deltaX = this.pixelsChange;
+      this.deltaX = 1;
       return;
     }
     if (event.key === ' ') {

@@ -10,7 +10,7 @@ class Battlefield {
   renderOptions : RenderOptions;
   level: Level;
   updateInterval: number;
-  lastUpdate: number;
+  pauseSeconds: number;
   invaders: Invader[];
   invaderRow: Invader[][];
   invaderPrimarySound: HTMLAudioElement;
@@ -50,7 +50,7 @@ class Battlefield {
     this.shields = [];
     this.headerFooterPercentage = 0.10;
     this.defender = new Defender(this.context, this.renderOptions, { x: this.context.canvas.width, y:  this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage)}, this.addShots);
-    this.lastUpdate = 0;
+    this.pauseSeconds = 0;
   }
 
   clear(): void {
@@ -116,7 +116,7 @@ class Battlefield {
     return shields;
   }
 
-  anyAtRightEdge(): Boolean {
+  anyAtRightEdge(): boolean {
     for (let i = 0; i < this.invaderRow.length; i++) {
       for (let j = 0; j < this.invaderRow[i].length; j++) {
         if (this.invaderRow[i][this.invaderRow[i].length - 1].pixels.some(pixel => pixel.x >= this.context!.canvas.width)) {
@@ -127,7 +127,7 @@ class Battlefield {
     return false;
   }
 
-  anyAtLeftEdge(): Boolean {
+  anyAtLeftEdge(): boolean {
     for (let i = 0; i < this.invaderRow.length; i++) {
       for (let j = 0; j < this.invaderRow[i].length; j++) {
         if (this.invaderRow[i][0].pixels.some(pixel => pixel.x <= 0)) {
@@ -139,30 +139,19 @@ class Battlefield {
   }
 
   updateInvaders(timestamp: number): void {
-    let delta = timestamp - this.lastUpdate;
-    if (delta > this.invaderUpdateDelta) {
-      this.removeInvaders();
+    this.removeInvaders();
 
-      let atLeftBoundary = this.anyAtLeftEdge();
-      let atRightBoundary = this.anyAtRightEdge();
+    let atLeftBoundary = this.anyAtLeftEdge();
+    let atRightBoundary = this.anyAtRightEdge();
 
-      if (atRightBoundary) {
-        this.deltaX = - 1 * this.invaderDeltaX;
+    let invaderMoved = false;
+    for (let i = 0; i < this.invaderRow.length; i++) {
+      for (let j = 0; j < this.invaderRow[i].length; j++) {
+        invaderMoved = this.invaderRow[i][j].update(timestamp, atLeftBoundary, atRightBoundary);        
       }
-
-      if (atLeftBoundary) {
-        this.deltaX = this.invaderDeltaX;
-        this.deltaY = characterConstants.cols * 3;
-      }
-
-      for (let i = 0; i < this.invaderRow.length; i++) {
-        for (let j = 0; j < this.invaderRow[i].length; j++) {
-          this.invaderRow[i][j].switchSprite(this.deltaX, this.deltaY);
-          this.playInvaderMoveSound();
-        }
-      }
-      this.deltaY = 0;
-      this.lastUpdate = timestamp;
+    }
+    if(invaderMoved){
+      this.playInvaderMoveSound();
     }
   }
 
@@ -192,6 +181,7 @@ class Battlefield {
     }
     this.defender.clear();
     this.defender.reset();
+    this.pauseSeconds = 0;
   }
 
   updateHits() {
@@ -243,7 +233,7 @@ class Battlefield {
   removeInvaders(): void {
     for (let i = this.invaderRow.length - 1; i >= 0; i--) {
       for (let j = this.invaderRow[i].length - 1; j >= 0; j--) {
-        if (this.invaderRow[i][j].health === 0) {
+        if (this.invaderRow[i][j].health === 0 && this.invaderRow[i][j].pixelsHoldSeconds >= 0.25) {
           this.enableLasers(i, j);
           this.removeInvader(i, j);
           this.levelState.numberOfInvaders--;
@@ -271,17 +261,17 @@ class Battlefield {
     this.laserShots.splice(index, 1);
   }
 
-  runLevel(timestamp: number): LevelState {
-    let delta = timestamp - this.lastUpdate;
+  runLevel(delta: number): LevelState {
     if (this.defender.health > 0) {
-      this.defender.update();
-      this.updateInvaders(timestamp);
+      this.defender.update(delta / 1000);
+      this.updateInvaders(delta / 1000);
       this.updateShields();
       this.updateLasers();
       this.updateHits();
     } else {
-      if (delta <= 300) {
-        this.defender.update();
+      if (this.pauseSeconds <= 1) {
+        this.pauseSeconds += delta;
+        this.defender.update(1);
       }
       else {
         this.reset();
@@ -291,6 +281,7 @@ class Battlefield {
     if(!this.levelState.running){
       this.teardownLevel();
     }
+    
     return this.levelState;
   }
 }
