@@ -4,6 +4,7 @@ import { Text } from "./characters";
 import { spriteFactory } from "./factories";
 import { Spaceship } from "./saucer";
 import { RenderOptions } from "./types";
+import { timeStamp } from "console";
 
 class TitleScreen {
     context: CanvasRenderingContext2D;
@@ -65,10 +66,10 @@ class TitleScreen {
         this.updateStars();
         let begin = true;
         if (this.titleYCurent === this.titleYEnd) {
-            this.updateSpaceship();
+            this.updateSpaceship(timestamp);
         }
         if (this.startGame > 1) {
-            begin = this.fadeOut();
+            begin = this.fadeOut(timestamp);
             window.removeEventListener('keydown', (event) => this.handleSpace(event));
         } else {
             this.updateTitle();
@@ -89,7 +90,7 @@ class TitleScreen {
             return;
         }
         if (this.pressStartFadeCurrent < this.pressStartFadeEnd) {
-            this.pressStartFadeCurrent += 0.1;
+            this.pressStartFadeCurrent += 0.01;
             this.pressStart.updateTextPosition(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeCurrent})`);
         }
         else {
@@ -97,17 +98,16 @@ class TitleScreen {
         }
     }
 
-    updateSpaceship(): void {
+    updateSpaceship(timeStamp: number): void {
         let position = this.spaceship.getPosition();
-        let deltaX = this.spaceship.deltaX;
-        let deltaY = this.spaceship.deltaY;
         if (position[1].x > this.context.canvas.width) {
-            deltaX = -1 * this.spaceship.deltaX;
+            this.spaceship.directionX = -1 * this.spaceship.directionX;
         }
         if (position[2].y < 0 || position[3].y > this.context.canvas.height / 3) {
-            deltaY = -1 * this.spaceship.deltaY;
+            this.spaceship.directionY = -1 * this.spaceship.directionY;
         }
-        this.spaceship.update(deltaX, deltaY, `rgb(192,192,192, ${this.titleOpacity})`);
+        this.spaceship.setColour(`rgb(192,192,192, ${this.titleOpacity})`);
+        this.spaceship.update(timeStamp / 1000);
     }
 
     setTextToFinal(): void {
@@ -123,13 +123,13 @@ class TitleScreen {
         this.pressStart.updateTextPosition(0, 0, `rgba(178, 34, 34, ${this.pressStartFadeEnd})`);
     }
 
-    fadeOut(): boolean {
+    fadeOut(secondsElapsed: number): boolean {
         if (this.titleOpacity > 0 || this.pressStartFadeCurrent > 0) {
-            this.titleOpacity -= 0.1;
-            this.pressStartFadeCurrent -= 0.1;
+            this.titleOpacity -= 0.01;
+            this.pressStartFadeCurrent -= 0.01;
             this.title.updateTextPosition(0, 0, `rgba(0, 255, 0, ${this.titleOpacity})`);
             this.pressStart.updateTextPosition(0, 0, `rgba(205, 62, 81, ${this.pressStartFadeCurrent})`);
-            this.updateSpaceship();
+            this.updateSpaceship(secondsElapsed);
             return true;
         }
         this.clear();

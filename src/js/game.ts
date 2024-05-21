@@ -78,7 +78,7 @@ class Game {
         }
 
         if (this.waitingToStartGame) {
-            this.waitingToStartGame = this.titleScreen.update(timestamp);
+            this.waitingToStartGame = this.titleScreen.update(delta);
             this.lastUpdate = performance.now();
         } else if (!this.levelState.initialized) {
             this.secondsPaused += delta;
