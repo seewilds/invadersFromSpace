@@ -42,7 +42,7 @@ class Defender {
     this.y = position.y - this.sprite.cols * this.renderOptions.scale - 2 * this.renderOptions.scale;
     this.lastX = this.x;
     this.lastY = this.y;
-    this.pixelMovementPerSecond = 160;
+    this.pixelMovementPerSecond = 200;
     this.lastUpdate = performance.now();
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -99,6 +99,11 @@ class Defender {
     }
     
     this.clear();
+    
+    if (this.health === 0) {
+      this.deltaX = 0;
+      this.switchSprite();
+    }
 
     let change = this.deltaX * Math.floor(this.pixelMovementPerSecond * secondsElapsed);
     this.pixels.forEach(pixel => {

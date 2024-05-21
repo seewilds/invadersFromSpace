@@ -8,25 +8,25 @@ class Laser {
   pixels: Pixel[];
   sprite: Sprite;
   deltaY: number;
+  pixelMovementPerSecond: number;
   position: PositionOptions;
   direction: number;
-  lastUpdate: number;
   colour: string;
 
   constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, position: Position, direction: number,  colour: string = "rgb(248, 102, 36)") {
     this.context = context;
     this.sprite = Shot;
-    this.deltaY = 10 / (renderOptions.targetFramesPerSecond / 30) * direction;
-    this.direction = 0;
-    this.lastUpdate = performance.now();
+    this.direction = direction;
+    this.pixelMovementPerSecond = 300;
     this.colour = colour;
     this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, renderOptions.scale, position.x, position.y, this.sprite.pixels, this.colour);
   }
 
-  update(): void {
+  update(secondsElapsed: number): void {
     this.clear();
+    let change = this.direction * Math.floor(this.pixelMovementPerSecond * secondsElapsed)
     this.pixels.forEach((pixel, index) => {
-      pixel.Update(this.context, pixel.x, pixel.y += this.deltaY, this.colour);
+      pixel.Update(this.context, pixel.x, pixel.y += change, this.colour);
     });
   }
 

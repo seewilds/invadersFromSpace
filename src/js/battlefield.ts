@@ -169,9 +169,9 @@ class Battlefield {
     this.laserShots = [...this.laserShots, laser];
   };
 
-  updateLasers(): void {
+  updateLasers(deltaTimestampSeconds: number): void {
     this.laserShots.forEach(shot => {
-      shot.update();
+      shot.update(deltaTimestampSeconds / 1000);
     });
   }
 
@@ -261,16 +261,16 @@ class Battlefield {
     this.laserShots.splice(index, 1);
   }
 
-  runLevel(delta: number): LevelState {
+  runLevel(deltaTimestamp: number): LevelState {
     if (this.defender.health > 0) {
-      this.defender.update(delta / 1000);
-      this.updateInvaders(delta / 1000);
+      this.defender.update(deltaTimestamp / 1000);
+      this.updateInvaders(deltaTimestamp / 1000);
       this.updateShields();
-      this.updateLasers();
+      this.updateLasers(deltaTimestamp);
       this.updateHits();
     } else {
-      if (this.pauseSeconds <= 1) {
-        this.pauseSeconds += delta;
+      if (this.pauseSeconds <= 0.8) {
+        this.pauseSeconds += deltaTimestamp / 1000;
         this.defender.update(1);
       }
       else {
