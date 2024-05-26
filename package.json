@@ -4,6 +4,7 @@
   "description": "Simple game in js",
   "source": "./src/index.html",
   "scripts": {
+    "build-ts": "tsc",
     "start": "parcel",
     "build": "parcel build"
   },
@@ -11,6 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "parcel": "^2.11.0"
+    "parcel": "^2.11.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5"
   }
 }
