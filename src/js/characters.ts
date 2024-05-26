@@ -1,7 +1,7 @@
-import { characterConstants, Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE } from "./sprites";
-import { Character, Position, RenderOptions } from "./types"
-import { Pixel } from "./pixel";
-import { textFactory } from "./factories";
+import { characterConstants, Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, SPACE } from "./sprites.js";
+import type { Character, Position } from "./types.js";
+import { Pixel } from "./pixel.js";
+import { textFactory } from "./factories.js";
 
 const ascii: Character = {
     "0" : Zero,

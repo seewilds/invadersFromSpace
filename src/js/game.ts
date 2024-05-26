@@ -1,8 +1,8 @@
-import { Battlefield } from "./battlefield";
-import { TitleScreen, ScoreBoard, PlayerSection, TransitionScreen } from "./screens";
-import { RenderOptions, LevelState, Game as GameType } from "./types";
+import { Battlefield } from "./battlefield.js";
+import { TitleScreen, ScoreBoard, PlayerSection, TransitionScreen } from "./screens.js";
+import type { RenderOptions, LevelState, Game as GameType } from "./types.js";
 
-class Game {
+export class Game {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D | null;
     game: GameType;
@@ -21,7 +21,6 @@ class Game {
     levelTransition: boolean;
     framesPerSecond: number;
     interval: number;
-    now: number;
     lastUpdate: number;
     secondsPaused: number;
     constructor(elementToInsertInto: HTMLElement, game: GameType, renderOptions: RenderOptions) {
@@ -124,6 +123,3 @@ class Game {
     }
 
 }
-
-
-export { Game }

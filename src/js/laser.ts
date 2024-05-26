@@ -1,7 +1,7 @@
-import { Position, RenderOptions, Sprite } from "./types.ts"
-import { Pixel } from "./pixel.ts";
-import { spriteFactory } from "./factories.ts";
-import { Shot } from "./sprites.ts";
+import type { Position, RenderOptions, Sprite } from "./types.js";
+import { Pixel } from "./pixel.js";
+import { spriteFactory } from "./factories.js";
+import { Shot } from "./sprites.js";
 
 class Laser {
   context: CanvasRenderingContext2D;

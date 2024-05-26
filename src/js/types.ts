@@ -54,4 +54,5 @@ interface RenderOptions{
     targetFramesPerSecond: number
 }
 
-export { Character, CharacterSprite, Sprite,  Level, Game, InvaderType, InvaderRow, LevelState, RenderOptions, Position }
+export { InvaderType };
+export type { Character, CharacterSprite, Sprite, Level, Game, InvaderRow, LevelState, RenderOptions, Position };

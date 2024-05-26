@@ -1,10 +1,9 @@
-import { Pixel } from "./pixel";
-import { DefenderSprite, characterConstants } from "./sprites";
-import { Text } from "./characters";
-import { spriteFactory } from "./factories";
-import { Spaceship } from "./saucer";
-import { RenderOptions } from "./types";
-import { timeStamp } from "console";
+import { Pixel } from "./pixel.js";
+import { DefenderSprite, characterConstants } from "./sprites.js";
+import { Text } from "./characters.js";
+import { spriteFactory } from "./factories.js";
+import { Spaceship } from "./saucer.js";
+import type { RenderOptions } from "./types.js";
 
 class TitleScreen {
     context: CanvasRenderingContext2D;
@@ -163,7 +162,6 @@ class TitleScreen {
 class TransitionScreen {
     context: CanvasRenderingContext2D;
     renderOptions: RenderOptions;
-    scale: number;
     mainText: Text;
     subText: Text;
 
@@ -212,12 +210,12 @@ class PlayerSection {
         this.renderOptions = renderOptions;
         this.level = level;
         this.lives = lives;
+        this.defenderLives = new Array<Pixel[]>(this.lives);
         this.livesText = new Text(this.context, 3, { x: 10, y: 850 }, `${this.lives.toString()}`, "white");
         this.setupDefenderLives(this.lives);
     }
 
     setupDefenderLives(lives: number): void {
-        this.defenderLives = new Array<Pixel[]>(lives);
         let startPixel = 80;
         for (let i = 0; i < lives; i++) {
             this.defenderLives[i] = spriteFactory(DefenderSprite.cols, DefenderSprite.rows, 3, startPixel, 850, DefenderSprite.pixels, "rgb(204, 218, 209)");

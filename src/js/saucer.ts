@@ -1,7 +1,7 @@
-import { Position, Sprite } from "./types.ts"
-import { Pixel } from "./pixel.ts";
-import { Saucer } from "./sprites.ts";
-import { spriteFactory } from "./factories.ts";
+import type { Position, RenderOptions, Sprite } from "./types.js";
+import { Pixel } from "./pixel.js";
+import { Saucer } from "./sprites.js";
+import { spriteFactory } from "./factories.js";
 
 class Spaceship {
   context: CanvasRenderingContext2D;
@@ -12,7 +12,7 @@ class Spaceship {
   directionY: number;
   direction: number;
   pixelMovementPerSecond: number;
-  constructor(context: CanvasRenderingContext2D, renderOptions, position: Position, colour: string) {
+  constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, position: Position, colour: string) {
     this.context = context;
     this.sprite = Saucer;
     this.colour = colour;

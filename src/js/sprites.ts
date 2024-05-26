@@ -1,4 +1,4 @@
-import { CharacterSprite, Sprite } from "./types"
+import type { CharacterSprite, Sprite } from "./types.js"
 
 const ShieldSprite: Sprite = {
     rows: 16,

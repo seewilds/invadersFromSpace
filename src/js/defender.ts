@@ -1,15 +1,14 @@
-import { spriteFactory } from "./factories";
-import { Laser } from "./laser";
-import { Pixel } from "./pixel";
-import { DefenderSprite } from "./sprites";
-import { Position, RenderOptions, Sprite } from "./types";
+import { spriteFactory } from "./factories.js";
+import { Laser } from "./laser.js";
+import { Pixel } from "./pixel.js";
+import { DefenderSprite } from "./sprites.js";
+import type { Position, RenderOptions, Sprite } from "./types.js";
 
 
 class Defender {
   context: CanvasRenderingContext2D;
   health: number;
   pixels: Pixel[];
-  key: boolean;
   sprite: Sprite;
   explosion: number[][];
   explosionIndex: number = 0;
@@ -18,15 +17,12 @@ class Defender {
   lastX: number;
   lastY: number;
   deltaX: number;
-  direction: number;
   renderOptions: RenderOptions;
   pixelMovementPerSecond: number;
   colour: string;
   lastUpdate: number;
   shotSound: HTMLAudioElement;
   defenderKilled: HTMLAudioElement;
-  handleKeydown: Function;
-  handleKeyup: Function;
   addShots: Function;
   constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, position: Position, addShots: Function) {
     this.context = context;
@@ -140,6 +136,7 @@ class Defender {
       return;
     }
     if (event.key === ' ') {
+      event.preventDefault();
       this.addShots(new Laser(this.context, this.renderOptions, { x: this.pixels[0].x, y: this.pixels[0].y - 24 }, -1, 'rgb(0,140,255)'));
       this.shotSound.currentTime = 0;
       this.shotSound.play();

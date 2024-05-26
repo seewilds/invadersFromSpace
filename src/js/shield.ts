@@ -1,8 +1,8 @@
-import { Position, RenderOptions, Sprite } from "./types.ts"
-import { Pixel } from "./pixel.ts";
-import { spriteFactory } from "./factories.ts";
-import { Laser } from "./laser.ts";
-import { ShieldSprite } from "./sprites.ts";
+import type { Position, RenderOptions, Sprite } from "./types.js";
+import { Pixel } from "./pixel.js";
+import { spriteFactory } from "./factories.js";
+import { Laser } from "./laser.js";
+import { ShieldSprite } from "./sprites.js";
 
 class Shield {
   context: CanvasRenderingContext2D;

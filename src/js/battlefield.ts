@@ -1,15 +1,14 @@
-import { Sprite, Level, InvaderRow, LevelState, RenderOptions } from "./types.ts"
-import { Invader } from "./invader.ts"
-import { ShieldSprite, characterConstants } from "./sprites.ts";
-import { Defender } from "./defender.ts";
-import { Laser } from "./laser.ts";
-import { Shield } from "./shield.ts";
+import type { Sprite, Level, InvaderRow, LevelState, RenderOptions } from "./types.js";
+import { Invader } from "./invader.js"
+import { ShieldSprite, characterConstants } from "./sprites.js";
+import { Defender } from "./defender.js";
+import { Laser } from "./laser.js";
+import { Shield } from "./shield.js";
 
 class Battlefield {
   context: CanvasRenderingContext2D | null;
   renderOptions : RenderOptions;
   level: Level;
-  updateInterval: number;
   pauseSeconds: number;
   invaders: Invader[];
   invaderRow: Invader[][];
@@ -49,6 +48,7 @@ class Battlefield {
     this.laserShots = [];
     this.shields = [];
     this.headerFooterPercentage = 0.10;
+    this.invaderRow = new Array(this.level.setup.length);
     this.defender = new Defender(this.context, this.renderOptions, { x: this.context.canvas.width, y:  this.context.canvas.height - Math.floor(this.context.canvas.height * this.headerFooterPercentage)}, this.addShots);
     this.pauseSeconds = 0;
   }
@@ -67,8 +67,7 @@ class Battlefield {
     this.soundIsPrimary = !this.soundIsPrimary;
   }
 
-  setupLevel(): void {
-    this.invaderRow = new Array(this.level.setup.length);
+  setupLevel(): void {    
     this.levelState.numberOfInvaders = this.level.setup.reduce((accum, row)=>  row.count + accum, 0);
     for (let i = 0; i < this.invaderRow.length; i++) {
       this.invaderRow[i] = this.setupInvaders(this.level.setup[i], i);

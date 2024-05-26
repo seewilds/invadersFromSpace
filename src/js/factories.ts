@@ -1,7 +1,7 @@
-import { ascii } from "./characters";
-import { Pixel } from "./pixel";
-import { characterConstants } from "./sprites";
-import { Sprite } from "./types";
+import { ascii } from "./characters.js";
+import { Pixel } from "./pixel.js";
+import { characterConstants } from "./sprites.js";
+import type { Sprite } from "./types.js";
 
 
 function spriteFactory(height: number, width: number, scale: number, xStart: number, yStart: number, pixels: number[], colour: string): Pixel[] {

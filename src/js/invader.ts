@@ -1,8 +1,8 @@
-import { spriteFactory } from "./factories";
-import { Laser } from "./laser";
-import { Pixel } from "./pixel";
-import { Explosion, characterConstants } from "./sprites";
-import { CharacterSprite, Position, RenderOptions, Sprite } from "./types"
+import { spriteFactory } from "./factories.js";
+import { Laser } from "./laser.js";
+import { Pixel } from "./pixel.js";
+import { Explosion, characterConstants } from "./sprites.js";
+import type { CharacterSprite, Position, RenderOptions, Sprite } from "./types.js";
 
 class Invader {
     context: CanvasRenderingContext2D;
