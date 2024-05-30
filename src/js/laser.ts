@@ -7,9 +7,7 @@ class Laser {
   context: CanvasRenderingContext2D;
   pixels: Pixel[];
   sprite: Sprite;
-  deltaY: number;
   pixelMovementPerSecond: number;
-  position: PositionOptions;
   direction: number;
   colour: string;
 
