@@ -136,7 +136,6 @@ class Defender {
       return;
     }
     if (event.key === ' ') {
-      event.preventDefault();
       this.addShots(new Laser(this.context, this.renderOptions, { x: this.pixels[0].x, y: this.pixels[0].y - 24 }, -1, 'rgb(0,140,255)'));
       this.shotSound.currentTime = 0;
       this.shotSound.play();

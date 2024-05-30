@@ -24,6 +24,11 @@ export class Game {
     lastUpdate: number;
     secondsPaused: number;
     constructor(elementToInsertInto: HTMLElement, game: GameType, renderOptions: RenderOptions) {
+        window.addEventListener('keydown', function(event: KeyboardEvent){
+            if(event.key === ' '){
+                event.preventDefault();
+            }
+        });
         this.renderOptions = renderOptions;
         this.scale = this.renderOptions.scale;
         this.game = game;

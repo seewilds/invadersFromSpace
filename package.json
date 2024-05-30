@@ -4,7 +4,7 @@
   "description": "Simple game in js",
   "source": "./src/index.html",
   "scripts": {
-    "build-ts": "tsc",
+    "build-ts": "tsc && cp -r ./src/audio ./invaders",
     "start": "parcel",
     "build": "parcel build"
   },
