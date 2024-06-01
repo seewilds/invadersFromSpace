@@ -49,8 +49,10 @@ class Defender {
     this.addShots = addShots;
     const audioUrl = new URL('./../audio/shoot.wav', import.meta.url);
     this.shotSound = new Audio(audioUrl.toString());
+    this.shotSound.volume = 0.25;
     const explosionSound = new URL('./../audio/explosion.wav', import.meta.url);
     this.defenderKilled = new Audio(explosionSound.toString());
+    this.defenderKilled.volume = 0.25;
   }
 
   hit(laser: Laser): boolean {
