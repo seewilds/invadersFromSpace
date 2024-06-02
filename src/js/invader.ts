@@ -130,10 +130,10 @@ class Invader {
           this.context,
           this.renderOptions,
           {
-            x: this.pixels[this.sprite.laserXPosition].x,
+            x: this.pixels[this.sprite.laserPosition.laserXPosition].x,
             y:
-              this.pixels[this.sprite.laserXPosition].y +
-              (this.sprite.rows - 2) * this.renderOptions.scale,
+              this.pixels[this.sprite.laserPosition.laserXPosition].y +
+              (this.sprite.laserPosition.rowsToBottom - 2) * this.renderOptions.scale,
           },
           1,
           "rgb(255,15,0)",
@@ -202,9 +202,9 @@ class Invader {
   isLaserBlocked(invader: Invader): boolean {
     let boundingBox = invader.getBoundingBox();
     return (
-      this.pixels[this.sprite.laserXPosition].x >=
+      this.pixels[this.sprite.laserPosition.laserXPosition].x >=
         boundingBox[0].x - 2 * this.renderOptions.scale &&
-      this.pixels[this.sprite.laserXPosition].x <=
+      this.pixels[this.sprite.laserPosition.laserXPosition].x <=
         boundingBox[1].x + 2 * this.renderOptions.scale
     );
   }
