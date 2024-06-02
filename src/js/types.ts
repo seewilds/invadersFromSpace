@@ -17,7 +17,12 @@ interface Sprite {
 
 interface CharacterSprite extends Sprite {
   alternatePixels: number[];
+  laserPosition: LaserPosition;
+}
+
+interface LaserPosition{
   laserXPosition: number;
+  rowsToBottom: number
 }
 
 type Character = {
@@ -62,6 +67,7 @@ export type {
   Level,
   Game,
   InvaderRow,
+  LaserPosition,
   LevelState,
   RenderOptions,
   Position,
