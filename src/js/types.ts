@@ -17,7 +17,7 @@ interface Sprite {
 
 interface CharacterSprite extends Sprite {
   alternatePixels: number[];
-  laserPosition: number;
+  laserXPosition: number;
 }
 
 type Character = {
