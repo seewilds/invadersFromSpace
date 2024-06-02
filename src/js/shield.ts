@@ -8,10 +8,11 @@ class Shield {
   context: CanvasRenderingContext2D;
   pixels: Pixel[];
   sprite: Sprite;
-  pix: number[];
+  pixelIndices: number[];
   damage: number[][];
   scale: number;
-
+  x0: number;
+  y0: number;
   constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, position: Position) {
     this.context = context;
     this.damage = [
@@ -25,10 +26,12 @@ class Shield {
       [-2, 7], [0, 7], [1, 7], [2, 7],
       [-1, 8], [1, 8]
     ];
+    this.x0 = position.x;
+    this.y0 = position.y;
     this.sprite = ShieldSprite;
-    this.pix = [...ShieldSprite.pixels];
+    this.pixelIndices = [...ShieldSprite.pixels];
     this.scale = renderOptions.scale;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, position.x, position.y, this.pix, "#1FFE1F");
+    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x0, this.y0, this.pixelIndices, "#1FFE1F");
   }
 
   clear(): void {
@@ -42,11 +45,8 @@ class Shield {
       for (let j = 0; j < laser.pixels.length - 1; j++) {
         if (Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 && Math.abs(laser.pixels[j].y - this.pixels[i].y) <= 2) {
           this.explosion(i);
-          let firstPixelPosition = this.pix[0];
-          let x0 = this.pixels[0].x - this.scale * firstPixelPosition;
-          let y0 = this.pixels[0].y - this.scale * Math.floor(firstPixelPosition / this.sprite.cols);
           this.clear();
-          this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, x0, y0, this.pix, "#1FFE1F");
+          this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, this.scale, this.x0, this.y0, this.pixelIndices, "#1FFE1F");
           this.update();
           return true;
         }
@@ -56,20 +56,24 @@ class Shield {
   }
 
   explosion(index: number): void {
-    let hitIndex = this.pix[index];
+    let hitIndex = this.pixelIndices[index];
     let pixelsToRemove = this.damage.map(d => this.damagedPixels(hitIndex, d));
-    for (let i = this.pix.length - 1; i >= 0; i--) {
-      if (pixelsToRemove.some(pixel => pixel === this.pix[i])) {
-        this.pix.splice(i, 1);
+    for (let i = this.pixelIndices.length - 1; i >= 0; i--) {
+      if (pixelsToRemove.some(pixel => pixel === this.pixelIndices[i])) {
+        this.pixelIndices.splice(i, 1);
       }
     }
-    if (this.pix.length <= 40) {
-      this.pix = [];
+    if (this.pixelIndices.length <= 40) {
+      this.pixelIndices = [];
     }
   }
 
   damagedPixels(position: number, explosionPoition: number[]): number {
     return position + explosionPoition[0] + this.sprite.cols * explosionPoition[1];
+  }
+
+  isActive():boolean{
+    return this.pixels.length > 0;
   }
 
   update(): void {

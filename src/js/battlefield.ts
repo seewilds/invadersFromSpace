@@ -158,7 +158,7 @@ class Battlefield {
 
   updateShields(): void {
     for (let i = this.shields.length - 1; i >= 0; i--) {
-      if (this.shields[i].pixels.length === 0) {
+      if (!this.shields[i].isActive()) {
         this.removeShield(i);
       } else {
         this.shields[i].update();
