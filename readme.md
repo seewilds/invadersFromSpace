@@ -3,12 +3,14 @@
 Invaders from Space is a twist on a classic arcade game reimagined for the web. Developed using Parcel, TypeScript, HTML, and CSS, this game brings the nostalgic alien-shooting experience to your browser. Players control a spaceship, dodging alien attacks while trying to eliminate Features
 
 Features:
-* Smooth animations and gameplay
-* Responsive design for play on any device
-* Score tracking and high-score board
-* Sound effects and background music
+
+- Smooth animations and gameplay
+- Responsive design for play on any device
+- Score tracking and high-score board
+- Sound effects and background music
 
 <!-- GETTING STARTED -->
+
 ## Getting Started
 
 Must have Node and Npm installed.
@@ -29,11 +31,13 @@ Must have Node and Npm installed.
    ```
 
 <!-- LICENSE -->
+
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <!-- CONTACT -->
+
 ## Contact
 
 Project Link: [https://github.com/seewilds/invadersFromSpace](https://github.com/seewilds/invadersFromSpace)

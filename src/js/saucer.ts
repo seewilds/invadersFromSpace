@@ -12,7 +12,12 @@ class Spaceship {
   directionY: number;
   direction: number;
   pixelMovementPerSecond: number;
-  constructor(context: CanvasRenderingContext2D, renderOptions: RenderOptions, position: Position, colour: string) {
+  constructor(
+    context: CanvasRenderingContext2D,
+    renderOptions: RenderOptions,
+    position: Position,
+    colour: string,
+  ) {
     this.context = context;
     this.sprite = Saucer;
     this.colour = colour;
@@ -20,18 +25,26 @@ class Spaceship {
     this.directionX = 1;
     this.directionY = 1;
     this.direction = 0;
-    this.pixels = spriteFactory(this.sprite.rows, this.sprite.cols, renderOptions.scale, position.x, position.y, this.sprite.pixels, this.colour);
+    this.pixels = spriteFactory(
+      this.sprite.rows,
+      this.sprite.cols,
+      renderOptions.scale,
+      position.x,
+      position.y,
+      this.sprite.pixels,
+      this.colour,
+    );
   }
 
   clear(colour: string = "black"): void {
-    this.pixels.forEach(pixel => {
+    this.pixels.forEach((pixel) => {
       pixel.Update(this.context, pixel.x, pixel.y, colour);
     });
   }
 
   getPosition() {
     // left, right, top, bottom
-    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]]
+    return [this.pixels[40], this.pixels[55], this.pixels[0], this.pixels[62]];
   }
 
   setDirections(directionX: number, directionY: number): void {
@@ -39,16 +52,25 @@ class Spaceship {
     this.directionY = directionY;
   }
 
-  setColour(colour: string){
+  setColour(colour: string) {
     this.colour = colour;
   }
 
   update(secondsElapsed: number): void {
     this.clear();
-    let changeX = this.directionX * Math.floor(this.pixelMovementPerSecond * secondsElapsed);
-    let changeY = this.directionY * Math.floor(this.pixelMovementPerSecond * secondsElapsed);
-    this.pixels.forEach(pixel => {
-      pixel.Update(this.context, pixel.x += changeX, pixel.y += changeY, this.colour);
+    let changeX =
+      this.directionX *
+      Math.floor(this.pixelMovementPerSecond * secondsElapsed);
+    let changeY =
+      this.directionY *
+      Math.floor(this.pixelMovementPerSecond * secondsElapsed);
+    this.pixels.forEach((pixel) => {
+      pixel.Update(
+        this.context,
+        (pixel.x += changeX),
+        (pixel.y += changeY),
+        this.colour,
+      );
     });
   }
 }

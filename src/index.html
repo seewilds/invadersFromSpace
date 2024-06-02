@@ -1,61 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
-<head>
+  <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-</head>
+  </head>
 
-<body>
-    <div id="divvy">
-
-    </div>
+  <body>
+    <div id="divvy"></div>
     <script type="module">
-        import { Game } from './js/game.ts'
-        import { Crab, Octopus, Squid } from './js/sprites';
-        import { InvaderType } from './js/types';
+      import { Game } from "./js/game.ts";
+      import { Crab, Octopus, Squid } from "./js/sprites";
+      import { InvaderType } from "./js/types";
 
-
-        let game = new Game(
+      let game = new Game(
         document.getElementById("divvy"),
+        {
+          levels: [
             {
-                levels: [
-                    {
-                        setup: [
-                            { count: 5, colour: "white", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
-                            { count: 11, colour: "white", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                            { count: 11, colour: "white", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
-                        ],
-                        shieldCount: 4
-                    },
-                    {
-                        setup: [
-                            { count: 11, colour: "rgb(186, 18, 0)", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
-                            { count: 11, colour: "rgb(28, 93, 153)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                            { count: 11, colour: "rgb(244, 91, 105)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
-                            // { count: 11, colour: "rgb(4, 240, 106)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                            // { count: 11, colour: "rgb(244, 91, 222)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
-                        ],
-                        shieldCount: 2
-                    },
-                    {
-                        setup: [
-                            { count: 11, colour: "rgb(186, 18, 0)", type: InvaderType.Squid, sprite: Squid, directionStart: -1 },
-                            { count: 11, colour: "rgb(28, 93, 153)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                            { count: 11, colour: "rgb(244, 91, 105)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 },
-                            { count: 11, colour: "rgb(4, 240, 106)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
-                            { count: 11, colour: "rgb(244, 91, 222)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
-                        ],
-                        shieldCount: 1
-                    }
-                ]
+              setup: [
+                {
+                  count: 5,
+                  colour: "white",
+                  type: InvaderType.Squid,
+                  sprite: Squid,
+                  directionStart: -1,
+                },
+                {
+                  count: 7,
+                  colour: "white",
+                  type: InvaderType.Octopus,
+                  sprite: Octopus,
+                  directionStart: 1,
+                },
+                {
+                  count: 11,
+                  colour: "white",
+                  type: InvaderType.Crab,
+                  sprite: Crab,
+                  directionStart: -1,
+                },
+              ],
+              shieldCount: 4,
             },
             {
-                scale: 4,
-                targetFramesPerSecond: 240
-            }
-        );
+              setup: [
+                {
+                  count: 11,
+                  colour: "rgb(186, 18, 0)",
+                  type: InvaderType.Squid,
+                  sprite: Squid,
+                  directionStart: -1,
+                },
+                {
+                  count: 11,
+                  colour: "rgb(28, 93, 153)",
+                  type: InvaderType.Octopus,
+                  sprite: Octopus,
+                  directionStart: 1,
+                },
+                {
+                  count: 11,
+                  colour: "rgb(244, 91, 105)",
+                  type: InvaderType.Crab,
+                  sprite: Crab,
+                  directionStart: -1,
+                },
+                // { count: 11, colour: "rgb(4, 240, 106)", type: InvaderType.Octopus, sprite: Octopus, directionStart: 1 },
+                // { count: 11, colour: "rgb(244, 91, 222)", type: InvaderType.Crab, sprite: Crab, directionStart: -1 }
+              ],
+              shieldCount: 2,
+            },
+            {
+              setup: [
+                {
+                  count: 11,
+                  colour: "rgb(186, 18, 0)",
+                  type: InvaderType.Squid,
+                  sprite: Squid,
+                  directionStart: -1,
+                },
+                {
+                  count: 11,
+                  colour: "rgb(28, 93, 153)",
+                  type: InvaderType.Octopus,
+                  sprite: Octopus,
+                  directionStart: 1,
+                },
+                {
+                  count: 11,
+                  colour: "rgb(244, 91, 105)",
+                  type: InvaderType.Crab,
+                  sprite: Crab,
+                  directionStart: -1,
+                },
+                {
+                  count: 11,
+                  colour: "rgb(4, 240, 106)",
+                  type: InvaderType.Octopus,
+                  sprite: Octopus,
+                  directionStart: 1,
+                },
+                {
+                  count: 11,
+                  colour: "rgb(244, 91, 222)",
+                  type: InvaderType.Crab,
+                  sprite: Crab,
+                  directionStart: -1,
+                },
+              ],
+              shieldCount: 1,
+            },
+          ],
+        },
+        {
+          scale: 4,
+          targetFramesPerSecond: 240,
+        },
+      );
     </script>
-</body>
-
+  </body>
 </html>
