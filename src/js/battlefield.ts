@@ -211,7 +211,6 @@ class Battlefield {
 
   updateInvaders(timestamp: number): void {
     this.removeInvaders();
-
     let atLeftBoundary = this.anyAtLeftEdge();
     let atRightBoundary = this.anyAtRightEdge();
 
@@ -228,6 +227,13 @@ class Battlefield {
     if (invaderMoved) {
       this.playInvaderMoveSound();
     }
+    this.enableLasers();
+  }
+
+  invadersFire(): void {
+    this.invaderRow.forEach((invaders) =>
+      invaders.forEach((invader) => invader.fire()),
+    );
   }
 
   updateShields(): void {
@@ -263,7 +269,10 @@ class Battlefield {
     this.invaderRow.forEach((invaders, index) => {
       for (let i = invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
-          if (invaders[i].hit(this.laserShots[j])) {
+          if (
+            this.laserShots[j].direction < 0 &&
+            invaders[i].hit(this.laserShots[j])
+          ) {
             this.removeLaserShot(j);
             this.levelState.points += 10 + (4 % (i + 1)) * 10;
           }
@@ -318,7 +327,6 @@ class Battlefield {
           this.invaderRow[i][j].health === 0 &&
           this.invaderRow[i][j].pixelsHoldSeconds >= 0.25
         ) {
-          this.enableLasers(i, j);
           this.removeInvader(i, j);
           this.levelState.numberOfInvaders--;
         }
@@ -326,15 +334,12 @@ class Battlefield {
     }
   }
 
-  enableLasers(row: number, index: number): void {
-    for (let i = row - 1; i >= 0; i--) {
-      if (
-        this.invaderRow[i].length - 1 >= index &&
-        this.invaderRow[i][index].setCanFire(this.invaderRow[i][index].pixels)
-      ) {
-        return;
-      }
-    }
+  enableLasers(): void {
+    this.invaderRow.forEach((invaders) =>
+      invaders.forEach(
+        (invader) => invader.health > 0 && invader.setCanFire(this.invaderRow),
+      ),
+    );
   }
 
   removeShield(index: number) {
@@ -349,11 +354,12 @@ class Battlefield {
 
   runLevel(deltaTimestamp: number): LevelState {
     if (this.defender.health > 0) {
+      this.updateHits();
+      this.updateLasers(deltaTimestamp);
       this.defender.update(deltaTimestamp / 1000);
       this.updateInvaders(deltaTimestamp / 1000);
       this.updateShields();
-      this.updateLasers(deltaTimestamp);
-      this.updateHits();
+      this.invadersFire();
     } else {
       if (this.pauseSeconds <= 0.8) {
         this.pauseSeconds += deltaTimestamp / 1000;
