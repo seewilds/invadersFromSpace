@@ -4,6 +4,7 @@ import { Pixel } from "./pixel.js";
 import { Explosion, characterConstants } from "./sprites.js";
 import type {
   CharacterSprite,
+  InvaderRow,
   Position,
   RenderOptions,
   Sprite,
@@ -71,28 +72,6 @@ class Invader {
     });
   }
 
-  hit(laser: Laser): boolean {
-    if (this.health === 0) {
-      return false;
-    }
-    for (let i = 0; i < this.pixels.length; i++) {
-      for (let j = 0; j < laser.pixels.length - 1; j++) {
-        if (
-          Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 &&
-          Math.abs(laser.pixels[j].y - this.pixels[i].y) <= 2
-        ) {
-          this.health = 0;
-          this.clear();
-          this.switchSprite();
-          this.pixelsHoldSeconds = 0;
-          this.explosionSound.play();
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   update(
     secondsElapsed: number,
     atLeftBoundary: boolean,
@@ -136,10 +115,6 @@ class Invader {
       );
     });
 
-    if (this.health > 0 && this.canFire) {
-      this.fire();
-    }
-
     if (this.firstRender) {
       this.direction = 1;
     }
@@ -149,14 +124,16 @@ class Invader {
   }
 
   fire(): void {
-    if (Math.random() >= 0.99) {
+    if (this.health > 0 && this.canFire && Math.random() >= 0.99) {
       this.addShot(
         new Laser(
           this.context,
           this.renderOptions,
           {
-            x: this.pixels[this.sprite.laserPosition].x,
-            y: this.pixels[this.sprite.laserPosition].y,
+            x: this.pixels[this.sprite.laserXPosition].x,
+            y:
+              this.pixels[this.sprite.laserXPosition].y +
+              (this.sprite.rows - 2) * this.renderOptions.scale,
           },
           1,
           "rgb(255,15,0)",
@@ -165,14 +142,71 @@ class Invader {
     }
   }
 
-  setCanFire(pixels: Pixel[]): boolean {
-    for (let i = 0; i < pixels.length; i++) {
-      if (this.pixels.some((pixel) => pixel.y === pixels[i].y)) {
-        this.canFire = true;
+  setCanFire(invaderRows: Invader[][]): boolean {
+    for (let i = 0; i < invaderRows.length; i++) {
+      for (let j = 0; j < invaderRows[i].length; j++) {
+        if (invaderRows[i][j].pixels[0] === this.pixels[0]) {
+          continue;
+        }
+
+        if (this.isLaserBlocked(invaderRows[i][j])) {
+          return false;
+        }
+      }
+    }
+    this.canFire = true;
+    return true;
+  }
+
+  hit(laser: Laser): boolean {
+    if (this.health === 0) {
+      return false;
+    }
+
+    for (let j = 0; j < laser.pixels.length; j++) {
+      if (this.isPixelInBoundingBox(laser.pixels[j])) {
+        this.health = 0;
+        this.clear();
+        this.switchSprite();
+        this.pixelsHoldSeconds = 0;
+        this.explosionSound.play();
         return true;
       }
     }
+
     return false;
+  }
+
+  getBoundingBox(): Position[] {
+    let x0 =
+      this.pixels[0].x - this.sprite.pixels[0] * this.renderOptions.scale;
+    let y0 = this.pixels[0].y;
+    let height = this.sprite.rows * this.renderOptions.scale;
+    let width = this.sprite.cols * this.renderOptions.scale;
+    return [
+      { x: x0, y: y0 },
+      { x: x0 + width, y: y0 + height },
+    ];
+  }
+
+  isPixelInBoundingBox(pixel: Pixel): boolean {
+    let boundingBox = this.getBoundingBox();
+    return (
+      pixel.x >= boundingBox[0].x &&
+      pixel.x <= boundingBox[1].x &&
+      pixel.y >= boundingBox[0].y &&
+      pixel.y <= boundingBox[1].y
+    );
+  }
+
+  isLaserBlocked(invader: Invader): boolean {
+    let boundingBox = invader.getBoundingBox();
+    return (
+      this.pixels[this.sprite.laserXPosition].x >=
+        boundingBox[0].x - 2 * this.renderOptions.scale &&
+      this.pixels[this.sprite.laserXPosition].x <=
+        boundingBox[1].x + 2 * this.renderOptions.scale
+    );
   }
 
   switchSprite(): void {
