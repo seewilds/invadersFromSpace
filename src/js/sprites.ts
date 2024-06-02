@@ -40,7 +40,7 @@ const Saucer: Sprite = {
 const Shot: Sprite = {
   rows: 6,
   cols: 1,
-  pixels: [1, 2, 3, 4, 5, 6],
+  pixels: [0, 1, 2, 3, 4, 5],
 };
 
 const Explosion: Sprite = {
@@ -76,7 +76,7 @@ const Crab: CharacterSprite = {
     38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 57, 58, 59,
     60, 61, 62, 63, 68, 74, 78, 86,
   ],
-  laserPosition: 40,
+  laserXPosition: 7,
 };
 
 const Octopus: CharacterSprite = {
@@ -94,7 +94,7 @@ const Octopus: CharacterSprite = {
     53, 54, 55, 56, 57, 58, 59, 62, 63, 64, 67, 68, 69, 73, 74, 77, 78, 81, 82,
     86, 87, 92, 93,
   ],
-  laserPosition: 53,
+  laserXPosition: 1,
 };
 
 const Squid: CharacterSprite = {
@@ -108,7 +108,7 @@ const Squid: CharacterSprite = {
     3, 4, 10, 11, 12, 13, 17, 18, 19, 20, 21, 22, 24, 25, 27, 28, 30, 31, 32,
     33, 34, 35, 36, 37, 38, 39, 41, 46, 48, 55, 57, 62,
   ],
-  laserPosition: 30,
+  laserXPosition: 0,
 };
 
 const Zero: Sprite = {
