@@ -102,7 +102,8 @@ class TitleScreen {
   update(timestamp: number): boolean {
     this.updateStars();
     let begin = true;
-    if (this.titleYCurent === this.titleYEnd) {
+    if (this.titleYCurent === this.titleYEnd
+      && this.startGame <= 1) {
       this.updateSpaceship(timestamp);
     }
     if (this.startGame > 1) {
