@@ -9,6 +9,7 @@ class Shield {
   pixels: Pixel[];
   sprite: Sprite;
   pixelIndices: number[];
+  renderOptions: RenderOptions;
   damage: number[][];
   scale: number;
   x0: number;
@@ -19,6 +20,7 @@ class Shield {
     position: Position,
   ) {
     this.context = context;
+    this.renderOptions = renderOptions;
     this.damage = [
       [0, 0],
       [-1, 1],
@@ -48,7 +50,7 @@ class Shield {
       [1, 7],
       [2, 7],
       [-1, 8],
-      [1, 8],
+      [1, 8]
     ];
     this.x0 = position.x;
     this.y0 = position.y;
@@ -73,11 +75,11 @@ class Shield {
   }
 
   hit(laser: Laser): boolean {
-    for (let i = 0; i < this.pixels.length; i++) {
+    for (let i = 0; i < this.pixels.length - 1; i++) {
       for (let j = 0; j < laser.pixels.length - 1; j++) {
         if (
-          Math.abs(laser.pixels[j].x - this.pixels[i].x) <= 2 &&
-          Math.abs(laser.pixels[j].y - this.pixels[i].y) <= 2
+          Math.abs(laser.pixels[j].x - this.pixels[i].x) < this.renderOptions.scale 
+          && Math.abs(laser.pixels[j].y - this.pixels[i].y) < this.renderOptions.scale 
         ) {
           this.explosion(i);
           this.clear();
@@ -104,8 +106,11 @@ class Shield {
       this.damagedPixels(hitIndex, d),
     );
     for (let i = this.pixelIndices.length - 1; i >= 0; i--) {
-      if (pixelsToRemove.some((pixel) => pixel === this.pixelIndices[i])) {
-        this.pixelIndices.splice(i, 1);
+      for (let j = pixelsToRemove.length - 1; j >= 0; j--){
+        if(pixelsToRemove[j] === this.pixelIndices[i]){
+          this.pixelIndices.splice(i, 1);
+          pixelsToRemove.splice(j, 1);
+        }
       }
     }
     if (this.pixelIndices.length <= 40) {
