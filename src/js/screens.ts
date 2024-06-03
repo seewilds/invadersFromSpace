@@ -316,8 +316,8 @@ class PlayerSection {
     let startPixel = 80;
     for (let i = 0; i < lives; i++) {
       this.defenderLives[i] = spriteFactory(
-        DefenderSprite.cols,
         DefenderSprite.rows,
+        DefenderSprite.cols,        
         3,
         startPixel,
         850,
