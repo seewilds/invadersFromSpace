@@ -1,13 +1,9 @@
 {
-    "image": "node:lts-bookworm",
-    "forwardPorts": [
-        3000
-    ],
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-vscode.vscode-typescript-next"
-            ]
-        }
+  "image": "node:lts-bookworm",
+  "forwardPorts": [3000],
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode.vscode-typescript-next"]
     }
+  }
 }
