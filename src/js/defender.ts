@@ -46,11 +46,10 @@ class Defender {
     this.health = 1;
     this.deltaX = 0;
     this.renderOptions = renderOptions;
-    this.x = position.x / 2;
+    this.x = this.context.canvas.width / 2;
     this.y =
       position.y -
-      this.sprite.cols * this.renderOptions.scale -
-      2 * this.renderOptions.scale;
+      this.sprite.cols * this.renderOptions.scale;
     this.lastX = this.x;
     this.lastY = this.y;
     this.pixelMovementPerSecond = 200;
@@ -60,8 +59,8 @@ class Defender {
     this.spaceDepressed = false;
     this.colour = "rgb(204, 218, 209)";
     this.pixels = spriteFactory(
-      this.sprite.cols,
       this.sprite.rows,
+      this.sprite.cols,
       this.renderOptions.scale,
       this.x,
       this.y,
@@ -78,12 +77,8 @@ class Defender {
   }
 
   hit(laser: Laser): boolean {
-    for (let i = 0; i < this.pixels.length; i++) {
-      for (let j = 0; j < laser.pixels.length - 1; j++) {
-        if (
-          Math.abs(this.pixels[i].x - laser.pixels[j].x) <= 2 &&
-          laser.pixels[j].y == this.pixels[i].y
-        ) {
+      for (let i = 0; i < laser.pixels.length - 1; i++) {
+        if (this.isPixelInBoundingBox(laser.pixels[i])) {
           this.health = 0;
           this.deltaX = 0;
           this.lastX = this.pixels[0].x;
@@ -93,18 +88,39 @@ class Defender {
           this.switchSprite();
           this.defenderKilled.play();
           return true;
-        }
       }
     }
     return false;
+  }
+  
+  getBoundingBox(): Position[] {
+    let x0 =
+      this.pixels[0].x - this.sprite.pixels[0] * this.renderOptions.scale;
+    let y0 = this.pixels[0].y;
+    let height = this.sprite.rows * this.renderOptions.scale;
+    let width = this.sprite.cols * this.renderOptions.scale;
+    return [
+      { x: x0, y: y0 },
+      { x: x0 + width, y: y0 + height },
+    ];
+  }
+
+  isPixelInBoundingBox(pixel: Pixel): boolean {
+    let boundingBox = this.getBoundingBox();
+    return (
+      pixel.x >= boundingBox[0].x &&
+      pixel.x <= boundingBox[1].x &&
+      pixel.y >= boundingBox[0].y &&
+      pixel.y <= boundingBox[1].y
+    );
   }
 
   reset(): void {
     this.health = 1;
     this.colour = "rgb(204, 218, 209)";
     this.pixels = spriteFactory(
-      this.sprite.cols,
       this.sprite.rows,
+      this.sprite.cols,
       this.renderOptions.scale,
       this.x,
       this.y,
@@ -116,8 +132,8 @@ class Defender {
   switchSprite() {
     if (this.explosionIndex === 1) {
       this.pixels = spriteFactory(
-        this.sprite.cols,
         this.sprite.rows,
+        this.sprite.cols,
         this.renderOptions.scale,
         this.lastX - 6 * this.renderOptions.scale,
         this.lastY,
@@ -127,8 +143,8 @@ class Defender {
       this.explosionIndex = 0;
     } else {
       this.pixels = spriteFactory(
-        this.sprite.cols,
         this.sprite.rows,
+        this.sprite.cols,        
         this.renderOptions.scale,
         this.lastX - 6 * this.renderOptions.scale,
         this.lastY,
