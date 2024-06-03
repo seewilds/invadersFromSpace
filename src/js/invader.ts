@@ -133,7 +133,8 @@ class Invader {
             x: this.pixels[this.sprite.laserPosition.laserXPosition].x,
             y:
               this.pixels[this.sprite.laserPosition.laserXPosition].y +
-              (this.sprite.laserPosition.rowsToBottom - 2) * this.renderOptions.scale,
+              (this.sprite.laserPosition.rowsToBottom - 2) *
+                this.renderOptions.scale,
           },
           1,
           "rgb(255,15,0)",

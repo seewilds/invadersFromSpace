@@ -20,9 +20,9 @@ interface CharacterSprite extends Sprite {
   laserPosition: LaserPosition;
 }
 
-interface LaserPosition{
+interface LaserPosition {
   laserXPosition: number;
-  rowsToBottom: number
+  rowsToBottom: number;
 }
 
 type Character = {

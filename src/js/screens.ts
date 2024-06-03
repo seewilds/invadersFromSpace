@@ -102,8 +102,7 @@ class TitleScreen {
   update(timestamp: number): boolean {
     this.updateStars();
     let begin = true;
-    if (this.titleYCurent === this.titleYEnd
-      && this.startGame <= 1) {
+    if (this.titleYCurent === this.titleYEnd && this.startGame <= 1) {
       this.updateSpaceship(timestamp);
     }
     if (this.startGame > 1) {
@@ -317,7 +316,7 @@ class PlayerSection {
     for (let i = 0; i < lives; i++) {
       this.defenderLives[i] = spriteFactory(
         DefenderSprite.rows,
-        DefenderSprite.cols,        
+        DefenderSprite.cols,
         3,
         startPixel,
         850,

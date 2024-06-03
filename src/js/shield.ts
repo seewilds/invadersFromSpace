@@ -50,7 +50,7 @@ class Shield {
       [1, 7],
       [2, 7],
       [-1, 8],
-      [1, 8]
+      [1, 8],
     ];
     this.x0 = position.x;
     this.y0 = position.y;
@@ -78,8 +78,10 @@ class Shield {
     for (let i = 0; i < this.pixels.length - 1; i++) {
       for (let j = 0; j < laser.pixels.length - 1; j++) {
         if (
-          Math.abs(laser.pixels[j].x - this.pixels[i].x) < this.renderOptions.scale 
-          && Math.abs(laser.pixels[j].y - this.pixels[i].y) < this.renderOptions.scale 
+          Math.abs(laser.pixels[j].x - this.pixels[i].x) <
+            this.renderOptions.scale &&
+          Math.abs(laser.pixels[j].y - this.pixels[i].y) <
+            this.renderOptions.scale
         ) {
           this.explosion(i);
           this.clear();
@@ -106,8 +108,8 @@ class Shield {
       this.damagedPixels(hitIndex, d),
     );
     for (let i = this.pixelIndices.length - 1; i >= 0; i--) {
-      for (let j = pixelsToRemove.length - 1; j >= 0; j--){
-        if(pixelsToRemove[j] === this.pixelIndices[i]){
+      for (let j = pixelsToRemove.length - 1; j >= 0; j--) {
+        if (pixelsToRemove[j] === this.pixelIndices[i]) {
           this.pixelIndices.splice(i, 1);
           pixelsToRemove.splice(j, 1);
         }

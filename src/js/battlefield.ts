@@ -230,10 +230,10 @@ class Battlefield {
     this.enableLasers();
   }
 
-  invadersFire():void{
-    this.invaderRow.forEach(invaders=> 
-      invaders.forEach(invader=> invader.fire())
-    )
+  invadersFire(): void {
+    this.invaderRow.forEach((invaders) =>
+      invaders.forEach((invader) => invader.fire()),
+    );
   }
 
   updateShields(): void {
@@ -269,8 +269,10 @@ class Battlefield {
     this.invaderRow.forEach((invaders, index) => {
       for (let i = invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
-          if (this.laserShots[j].direction < 0 
-            && invaders[i].hit(this.laserShots[j])) {
+          if (
+            this.laserShots[j].direction < 0 &&
+            invaders[i].hit(this.laserShots[j])
+          ) {
             this.removeLaserShot(j);
             this.levelState.points += 10 + (4 % (i + 1)) * 10;
           }
@@ -333,8 +335,10 @@ class Battlefield {
   }
 
   enableLasers(): void {
-    this.invaderRow.forEach(invaders => 
-      invaders.forEach(invader => invader.health > 0 && invader.setCanFire(this.invaderRow))
+    this.invaderRow.forEach((invaders) =>
+      invaders.forEach(
+        (invader) => invader.health > 0 && invader.setCanFire(this.invaderRow),
+      ),
     );
   }
 

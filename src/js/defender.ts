@@ -47,9 +47,7 @@ class Defender {
     this.deltaX = 0;
     this.renderOptions = renderOptions;
     this.x = this.context.canvas.width / 2;
-    this.y =
-      position.y -
-      this.sprite.cols * this.renderOptions.scale;
+    this.y = position.y - this.sprite.cols * this.renderOptions.scale;
     this.lastX = this.x;
     this.lastY = this.y;
     this.pixelMovementPerSecond = 200;
@@ -77,22 +75,22 @@ class Defender {
   }
 
   hit(laser: Laser): boolean {
-      for (let i = 0; i < laser.pixels.length - 1; i++) {
-        if (this.isPixelInBoundingBox(laser.pixels[i])) {
-          this.health = 0;
-          this.deltaX = 0;
-          this.lastX = this.pixels[0].x;
-          this.lastY = this.pixels[0].y;
-          this.colour = "rgb(255,255,102)";
-          this.clear();
-          this.switchSprite();
-          this.defenderKilled.play();
-          return true;
+    for (let i = 0; i < laser.pixels.length - 1; i++) {
+      if (this.isPixelInBoundingBox(laser.pixels[i])) {
+        this.health = 0;
+        this.deltaX = 0;
+        this.lastX = this.pixels[0].x;
+        this.lastY = this.pixels[0].y;
+        this.colour = "rgb(255,255,102)";
+        this.clear();
+        this.switchSprite();
+        this.defenderKilled.play();
+        return true;
       }
     }
     return false;
   }
-  
+
   getBoundingBox(): Position[] {
     let x0 =
       this.pixels[0].x - this.sprite.pixels[0] * this.renderOptions.scale;
@@ -144,7 +142,7 @@ class Defender {
     } else {
       this.pixels = spriteFactory(
         this.sprite.rows,
-        this.sprite.cols,        
+        this.sprite.cols,
         this.renderOptions.scale,
         this.lastX - 6 * this.renderOptions.scale,
         this.lastY,
