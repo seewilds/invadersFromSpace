@@ -17,6 +17,7 @@ export class Game {
   scoreBoard!: ScoreBoard;
   transitionScreens!: TransitionScreen;
   playerSection!: PlayerSection;
+  highScore: number;
   scale: number;
   updateInterval!: number;
   gameId!: number;
@@ -41,6 +42,7 @@ export class Game {
     this.renderOptions = renderOptions;
     this.scale = this.renderOptions.scale;
     this.game = game;
+    this.highScore = 0;
     this.framesPerSecond = this.renderOptions.targetFramesPerSecond;
     this.interval = 1000 / this.framesPerSecond;
     (this.canvas = document.createElement("canvas")),
@@ -77,7 +79,7 @@ export class Game {
       1,
       3,
     );
-    this.scoreBoard = new ScoreBoard(this.context!, this.renderOptions, 1, 3);
+    this.scoreBoard = new ScoreBoard(this.context!, this.renderOptions, 1, 3, this.highScore);
   }
 
   clear(): void {
@@ -139,7 +141,11 @@ export class Game {
           "red",
         );
       } else {
-        this.transitionScreens.updateMainText("WINNER", "rgba(0, 255, 0, 1)");
+        let message = "WINNER";
+        if(this.levelState.points > this.highScore){
+          message = "NEW HIGH SCORE";
+        }
+        this.transitionScreens.updateMainText(message, "rgba(0, 255, 0, 1)");
         this.transitionScreens.updateSubText(
           `POINTS ${this.levelState.points}`,
           "rgba(0, 255, 0, 1)",
@@ -148,6 +154,7 @@ export class Game {
     } else {
       this.secondsPaused += delta;
       if (this.secondsPaused / 1000 >= 4) {
+        this.highScore = this.levelState.points > this.highScore ?  this.levelState.points : this.highScore;
         if (
           this.levelState.lives > 0 &&
           this.levelNumber < this.game.levels.length - 1

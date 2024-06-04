@@ -356,24 +356,25 @@ class ScoreBoard {
   renderOptions: RenderOptions;
   level: number;
   lives: number;
-  currentPoints: number;
+  currenctScoreNumber: number;
   currentScoreText: Text;
   currentScore: Text;
-  hiPoints: number;
-  hiScoreText: Text;
-  hiScore: Text;
+  highScoreNumber: number;
+  highScoreText: Text;
+  highScore: Text;
   constructor(
     context: CanvasRenderingContext2D,
     renderOptions: RenderOptions,
     level: number,
     lives: number,
+    highScore: number
   ) {
     this.context = context;
     this.renderOptions = renderOptions;
     this.level = level;
     this.lives = lives;
-    this.hiPoints = 0;
-    this.currentPoints = 0;
+    this.highScoreNumber = highScore;
+    this.currenctScoreNumber = 0;
     this.currentScoreText = new Text(
       this.context!,
       2,
@@ -385,21 +386,21 @@ class ScoreBoard {
       this.context!,
       2,
       { x: 10, y: 40 },
-      `${this.currentPoints.toString()}`,
+      `${this.currenctScoreNumber.toString()}`,
       "white",
     );
-    this.hiScoreText = new Text(
+    this.highScoreText = new Text(
       this.context!,
       2,
       { x: 250, y: 10 },
       `HIGH SCORE`,
       "white",
     );
-    this.hiScore = new Text(
+    this.highScore = new Text(
       this.context!,
       2,
       { x: 250, y: 40 },
-      `${this.hiPoints.toString()}`,
+      `${this.highScoreNumber.toString()}`,
       "white",
     );
   }
@@ -409,16 +410,16 @@ class ScoreBoard {
   }
 
   draw(points: number): void {
-    this.currentPoints = points;
+    this.currenctScoreNumber = points;
     this.currentScoreText.updateTextPosition(0, 0);
-    this.currentScore.setText(this.currentPoints.toString());
+    this.currentScore.setText(this.currenctScoreNumber.toString());
     this.currentScore.updateTextPosition(0, 0);
-    this.hiScoreText.updateTextPosition(0, 0);
-    if (this.currentPoints >= this.hiPoints) {
-      this.hiPoints = this.currentPoints;
-      this.hiScore.setText(this.hiPoints.toString());
+    this.highScoreText.updateTextPosition(0, 0);
+    if (this.currenctScoreNumber >= this.highScoreNumber) {
+      this.highScoreNumber = this.currenctScoreNumber;
+      this.highScore.setText(this.highScoreNumber.toString());
     }
-    this.hiScore.updateTextPosition(0, 0);
+    this.highScore.updateTextPosition(0, 0);
   }
 }
 
