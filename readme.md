@@ -13,7 +13,9 @@ Features:
 - Score tracking and high-score board
 - Sound effects
 
-<!-- GETTING STARTED -->
+<p align="center" width="100%">
+   <img src='./docs/images/invaders_action.png' width=60%>
+</p>
 
 ## Getting Started
 
