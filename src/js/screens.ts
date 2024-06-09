@@ -367,7 +367,7 @@ class ScoreBoard {
     renderOptions: RenderOptions,
     level: number,
     lives: number,
-    highScore: number
+    highScore: number,
   ) {
     this.context = context;
     this.renderOptions = renderOptions;

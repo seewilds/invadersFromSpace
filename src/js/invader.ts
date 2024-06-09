@@ -121,7 +121,7 @@ class Invader {
 
     return invaderMoved;
   }
-  
+
   switchSprite(): void {
     if (this.health === 0) {
       this.colour = "rgb(249, 200, 14)";
@@ -159,7 +159,7 @@ class Invader {
       this.altActive = true;
     }
   }
- 
+
   isLaserBlocked(invader: Invader): boolean {
     let boundingBox = invader.getBoundingBox();
     return (

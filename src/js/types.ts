@@ -59,7 +59,7 @@ interface RenderOptions {
   targetFramesPerSecond: number;
 }
 
-interface BattlefieldDimensions{
+interface BattlefieldDimensions {
   height: number;
   width: number;
 }

@@ -69,7 +69,7 @@ class Battlefield {
     this.headerFooterPercentage = 0.1;
     this.dimensions = {
       height: this.context.canvas.height,
-      width: this.context.canvas.width
+      width: this.context.canvas.width,
     };
     this.invaderRow = new Array(this.level.setup.length);
     this.defender = new Defender(
@@ -213,7 +213,7 @@ class Battlefield {
     let topOfDefender = this.defender.getBoundingBox()[0].y;
     let atLeftBoundary = this.anyAtLeftEdge();
     let atRightBoundary = this.anyAtRightEdge();
-    
+
     let invaderMoved = false;
     for (let i = 0; i < this.invaderRow.length; i++) {
       for (let j = 0; j < this.invaderRow[i].length; j++) {
@@ -223,7 +223,7 @@ class Battlefield {
           atRightBoundary,
         );
         this.updateInvadersConsumeShields(this.invaderRow[i][j]);
-        if(this.invaderRow[i][j].getBoundingBox()[1].y >= topOfDefender){
+        if (this.invaderRow[i][j].getBoundingBox()[1].y >= topOfDefender) {
           this.levelState.lives = 0;
         }
       }
@@ -240,13 +240,13 @@ class Battlefield {
     );
   }
 
-  updateInvadersConsumeShields(invader: Invader): void{
-    for(let k = 0; k < this.shields.length; k++){
-      for(let l = this.shields[k].pixels.length - 1; l >= 0; l--){
-        if(invader.isPixelInBoundingBox(this.shields[k].pixels[l])){
+  updateInvadersConsumeShields(invader: Invader): void {
+    for (let k = 0; k < this.shields.length; k++) {
+      for (let l = this.shields[k].pixels.length - 1; l >= 0; l--) {
+        if (invader.isPixelInBoundingBox(this.shields[k].pixels[l])) {
           this.shields[k].pixels.splice(l, 1);
         }
-      } 
+      }
     }
   }
 
@@ -280,7 +280,7 @@ class Battlefield {
   }
 
   updateHits() {
-    this.invaderRow.forEach(invaders => {
+    this.invaderRow.forEach((invaders) => {
       for (let i = invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (
@@ -315,10 +315,8 @@ class Battlefield {
       if (
         this.laserShots[j].pixels.some((pixel) => {
           return (
-            pixel.y <
-              this.dimensions.height * this.headerFooterPercentage ||
-            pixel.y >
-              this.dimensions.height * (1 - this.headerFooterPercentage)
+            pixel.y < this.dimensions.height * this.headerFooterPercentage ||
+            pixel.y > this.dimensions.height * (1 - this.headerFooterPercentage)
           );
         })
       ) {

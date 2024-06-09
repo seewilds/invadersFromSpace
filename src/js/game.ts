@@ -79,7 +79,13 @@ export class Game {
       1,
       3,
     );
-    this.scoreBoard = new ScoreBoard(this.context!, this.renderOptions, 1, 3, this.highScore);
+    this.scoreBoard = new ScoreBoard(
+      this.context!,
+      this.renderOptions,
+      1,
+      3,
+      this.highScore,
+    );
   }
 
   clear(): void {
@@ -142,7 +148,7 @@ export class Game {
         );
       } else {
         let message = "WINNER";
-        if(this.levelState.points > this.highScore){
+        if (this.levelState.points > this.highScore) {
           message = "NEW HIGH SCORE";
         }
         this.transitionScreens.updateMainText(message, "rgba(0, 255, 0, 1)");
@@ -154,7 +160,10 @@ export class Game {
     } else {
       this.secondsPaused += delta;
       if (this.secondsPaused / 1000 >= 4) {
-        this.highScore = this.levelState.points > this.highScore ?  this.levelState.points : this.highScore;
+        this.highScore =
+          this.levelState.points > this.highScore
+            ? this.levelState.points
+            : this.highScore;
         if (
           this.levelState.lives > 0 &&
           this.levelNumber < this.game.levels.length - 1
