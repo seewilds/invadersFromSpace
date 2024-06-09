@@ -4,33 +4,33 @@ import { characterConstants } from "./sprites.js";
 import type { Sprite } from "./types.js";
 
 function spriteFactory(
-  height: number,
-  width: number,
+  rows: number,
+  columns: number,
   scale: number,
   xStart: number,
   yStart: number,
   pixels: number[],
   colour: string,
 ): Pixel[] {
-  let spriteArray: Pixel[] = new Array(pixels.length);
-  let activePixelsSet = 0;
-  let loopNumber = 0;
-  for (let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
-      if (pixels.includes(loopNumber)) {
-        spriteArray[activePixelsSet] = new Pixel(
+  let pixelArrays: Pixel[] = new Array(pixels.length);
+  let pixelIndex = 0;
+  let cell = 0;
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < columns; j++) {
+      if (pixels.includes(cell)) {
+        pixelArrays[pixelIndex] = new Pixel(
           scale,
           scale,
-          xStart + j * scale,
+          xStart + scale * j,
           yStart + scale * i,
           colour,
         );
-        activePixelsSet++;
+        pixelIndex++;
       }
-      loopNumber++;
+      cell++;
     }
   }
-  return spriteArray;
+  return pixelArrays;
 }
 
 function textFactory(
@@ -42,7 +42,7 @@ function textFactory(
   spacingOverride: number = characterConstants.cols,
 ): Pixel[][] {
   let lettersArray: Sprite[] = text.split("").map((char) => ascii[char]);
-  let letters: Pixel[][] = Array(lettersArray.length);
+  let letters: Pixel[][] = Array.from({ length: lettersArray.length }, () => []);
   for (let i = 0; i < lettersArray.length; i++) {
     letters[i] = spriteFactory(
       characterConstants.rows,
