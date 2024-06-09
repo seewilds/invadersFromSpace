@@ -222,6 +222,7 @@ class Battlefield {
           atLeftBoundary,
           atRightBoundary,
         );
+        this.updateInvadersConsumeShields(this.invaderRow[i][j]);
       }
     }
     if (invaderMoved) {
@@ -234,6 +235,16 @@ class Battlefield {
     this.invaderRow.forEach((invaders) =>
       invaders.forEach((invader) => invader.fire()),
     );
+  }
+
+  updateInvadersConsumeShields(invader: Invader): void{
+    for(let k = 0; k < this.shields.length; k++){
+      for(let l = this.shields[k].pixels.length - 1; l >= 0; l--){
+        if(invader.isPixelInBoundingBox(this.shields[k].pixels[l])){
+          this.shields[k].pixels.splice(l, 1);
+        }
+      } 
+    }
   }
 
   updateShields(): void {

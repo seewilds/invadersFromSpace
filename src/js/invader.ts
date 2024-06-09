@@ -124,7 +124,7 @@ class Invader {
   }
 
   fire(): void {
-    if (this.health > 0 && this.canFire && Math.random() >= 0.99) {
+    if (this.health > 0 && this.canFire && Math.random() >= 101) {
       this.addShot(
         new Laser(
           this.context,
