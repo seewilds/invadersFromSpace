@@ -4,6 +4,7 @@ import type {
   InvaderRow,
   LevelState,
   RenderOptions,
+  BattlefieldDimensions,
 } from "./types.js";
 import { Invader } from "./invader.js";
 import { ShieldSprite, characterConstants } from "./sprites.js";
@@ -14,6 +15,7 @@ import { Shield } from "./shield.js";
 class Battlefield {
   context: CanvasRenderingContext2D | null;
   renderOptions: RenderOptions;
+  dimensions: BattlefieldDimensions;
   level: Level;
   pauseSeconds: number;
   invaders: Invader[];
@@ -65,6 +67,10 @@ class Battlefield {
     this.laserShots = [];
     this.shields = [];
     this.headerFooterPercentage = 0.1;
+    this.dimensions = {
+      height: this.context.canvas.height,
+      width: this.context.canvas.width
+    };
     this.invaderRow = new Array(this.level.setup.length);
     this.defender = new Defender(
       this.context,
@@ -167,17 +173,10 @@ class Battlefield {
     let shields = new Array<Shield>(level.shieldCount);
     let spaceBetween = this.getHorizontalSpace(ShieldSprite, level.shieldCount);
     let shieldWidth = ShieldSprite.cols * this.renderOptions.scale;
-    let shieldHeight =
-      ShieldSprite.rows * this.renderOptions.scale +
-      this.renderOptions.scale * this.renderOptions.scale;
-
     for (let i = 0; i < level.shieldCount; i++) {
       shields[i] = new Shield(this.context!, this.renderOptions, {
         x: i * (shieldWidth + spaceBetween) + spaceBetween,
-        y:
-          4.5 * shieldHeight +
-          5 +
-          Math.floor(this.context!.canvas.height * 0.3),
+        y: Math.floor(this.context!.canvas.height * 0.72),
       });
     }
     return shields;
@@ -188,7 +187,7 @@ class Battlefield {
       for (let j = 0; j < this.invaderRow[i].length; j++) {
         if (
           this.invaderRow[i][this.invaderRow[i].length - 1].pixels.some(
-            (pixel) => pixel.x >= this.context!.canvas.width,
+            (pixel) => pixel.x >= this.dimensions.width,
           )
         ) {
           return true;
@@ -211,9 +210,10 @@ class Battlefield {
 
   updateInvaders(timestamp: number): void {
     this.removeInvaders();
+    let topOfDefender = this.defender.getBoundingBox()[0].y;
     let atLeftBoundary = this.anyAtLeftEdge();
     let atRightBoundary = this.anyAtRightEdge();
-
+    
     let invaderMoved = false;
     for (let i = 0; i < this.invaderRow.length; i++) {
       for (let j = 0; j < this.invaderRow[i].length; j++) {
@@ -223,6 +223,9 @@ class Battlefield {
           atRightBoundary,
         );
         this.updateInvadersConsumeShields(this.invaderRow[i][j]);
+        if(this.invaderRow[i][j].getBoundingBox()[1].y >= topOfDefender){
+          this.levelState.lives = 0;
+        }
       }
     }
     if (invaderMoved) {
@@ -277,7 +280,7 @@ class Battlefield {
   }
 
   updateHits() {
-    this.invaderRow.forEach((invaders, index) => {
+    this.invaderRow.forEach(invaders => {
       for (let i = invaders.length - 1; i >= 0; i--) {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (
@@ -313,9 +316,9 @@ class Battlefield {
         this.laserShots[j].pixels.some((pixel) => {
           return (
             pixel.y <
-              this.context!.canvas.height * this.headerFooterPercentage ||
+              this.dimensions.height * this.headerFooterPercentage ||
             pixel.y >
-              this.context!.canvas.height * (1 - this.headerFooterPercentage)
+              this.dimensions.height * (1 - this.headerFooterPercentage)
           );
         })
       ) {

@@ -59,8 +59,14 @@ interface RenderOptions {
   targetFramesPerSecond: number;
 }
 
+interface BattlefieldDimensions{
+  height: number;
+  width: number;
+}
+
 export { InvaderType };
 export type {
+  BattlefieldDimensions,
   Character,
   CharacterSprite,
   Sprite,
