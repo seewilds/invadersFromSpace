@@ -1,8 +1,8 @@
 ## Invaders from Space
 
-<div style="text-align:center;">
+<p align="center" width="100%">
    <img src='./docs/images/invaders_title_screen.png' width=60%>
-</div>
+</p>
 
 
 Invaders from Space is a twist on a classic arcade game reimagined for the web. Developed using TypeScript, HTML, and CSS, this game brings the nostalgic alien-shooting experience to your browser. Players control the defender, dodging invader attacks while trying to save the world.
