@@ -282,7 +282,7 @@ class Battlefield {
         for (let j = this.laserShots.length - 1; j >= 0; j--) {
           if (
             this.laserShots[j].direction < 0 &&
-            invaders[i].hit(this.laserShots[j])
+            invaders[i].processLaser(this.laserShots[j])
           ) {
             this.removeLaserShot(j);
             this.levelState.points += 10 + (4 % (i + 1)) * 10;

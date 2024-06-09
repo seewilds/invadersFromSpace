@@ -4,7 +4,6 @@ import { Pixel } from "./pixel.js";
 import { Explosion, characterConstants } from "./sprites.js";
 import type {
   CharacterSprite,
-  InvaderRow,
   Position,
   RenderOptions,
   Sprite,
@@ -122,6 +121,70 @@ class Invader {
 
     return invaderMoved;
   }
+  
+  switchSprite(): void {
+    if (this.health === 0) {
+      this.colour = "rgb(249, 200, 14)";
+      this.pixels = spriteFactory(
+        this.explosion.rows,
+        this.explosion.cols,
+        this.renderOptions.scale,
+        this.x,
+        this.y,
+        this.explosion.pixels,
+        this.colour,
+      );
+      this.altActive = false;
+    } else if (this.altActive) {
+      this.pixels = spriteFactory(
+        this.sprite.rows,
+        this.sprite.cols,
+        this.renderOptions.scale,
+        this.x,
+        this.y,
+        this.sprite.alternatePixels,
+        this.colour,
+      );
+      this.altActive = false;
+    } else {
+      this.pixels = spriteFactory(
+        this.sprite.rows,
+        this.sprite.cols,
+        this.renderOptions.scale,
+        this.x,
+        this.y,
+        this.sprite.pixels,
+        this.colour,
+      );
+      this.altActive = true;
+    }
+  }
+ 
+  isLaserBlocked(invader: Invader): boolean {
+    let boundingBox = invader.getBoundingBox();
+    return (
+      this.pixels[this.sprite.laserPosition.laserXPosition].x >=
+        boundingBox[0].x - 2 * this.renderOptions.scale &&
+      this.pixels[this.sprite.laserPosition.laserXPosition].x <=
+        boundingBox[1].x + 2 * this.renderOptions.scale
+    );
+  }
+
+  setCanFire(invaderRows: Invader[][]): boolean {
+    for (let i = 0; i < invaderRows.length; i++) {
+      for (let j = 0; j < invaderRows[i].length; j++) {
+        if (invaderRows[i][j].pixels[0] === this.pixels[0]) {
+          continue;
+        }
+
+        if (this.isLaserBlocked(invaderRows[i][j])) {
+          return false;
+        }
+      }
+    }
+    this.canFire = true;
+    return true;
+  }
 
   fire(): void {
     if (this.health > 0 && this.canFire && Math.random() >= 0.99) {
@@ -143,23 +206,7 @@ class Invader {
     }
   }
 
-  setCanFire(invaderRows: Invader[][]): boolean {
-    for (let i = 0; i < invaderRows.length; i++) {
-      for (let j = 0; j < invaderRows[i].length; j++) {
-        if (invaderRows[i][j].pixels[0] === this.pixels[0]) {
-          continue;
-        }
-
-        if (this.isLaserBlocked(invaderRows[i][j])) {
-          return false;
-        }
-      }
-    }
-    this.canFire = true;
-    return true;
-  }
-
-  hit(laser: Laser): boolean {
+  processLaser(laser: Laser): boolean {
     if (this.health === 0) {
       return false;
     }
@@ -198,54 +245,6 @@ class Invader {
       pixel.y >= boundingBox[0].y &&
       pixel.y <= boundingBox[1].y
     );
-  }
-
-  isLaserBlocked(invader: Invader): boolean {
-    let boundingBox = invader.getBoundingBox();
-    return (
-      this.pixels[this.sprite.laserPosition.laserXPosition].x >=
-        boundingBox[0].x - 2 * this.renderOptions.scale &&
-      this.pixels[this.sprite.laserPosition.laserXPosition].x <=
-        boundingBox[1].x + 2 * this.renderOptions.scale
-    );
-  }
-
-  switchSprite(): void {
-    if (this.health === 0) {
-      this.colour = "rgb(249, 200, 14)";
-      this.pixels = spriteFactory(
-        this.explosion.rows,
-        this.explosion.cols,
-        this.renderOptions.scale,
-        this.x,
-        this.y,
-        this.explosion.pixels,
-        this.colour,
-      );
-      this.altActive = false;
-    } else if (this.altActive) {
-      this.pixels = spriteFactory(
-        this.sprite.rows,
-        this.sprite.cols,
-        this.renderOptions.scale,
-        this.x,
-        this.y,
-        this.sprite.alternatePixels,
-        this.colour,
-      );
-      this.altActive = false;
-    } else {
-      this.pixels = spriteFactory(
-        this.sprite.rows,
-        this.sprite.cols,
-        this.renderOptions.scale,
-        this.x,
-        this.y,
-        this.sprite.pixels,
-        this.colour,
-      );
-      this.altActive = true;
-    }
   }
 }
 
