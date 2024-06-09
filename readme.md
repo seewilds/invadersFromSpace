@@ -1,7 +1,7 @@
 ## Invaders from Space
 
 <p align="center" width="100%">
-   <img src='./docs/images/invaders_title_screen.png' width=60%>
+   <img src='./docs/images/invaders_title_screen.png' width=40%>
 </p>
 
 
@@ -14,7 +14,7 @@ Features:
 - Sound effects
 
 <p align="center" width="100%">
-   <img src='./docs/images/invaders_action.png' width=60%>
+   <img src='./docs/images/invaders_action.png' width=40%>
 </p>
 
 ## Getting Started
